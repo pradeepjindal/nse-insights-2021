@@ -1,0 +1,18 @@
+{
+  "properties": [
+    {
+      "name": "app.enable.scheduling",
+      "type": "java.lang.String",
+      "description": "Description for app.enable.scheduling."
+    },
+    {
+      "name": "app.enable.uploading",
+      "type": "java.lang.String",
+      "description": "Description for app.enable.uploading."
+    },
+    {
+      "name": "app.enable.downloading",
+      "type": "java.lang.String",
+      "description": "Description for app.enable.downloading."
+    }
+  ] }

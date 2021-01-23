@@ -1,0 +1,4 @@
+pg_dump --username=postgres -s postgres > schema.sql
+
+C:\rdbms\PostgreSQLPort_13.1\App\PgSQL\bin>pg_dump --username=postgres -s postgres > schema.sql
+

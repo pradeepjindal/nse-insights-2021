@@ -1,0 +1,286 @@
+sqlDeliverySpike: >
+  SELECT
+    tdy.symbol AS symbol,
+    tdy.one_trade_date AS trade_date,
+
+    tdy.cmclose_prev AS previous_close,
+    tdy.cmopen AS open,
+    tdy.cmhigh AS high,
+    tdy.cmlow AS low,
+    tdy.cmclose AS close,
+    tdy.cmlast AS last,
+    tdy.cmatp AS atp,
+
+    round(tdy.cmopen / (yes.cmopen/100),2) - 100 AS open_chg_prcnt,
+    round(tdy.cmhigh / (yes.cmhigh/100),2) - 100 AS high_chg_prcnt,
+    round(tdy.cmlow / (yes.cmlow/100),2) - 100 AS low_chg_prcnt,
+    round(tdy.cmclose / (yes.cmclose/100),2) - 100 AS close_chg_prcnt,
+    round(tdy.cmlast / (yes.cmlast/100),2) - 100 AS last_chg_prcnt,
+    round(tdy.cmatp / (yes.cmatp/100),2) - 100 AS atp_chg_prcnt,
+
+    round(tdy.traded_qty / (yes.traded_qty/100),2) - 100 AS volume_chg_prcnt,
+    round(tdy.delivered_qty / (yes.delivered_qty/100),2) - 100 AS delivery_chg_prcnt,
+    round(tdy.oi / (yes.oi/100),2) - 100 as oi_chg_prcnt,
+    tdy.premium,
+    round(tdy.cmopen / (tdy.cmclose_prev/100), 2) - 100 AS close_to_open_percent,
+    round(tdy.cmhigh / (tdy.cmopen/100), 2) - 100 AS othigh_prcnt,
+    round(tdy.cmlow / (tdy.cmopen/100), 2) - 100 AS otlow_prcnt,
+    round(tdy.cmclose / (tdy.cmopen/100), 2) - 100 AS otclose_prcnt,
+    round(tdy.cmlast / (tdy.cmopen/100), 2) - 100 AS otlast_prcnt,
+    round(tdy.cmatp / (tdy.cmopen/100), 2) - 100 AS otatp_prcnt,
+
+    tdy.cmclose - yes.cmclose AS tdyclose_minus_yesclose,
+    tdy.cmlast - yes.cmlast AS tdylast_minus_yeslast,
+    tdy.cmatp - yes.cmatp AS tdyatp_minus_yesatp,
+    tdy.delivered_qty - yes.delivered_qty AS tdydel_minus_yesdel,
+
+    tdy.traded_qty volume,
+    tdy.delivered_qty delivery
+  FROM
+    (
+      select *
+      from date_linking_view1 v1, cfd_data_view_a1 d1
+      where v1.One_trade_date = d1.trade_Date
+    ) tdy,
+    (
+      select *
+      from date_linking_view1 v2, cfd_data_view_a1 d2
+      where v2.two_trade_date = d2.trade_Date
+    ) yes
+  WHERE tdy.one_trade_date = yes.one_trade_Date and tdy.symbol = yes.symbol
+  order by tdy.symbol, tdy.trade_date
+
+sqlDeliverySpikeTwo: >
+  SELECT
+    tdy.symbol AS symbol,
+    tdy.one_trade_date AS trade_date,
+
+    tdy.cmclose_prev AS previous_close,
+    tdy.cmopen AS open,
+    tdy.cmhigh AS high,
+    tdy.cmlow AS low,
+    tdy.cmclose AS close,
+    tdy.cmlast AS last,
+    tdy.cmatp AS atp,
+
+    round(tdy.cmopen / (yes.cmopen/100),2) - 100 AS open_chg_prcnt,
+    round(tdy.cmhigh / (yes.cmhigh/100),2) - 100 AS high_chg_prcnt,
+    round(tdy.cmlow / (yes.cmlow/100),2) - 100 AS low_chg_prcnt,
+    round(tdy.cmclose / (yes.cmclose/100),2) - 100 AS close_chg_prcnt,
+    round(tdy.cmlast / (yes.cmlast/100),2) - 100 AS last_chg_prcnt,
+    round(tdy.cmatp / (yes.cmatp/100),2) - 100 AS atp_chg_prcnt,
+
+    round(tdy.traded_qty / (yes.traded_qty/100),2) - 100 AS volume_chg_prcnt,
+    round(tdy.delivered_qty / (yes.delivered_qty/100),2) - 100 AS delivery_chg_prcnt,
+
+    round(tdy.cmopen / (tdy.cmclose_prev/100), 2) - 100 AS close_to_open_percent,
+    round(tdy.cmhigh / (tdy.cmopen/100), 2) - 100 AS othigh_prcnt,
+    round(tdy.cmlow / (tdy.cmopen/100), 2) - 100 AS otlow_prcnt,
+    round(tdy.cmclose / (tdy.cmopen/100), 2) - 100 AS otclose_prcnt,
+    round(tdy.cmlast / (tdy.cmopen/100), 2) - 100 AS otlast_prcnt,
+    round(tdy.cmatp / (tdy.cmopen/100), 2) - 100 AS otatp_prcnt,
+
+    tdy.cmclose - yes.cmclose AS tdyclose_minus_yesclose,
+    tdy.cmlast - yes.cmlast AS tdylast_minus_yeslast,
+    tdy.cmatp - yes.cmatp AS tdyatp_minus_yesatp,
+    tdy.delivered_qty - yes.delivered_qty AS tdydel_minus_yesdel,
+
+    tdy.traded_qty volume,
+    tdy.delivered_qty delivery
+  FROM
+    (
+      select *
+      from cm_date_linking_view1 v1, cd_data_view_a1 d1
+      where v1.One_trade_date = d1.trade_Date
+    ) tdy,
+    (
+      select *
+      from cm_date_linking_view1 v2, cd_data_view_a1 d2
+      where v2.two_trade_date = d2.trade_Date
+    ) yes
+  WHERE tdy.one_trade_date = yes.one_trade_Date and tdy.symbol = yes.symbol
+  order by tdy.symbol, tdy.trade_date
+
+sqlDeliverySpikeThreeFor30DayzOrderBySymbolAndTradeDate: >
+  SELECT
+    tdy.symbol AS symbol,
+    tdy.one_trade_date AS trade_date,
+
+    tdy.cmclose_prev AS previous_close,
+    tdy.cmopen AS open,
+    tdy.cmhigh AS high,
+    tdy.cmlow AS low,
+    tdy.cmclose AS close,
+    tdy.cmlast AS last,
+    tdy.cmatp AS atp,
+
+    round(tdy.cmopen / (yes.cmopen/100),2) - 100 AS open_chg_prcnt,
+    round(tdy.cmhigh / (yes.cmhigh/100),2) - 100 AS high_chg_prcnt,
+    round(tdy.cmlow / (yes.cmlow/100),2) - 100 AS low_chg_prcnt,
+    round(tdy.cmclose / (yes.cmclose/100),2) - 100 AS close_chg_prcnt,
+    round(tdy.cmlast / (yes.cmlast/100),2) - 100 AS last_chg_prcnt,
+    round(tdy.cmatp / (yes.cmatp/100),2) - 100 AS atp_chg_prcnt,
+
+    case when yes.traded_qty/100 = 0 then 0 else round(tdy.traded_qty / (yes.traded_qty/100),2) - 100 end AS volume_chg_prcnt,
+    case when yes.delivered_qty/100 = 0 then 0 else round(tdy.delivered_qty / (yes.delivered_qty/100),2) - 100 end AS delivery_chg_prcnt,
+
+    round(tdy.cmopen / (tdy.cmclose_prev/100), 2) - 100 AS close_to_open_percent,
+    round(tdy.cmhigh / (tdy.cmopen/100), 2) - 100 AS othigh_prcnt,
+    round(tdy.cmlow / (tdy.cmopen/100), 2) - 100 AS otlow_prcnt,
+    round(tdy.cmclose / (tdy.cmopen/100), 2) - 100 AS otclose_prcnt,
+    round(tdy.cmlast / (tdy.cmopen/100), 2) - 100 AS otlast_prcnt,
+    round(tdy.cmatp / (tdy.cmopen/100), 2) - 100 AS otatp_prcnt,
+
+    tdy.cmclose - yes.cmclose AS tdyclose_minus_yesclose,
+    tdy.cmlast - yes.cmlast AS tdylast_minus_yeslast,
+    tdy.cmatp - yes.cmatp AS tdyatp_minus_yesatp,
+    tdy.delivered_qty - yes.delivered_qty AS tdydel_minus_yesdel,
+
+    tdy.traded_qty volume,
+    tdy.delivered_qty delivery
+  FROM
+    (
+      select symbol, min(trade_Date) fut_traded_from_date, max(trade_date) fut_traded_to_date
+      from nse_future_market_tab group by symbol
+    ) distinct_future_stocks,
+    (
+      select *
+      from cm_date_linking_view1 v1, cfd_data_cd_left_join_f_mv d1
+      where v1.One_trade_date = d1.trade_Date
+    ) tdy,
+    (
+      select *
+      from cm_date_linking_view1 v2, cfd_data_cd_left_join_f_mv d2
+      where v2.two_trade_date = d2.trade_Date
+    ) yes
+  WHERE distinct_future_stocks.symbol = tdy.symbol
+  and tdy.one_trade_date = yes.one_trade_Date and tdy.symbol = yes.symbol and tdy.one_rank <=30
+  order by tdy.symbol, tdy.trade_date
+
+sqlPastPresentFuture: >
+  SELECT
+      tdy.symbol symbol,
+      tdy.one_trade_date trade_date,
+      tdy.cmopen open,
+      tdy.cmhigh high,
+      tdy.cmlow low,
+      tdy.cmclose as close,
+      tdy.cmlast as last,
+      tdy.cmatp atp,
+      round((tdy.cmhigh+tdy.cmlow)/2, 2) as high_low_mid,
+
+      round(tdy.traded_qty / (yes.traded_qty/100),2) - 100 as volume_chg_prcnt,
+      round(tdy.delivered_qty / (yes.delivered_qty/100),2) - 100 as delivery_chg_prcnt,
+      round(tdy.oi / (yes.oi/100),2) - 100 as oi_chg_prcnt,
+      tdy.premium,
+      round(tmr.cmhigh / (tmr.cmopen/100), 2) - 100 as othigh_prcnt,
+  	  round(tmr.cmlow / (tmr.cmopen/100), 2) - 100 as otlow_prcnt,
+      round(tmr.cmatp / (tmr.cmopen/100), 2) - 100 as otatp_prcnt,
+      tdy.volume,
+      tdy.delivery
+    FROM
+    (
+      select *
+      from date_linking_view1 v1, cfd_data_view_a1 d1
+      where v1.two_trade_date = d1.trade_Date
+    ) tdy,
+    (
+      select *
+      from date_linking_view1 v2, cfd_data_view_a1 d2
+      where v2.three_trade_date = d2.trade_Date
+    ) yes,
+    (
+      select *
+      from date_linking_view1 v3, cfd_data_view_a1 d3
+      where v3.one_trade_date = d3.trade_Date
+    ) tmr
+    WHERE tdy.one_trade_date = yes.one_trade_Date and tdy.symbol = yes.symbol
+      and tdy.one_trade_date = tmr.one_trade_Date and tdy.symbol = tmr.symbol
+      and tdy.trade_date < to_date(?, 'yyyy-MM-dd')
+    ORDER BY tdy.symbol, tdy.one_trade_date
+
+sqlDeliverySpikeForDateCondition: >
+  and tdy.trade_date < to_date('2020-01-03','yyyy-MM-dd')
+        and tdy.trade_date < to_date(?, 'yyyy-MM-dd')
+  ORDER BY tdy.symbol, tdy.one_trade_date
+
+sqlDeliverySpike2: >
+  SELECT
+      tdy.symbol symbol,
+      tdy.one_trade_date trade_date,
+      tdy.cmopen open,
+      tdy.cmhigh high,
+      tdy.cmlow low,
+      tdy.cmclose as close,
+      round(tdy.cmclose / (yes.cmclose/100),2) - 100 as close_chg_prcnt,
+      round(tdy.traded_qty / (yes.traded_qty/100),2) - 100 as traded_chg_prcnt,
+      round(tdy.delivered_qty / (yes.delivered_qty/100),2) - 100 as delivered_chg_prcnt,
+      tdy.cmclose-yes.cmclose tdyclose_minus_yesclose,
+      round(tdy.cmhigh / (tdy.cmopen/100), 2) - 100 as hmo_prcnt,
+  	  round(tdy.cmlow / (tdy.cmopen/100), 2) - 100 as oml_prcnt,
+  	  round(tdy.cmclose / (tdy.cmopen/100), 2) - 100 as cmo_prcnt
+    FROM
+      (
+      select *
+      from date_linking_view1 v1, cfd_data_view_a1 d1
+      where v1.One_trade_date = d1.trade_Date
+      ) tdy,
+      (
+      select *
+      from date_linking_view1 v2, cfd_data_view_a1 d2
+      where v2.two_trade_date = d2.trade_Date
+      ) yes
+    WHERE tdy.one_trade_date = yes.one_trade_Date and tdy.symbol = yes.symbol
+    ORDER BY tdy.symbol, tdy.one_trade_date
+
+sqlTomorrowHeroOrigianl: >
+  SELECT
+    tdy.one_rank tdy_rank, tdy.trade_Date tdy_trd_date, yes.one_rank yes_rank, yes.trade_Date yes_trd_date,
+    tdy.symbol tdy_symbol,
+    yes.symbol yes_symbol,
+    tdy.cmclose tdy_close,
+    yes.cmclose yes_close,
+    tdy.cmclose - yes.cmclose as close_chg,
+    round(tdy.cmclose / (yes.cmclose/100),2) - 100 as close_chg_prcnt,
+    tdy.cmatp tdy_atp,
+    yes.cmatp yes_atp,
+    tdy.cmatp - yes.cmatp as atp_chg,
+    round(tdy.cmatp / (yes.cmatp/100),2) - 100 as atp_chg_prcnt,
+    tdy.premium tdy_premium,
+    yes.premium yes_premium,
+    tdy.premium - yes.premium as premium_chg,
+    round(tdy.premium / (case when yes.premium/100 = 0 then 1 else yes.premium/100 end),2) - 100 as premium_chg_prcnt,
+    tdy.oi tdy_oi,
+    yes.oi yes_oi,
+    tdy.oi - yes.oi as oi_chg,
+    yes.oi/100 as oii,
+    tdy.oi / (yes.oi/100) as oi_chg_prcnt0,
+    tdy.oi / (yes.oi/100) - 100 as oi_chg_prcnt1,
+    round(tdy.oi / (yes.oi/100),2) - 100 as oi_chg_prcnt,
+    tdy.traded_qty tdy_traded,
+    yes.traded_qty yes_traded,
+    tdy.traded_qty - yes.traded_qty as traded_chg,
+    round(tdy.traded_qty / (yes.traded_qty/100),2) - 100 as traded_chg_prcnt,
+    tdy.delivered_qty tdy_delivered,
+    yes.delivered_qty yes_delivered,
+    tdy.delivered_qty - yes.delivered_qty as delivery_chg,
+    round(tdy.delivered_qty / (yes.delivered_qty/100),2) - 100 as delivered_chg_prcnt,
+    tdy.cmhigh tdyhigh,
+    tdy.cmhigh - yes.cmopen hmo,
+    round(tdy.cmhigh / (yes.cmopen/100),2) - 100 as hmo_prcnt,
+    tdy.cmopen tdyopen,
+    tdy.del_to_trd_ratio tdy_del_to_trd_ratio,
+    yes.del_to_trd_ratio yes_del_to_trd_ratio
+  FROM
+    (
+    select *
+    from date_linking_view1 v1, cfd_data_view_a1 d1
+    where v1.One_trade_date = d1.trade_Date
+    ) tdy,
+    (
+    select *
+    from date_linking_view1 v2, cfd_data_view_a1 d2
+    where v2.two_trade_date = d2.trade_Date
+    ) yes
+  WHERE tdy.one_trade_date = yes.one_trade_Date and tdy.symbol = yes.symbol
+  ORDER BY tdy.symbol, tdy.one_trade_date

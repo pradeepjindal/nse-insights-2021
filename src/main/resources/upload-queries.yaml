@@ -1,0 +1,15 @@
+cmDataCountForDateSql: >
+  SELECT count(*)
+  FROM nse_cash_market_tab t
+  WHERE t.trade_date = to_date(?,'yyyy-mm-dd')
+
+fmDataCountForDateSql: >
+  SELECT count(*)
+  FROM nse_future_market_tab t
+  WHERE t.trade_date = to_date(?,'yyyy-mm-dd')
+
+dmDataCountForDateSql: >
+  SELECT count(*)
+  FROM nse_delivery_market_tab t
+  WHERE t.trade_date = to_date(?,'yyyy-mm-dd')
+

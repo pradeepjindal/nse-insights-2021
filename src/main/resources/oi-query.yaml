@@ -1,0 +1,12 @@
+oiAllSql: >
+  SELECT symbol, trade_date, sum(open_int) sum_oi
+  FROM nse_future_market_tab
+  GROUP by symbol, trade_date
+  ORDER BY symbol, trade_Date
+
+oiForDateSql: >
+  SELECT symbol, trade_date, sum(open_int) sum_oi
+  FROM nse_future_market_tab
+  WHERE trade_date = to_date(?,'yyyy-MM-dd')
+  GROUP by symbol, trade_date
+  ORDER by symbol

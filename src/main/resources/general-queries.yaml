@@ -1,0 +1,19 @@
+cmTradeDateRanking: >
+  SELECT
+    td.trade_date,
+    rank() OVER (ORDER BY td.trade_date DESC) AS rank
+  FROM (
+    select distinct trade_date from nse_cash_market_tab
+  ) td;
+
+tradeDateRanking: >
+  SELECT
+    td.trade_date,
+    rank() OVER (ORDER BY td.trade_date DESC) AS trade_day_rank
+  FROM (
+    select distinct trade_date from nse_cash_market_tab
+    union distinct
+    select distinct trade_date from nse_future_market_tab
+    union distinct
+    select distinct trade_date from nse_delivery_market_tab
+  ) td;

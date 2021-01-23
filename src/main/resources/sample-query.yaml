@@ -1,0 +1,9 @@
+# Join multiple lines without new line
+value: >
+  part 1
+  part 2
+
+# Join with newline
+value2: |
+  line 1
+  line 2

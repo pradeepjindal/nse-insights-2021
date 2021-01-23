@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.4.2</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+
+	<groupId>org.pra</groupId>
+	<artifactId>nse-insights-2021</artifactId>
+	<version>4.3.0-Release</version>
+	<name>nse insights four</name>
+<!--	<description>A Spring Boot and Java 11 based Project</description>-->
+	<description>2021.JAN-RELEASE</description>
+
+	<developers>
+		<developer>
+			<name>Pradeep Jindal</name>
+			<id>pradeepjindal</id>
+			<email>pradeepjindal.mca@gmail.com</email>
+			<organization>Individual</organization>
+			<roles>
+				<role>Project Lead</role>
+			</roles>
+			<timezone>5.5</timezone>
+		</developer>
+	</developers>
+
+	<properties>
+		<java.version>11</java.version>
+		<jackson.version>2.10.2</jackson.version>
+		<manifold.version>2020.1.41</manifold.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.fusesource.jansi</groupId>-->
+<!--            <artifactId>jansi</artifactId>-->
+<!--            <version>1.18</version>-->
+<!--        </dependency>-->
+
+		<dependency>
+			<groupId>systems.manifold</groupId>
+			<artifactId>manifold-all</artifactId>
+			<version>${manifold.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.tomcat</groupId>
+					<artifactId>tomcat-jdbc</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.zaxxer</groupId>-->
+<!--			<artifactId>HikariCP</artifactId>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>mysql</groupId>-->
+<!--			<artifactId>mysql-connector-java</artifactId>-->
+<!--		</dependency>-->
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jdk8</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-csv</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+        <dependency>
+            <groupId>net.sf.supercsv</groupId>
+            <artifactId>super-csv-java8</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+
+<!--		<dependency>-->
+<!--			<groupId>org.simpleflatmapper</groupId>-->
+<!--			<artifactId>sfm-csv</artifactId>-->
+<!--			<version>8.2.1</version>-->
+<!--		</dependency>-->
+
+		<!-- jpa, crud repository -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!-- PostgreSQL -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+<!--			<version>42.2.8.jre7</version>-->
+		</dependency>
+
+
+<!--			<groupId>com.h2database</groupId>-->
+<!--			<artifactId>h2</artifactId>-->
+<!--			<scope>runtime</scope>-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>org.apache.spark</groupId>-->
+<!--			<artifactId>spark-core_2.11</artifactId>-->
+<!--			<version>2.4.4</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.apache.spark</groupId>-->
+<!--			<artifactId>spark-sql_2.11</artifactId>-->
+<!--			<version>2.4.4</version>-->
+<!--		</dependency>-->
+
+		<!--      -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+<!--		<dependency>-->
+<!--			<groupId>org.apache.kafka</groupId>-->
+<!--			<artifactId>kafka_2.12</artifactId>-->
+<!--			<version>2.3.0</version>-->
+<!--		</dependency>-->
+
+		<dependency>
+			<groupId>org.ta4j</groupId>
+			<artifactId>ta4j-core</artifactId>
+			<version>0.13</version>
+		</dependency>
+
+		<!-- mapper -->
+		<dependency>
+			<groupId>com.googlecode.jmapper-framework</groupId>
+			<artifactId>jmapper-core</artifactId>
+			<version>1.6.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>1.4.1.Final</version>
+		</dependency>
+
+    </dependencies>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+<!--				<profiles>-->
+<!--					<profile>dev</profile>-->
+<!--				</profiles>-->
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<source>11</source>
+					<target>11</target>
+					<encoding>UTF-8</encoding>
+<!--					<compilerArgs>-->
+<!--						&lt;!&ndash; Configure manifold plugin&ndash;&gt;-->
+<!--						<arg>-Xplugin:Manifold</arg>-->
+<!--					</compilerArgs>-->
+<!--					&lt;!&ndash; Add the processor path for the plugin (required for Java 9+) &ndash;&gt;-->
+<!--					<annotationProcessorPaths>-->
+<!--						<path>-->
+<!--							<groupId>systems.manifold</groupId>-->
+<!--							<artifactId>manifold-all</artifactId>-->
+<!--							<version>${manifold.version}</version>-->
+<!--						</path>-->
+<!--					</annotationProcessorPaths>-->
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+<!--	<profiles>-->
+<!--		<profile>-->
+<!--			<id>dev</id>-->
+<!--			<activation>-->
+<!--				<activeByDefault>true</activeByDefault>-->
+<!--			</activation>-->
+<!--			<properties>-->
+<!--				<spring.profiles.active>dev</spring.profiles.active>-->
+<!--			</properties>-->
+<!--		</profile>-->
+<!--		<profile>-->
+<!--			<id>prod</id>-->
+<!--			<properties>-->
+<!--				<spring.profiles.active>prod</spring.profiles.active>-->
+<!--			</properties>-->
+<!--		</profile>-->
+<!--	</profiles>-->
+
+
+<!--	<profiles>-->
+<!--		&lt;!&ndash; tools.jar dependency (for Java 8 only), primarily to support structural typing without static proxies.-->
+<!--             Thus if you are not using structural typing, you **don't** need tools.jar &ndash;&gt;-->
+<!--		<profile>-->
+<!--			<id>internal.tools-jar</id>-->
+<!--			<activation>-->
+<!--				<file>-->
+<!--					<exists>\${java.home}/../lib/tools.jar</exists>-->
+<!--				</file>-->
+<!--			</activation>-->
+<!--			<dependencies>-->
+<!--				<dependency>-->
+<!--					<groupId>com.sun</groupId>-->
+<!--					<artifactId>tools</artifactId>-->
+<!--					<version>1.8.0</version>-->
+<!--					<scope>system</scope>-->
+<!--					<systemPath>\${java.home}/../lib/tools.jar</systemPath>-->
+<!--				</dependency>-->
+<!--			</dependencies>-->
+<!--		</profile>-->
+<!--	</profiles>-->
+
+</project>
