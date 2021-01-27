@@ -44,7 +44,7 @@ public class ReportConstants {
     static final String PPF_CSV_HEADER_NEW =
             "symbol,trade_date,day," +
 //            "open,high,low,hlp,close,last,closingBell,closeToLastPct,atp,hlm,ohlc," +
-                    "open,high,low,close,last,atp,ohlc,hlm,hld,hlp,cToL_Pct," +
+                    "open,high,low,close,last,ohlc,atp,hlm,hlmMatp,hld,hlp,cToL_Pct," +
 
 //            "calcAtpFixGrowth,calcAtpDynGrowth,atpChgPct," +
 //            "calcVolFixGrowth,calcVolDynGrowth,volChgPct," +
@@ -52,7 +52,7 @@ public class ReportConstants {
 //            "calcFoiFixGrowth,calcFoiDynGrowth,foiChgPct," +
                     "calcAtpFixGrowth,atpChgPct," +
                     "calcVolFixGrowth,volChgPct," +
-                    "vdr,sumDel," +
+                    "vdr,sumDel,sumDelDiff," +
                     "calcDelFixGrowth,delChgPct," +
 //                    "calcFoiFixGrowth,foiChgPct," +
 //
@@ -61,7 +61,8 @@ public class ReportConstants {
                     "VolAtpMfi,DelAtpMfi,DelAtpMfiChg," +
                     "DelRsi,DelRsiChg," +
                     "AtpRsi,AtpRsiChg,lotSize" +
-                    ",vol_InLakh,del_InLakh,vdr";
+                    ",vol_InLakh,del_InLakh,vdr" +
+                    ",fuAtp,fuAtpMcmAtp";
 
     static final List<String> SHUVI_TICKERS =
             List.of("ASIANPAINTS", "COLPAL", "DABUR", "ICICIPRULI", "JUBLIENTFOOD", "PIDILITE", "RELIANCE", "SBIN", "TITAN", "UBL");

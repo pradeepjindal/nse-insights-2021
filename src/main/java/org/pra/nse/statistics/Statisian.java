@@ -1,7 +1,7 @@
 package org.pra.nse.statistics;
 
-import org.pra.nse.service.DataService;
 import org.pra.nse.db.dto.DeliverySpikeDto;
+import org.pra.nse.service.DataServiceI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -15,9 +15,9 @@ import java.util.Map;
 public class Statisian {
     private static final Logger LOGGER = LoggerFactory.getLogger(Statisian.class);
 
-    private final DataService dataService;
+    private final DataServiceI dataService;
 
-    public Statisian(DataService dataService) {
+    public Statisian(DataServiceI dataService) {
         this.dataService = dataService;
     }
 

@@ -2,7 +2,7 @@ package org.pra.nse.statistics;
 
 import org.pra.nse.Manager;
 import org.pra.nse.db.dto.DeliverySpikeDto;
-import org.pra.nse.service.DataService;
+import org.pra.nse.service.DataServiceI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -41,10 +41,10 @@ import java.util.Map;
 public class StatisticsManager implements Manager {
     private static final Logger LOGGER = LoggerFactory.getLogger(StatisticsManager.class);
 
-    private final DataService dataService;
+    private final DataServiceI dataService;
     private final Statisian statisian;
 
-    public StatisticsManager(DataService dataService, Statisian statisian) {
+    public StatisticsManager(DataServiceI dataService, Statisian statisian) {
         this.dataService = dataService;
         this.statisian = statisian;
     }

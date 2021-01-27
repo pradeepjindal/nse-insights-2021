@@ -5,7 +5,7 @@ import org.pra.nse.csv.data.CalcBeanNew;
 import org.pra.nse.csv.data.RsiBeanNew;
 import org.pra.nse.csv.data.RsiCaoNew;
 import org.pra.nse.db.dto.DeliverySpikeDto;
-import org.pra.nse.service.DataService;
+import org.pra.nse.service.DataServiceI;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.NumberUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -31,16 +31,16 @@ public class RsiCalculatorNew {
 
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
-    private final DataService dataService;
+    private final DataServiceI dataService;
 
-    RsiCalculatorNew(NseFileUtils nseFileUtils, PraFileUtils praFileUtils, DataService dataService) {
+    RsiCalculatorNew(NseFileUtils nseFileUtils, PraFileUtils praFileUtils, DataServiceI dataService) {
         this.nseFileUtils = nseFileUtils;
         this.praFileUtils = praFileUtils;
         this.dataService = dataService;
     }
 
     public List<RsiBeanNew> calculateAndReturn(LocalDate forDate) {
-        int[] forDaysArray = {20, 10, 5, 3};
+        int[] forDaysArray = {20, 15, 10, 5, 3};
         List<RsiBeanNew> beans = prepareData(forDate, forDaysArray);
         List<CalcBeanNew> calcBeanList = new ArrayList<>();
         beans.forEach( bean -> {
@@ -96,34 +96,38 @@ public class RsiCalculatorNew {
     }
 
     private List<RsiBeanNew> loopIt(LocalDate forDate, int forDays, Map<String, List<DeliverySpikeDto>> symbolDtoMap) {
-        //List<DeliverySpikeDto> dtos_ToBeSaved = new ArrayList<>();
         List<RsiBeanNew> beans = new ArrayList<>();
-        symbolDtoMap.forEach( (symbol, list) -> {
+        symbolDtoMap.forEach( (mapSymbol, mapDtoList_OfGivenSymbol) -> {
+            String listSymbol = mapDtoList_OfGivenSymbol.get(0).getSymbol();
+            if(!mapSymbol.equals(listSymbol)) {
+                throw new RuntimeException("symbol mismatch");
+            }
+
             RsiBeanNew bean = new RsiBeanNew();
-            bean.setSymbol(list.get(0).getSymbol());
+            bean.setSymbol(mapSymbol);
             bean.setTradeDate(forDate);
             bean.setForDays(forDays);
 
-            calculate(forDate, symbol, list,
+            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {
                         LOGGER.debug("calc+:{}", dto.getTdyatpMinusYesatp());
                         return dto.getTdyatpMinusYesatp();
                     },
                     (dto, calculatedValue) -> bean.setAtpRsiSma(calculatedValue)
             );
-            calculate(forDate, symbol, list,
+            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {
                         return dto.getTdycloseMinusYesclose();
                     },
                     (dto, calculatedValue) -> bean.setCloseRsiSma(calculatedValue)
             );
-            calculate(forDate, symbol, list,
+            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {
                         return dto.getTdylastMinusYeslast();
                     },
                     (dto, calculatedValue) -> bean.setLastRsiSma(calculatedValue)
             );
-            calculate(forDate, symbol, list,
+            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {
                         return dto.getTdydelMinusYesdel();
                     },

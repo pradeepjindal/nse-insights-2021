@@ -9,6 +9,8 @@ public class DeliverySpikeDto {
     private LocalDate tradeDate;
     private LocalDate backDate;
     private LocalDate nextDate;
+    private DeliverySpikeDto backDto;
+    private DeliverySpikeDto nextDto;
 
     private BigDecimal previousClose;
     private BigDecimal open;
@@ -16,11 +18,13 @@ public class DeliverySpikeDto {
     private BigDecimal low;
     private BigDecimal close;
     private BigDecimal last;
-    private BigDecimal atp;
     private BigDecimal ohlc;
-    private BigDecimal highLowMid;
+    private BigDecimal atp;
+    private BigDecimal highLowMid; //hlm
+    private BigDecimal hlmMatp;
     private BigDecimal highLowDiff;
     private BigDecimal highLowPct;
+
     private String closingBell;
     private BigDecimal closeToLastPercent;
 
@@ -42,7 +46,7 @@ public class DeliverySpikeDto {
     private BigDecimal foiFixGrowth;
     private BigDecimal foiDynGrowth;
     private BigDecimal oiChgPrcnt;
-    private BigDecimal premium;
+    private BigDecimal fuPremium;
 
     private String openingBell;
     private BigDecimal closeToOpenPercent;
@@ -60,7 +64,11 @@ public class DeliverySpikeDto {
 
     private BigDecimal volume;
     private BigDecimal delivery;
-    private BigDecimal oi;
+    private BigDecimal fuOi;
+    private BigDecimal fuContracts;
+    private BigDecimal fuTotTrdVal;
+    private BigDecimal fuAtp;
+    private BigDecimal fuAtpMinusCmAtp;
 
     private BigDecimal volAtpMfi;
     private BigDecimal delAtpMfi;
@@ -81,6 +89,10 @@ public class DeliverySpikeDto {
 
     private BigDecimal vdr;
     private BigDecimal delAccumulation;
+
+
+
+    private BigDecimal delDiff;
     private long lotSize;
 
     public String toCsvString() {
@@ -119,7 +131,7 @@ public class DeliverySpikeDto {
                 + volumeChgPrcnt + ","
                 + deliveryChgPrcnt + ","
                 + oiChgPrcnt + ","
-                + premium + ","
+                + fuPremium + ","
 
                 + othighPrcnt + ","
                 + otlowPrcnt + ","
@@ -147,11 +159,12 @@ public class DeliverySpikeDto {
                 + close + ","
                 + last + ","
 //                + closingBell + ","
-                + atp + ","
 
                 //calculated fields
                 + ohlc + ","
+                + atp + ","
                 + highLowMid + ","
+                + hlmMatp + ","
                 + highLowDiff + ","
                 + highLowPct + ","
                 + closeToLastPercent + ","
@@ -165,7 +178,7 @@ public class DeliverySpikeDto {
 
                 + vdr + ","
                 + delAccumulation + ","
-
+                + delDiff + ","
                 + delFixGrowth + ","
 //                + delDynGrowth + ","
                 + deliveryChgPrcnt + ","
@@ -195,7 +208,9 @@ public class DeliverySpikeDto {
                 + lotSize + ","
                 + volume.divide(new BigDecimal(100000), 0, RoundingMode.HALF_DOWN) + ","
                 + delivery.divide(new BigDecimal(100000), 0, RoundingMode.HALF_DOWN) + ","
-                + vdr;
+                + vdr + ","
+                + fuAtp + ","
+                + fuAtpMinusCmAtp;
     }
 
     public String getSymbol() {
@@ -406,12 +421,12 @@ public class DeliverySpikeDto {
         this.oiChgPrcnt = oiChgPrcnt;
     }
 
-    public BigDecimal getPremium() {
-        return premium;
+    public BigDecimal getFuPremium() {
+        return fuPremium;
     }
 
-    public void setPremium(BigDecimal premium) {
-        this.premium = premium;
+    public void setFuPremium(BigDecimal fuPremium) {
+        this.fuPremium = fuPremium;
     }
 
     public String getOpeningBell() {
@@ -518,12 +533,12 @@ public class DeliverySpikeDto {
         this.delivery = delivery;
     }
 
-    public BigDecimal getOi() {
-        return oi;
+    public BigDecimal getFuOi() {
+        return fuOi;
     }
 
-    public void setOi(BigDecimal oi) {
-        this.oi = oi;
+    public void setFuOi(BigDecimal fuOi) {
+        this.fuOi = fuOi;
     }
 
     public BigDecimal getVolAtpMfi() {
@@ -716,5 +731,69 @@ public class DeliverySpikeDto {
 
     public void setLotSize(long lotSize) {
         this.lotSize = lotSize;
+    }
+
+    public BigDecimal getFuContracts() {
+        return fuContracts;
+    }
+
+    public void setFuContracts(BigDecimal fuContracts) {
+        this.fuContracts = fuContracts;
+    }
+
+    public BigDecimal getFuTotTrdVal() {
+        return fuTotTrdVal;
+    }
+
+    public void setFuTotTrdVal(BigDecimal fuTotTrdVal) {
+        this.fuTotTrdVal = fuTotTrdVal;
+    }
+
+    public BigDecimal getFuAtp() {
+        return fuAtp;
+    }
+
+    public void setFuAtp(BigDecimal fuAtp) {
+        this.fuAtp = fuAtp;
+    }
+
+    public BigDecimal getFuAtpMinusCmAtp() {
+        return fuAtpMinusCmAtp;
+    }
+
+    public void setFuAtpMinusCmAtp(BigDecimal fuAtpMinusCmAtp) {
+        this.fuAtpMinusCmAtp = fuAtpMinusCmAtp;
+    }
+
+    public BigDecimal getHlmMatp() {
+        return hlmMatp;
+    }
+
+    public void setHlmMatp(BigDecimal hlmMatp) {
+        this.hlmMatp = hlmMatp;
+    }
+
+    public BigDecimal getDelDiff() {
+        return delDiff;
+    }
+
+    public void setDelDiff(BigDecimal delDiff) {
+        this.delDiff = delDiff;
+    }
+
+    public DeliverySpikeDto getBackDto() {
+        return backDto;
+    }
+
+    public void setBackDto(DeliverySpikeDto backDto) {
+        this.backDto = backDto;
+    }
+
+    public DeliverySpikeDto getNextDto() {
+        return nextDto;
+    }
+
+    public void setNextDto(DeliverySpikeDto nextDto) {
+        this.nextDto = nextDto;
     }
 }

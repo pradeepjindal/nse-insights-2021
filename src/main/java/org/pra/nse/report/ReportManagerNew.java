@@ -50,7 +50,8 @@ public class ReportManagerNew implements Manager {
 //        pastPresentFutureReporterNew.reportFromLast(3);
 //        pastPresentFutureReporterNew.reportFromLast(5);
         pastPresentFutureReporterNew.reportFromLast(10);
-//        pastPresentFutureReporterNew.reportFromLast(20);
+        pastPresentFutureReporterNew.reportFromLast(15);
+        pastPresentFutureReporterNew.reportFromLast(20);
         LOGGER.info("======================================== Report Manager New");
     }
 

@@ -10,7 +10,7 @@ import org.pra.nse.db.repository.CalcMfiRepoNew;
 import org.pra.nse.db.repository.CalcRsiRepoNew;
 import org.pra.nse.email.EmailService;
 import org.pra.nse.refdata.RefData;
-import org.pra.nse.service.DataService;
+import org.pra.nse.service.DataServiceI;
 import org.pra.nse.service.DateService;
 import org.pra.nse.util.*;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class PastPresentFutureReporterNew {
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
 
-    private final DataService dataService;
+    private final DataServiceI dataService;
     private final DateService dateService;
 
     PastPresentFutureReporterNew(CalcRsiRepoNew calcRsiRepository,
@@ -50,7 +50,7 @@ public class PastPresentFutureReporterNew {
                                  EmailService emailService,
                                  NseFileUtils nseFileUtils,
                                  PraFileUtils praFileUtils,
-                                 DataService dataService, DateService dateService) {
+                                 DataServiceI dataService, DateService dateService) {
         this.calcRsiRepository = calcRsiRepository;
         this.calcMfiRepository = calcMfiRepository;
         this.calcAvgRepository = calcAvgRepository;
@@ -122,7 +122,18 @@ public class PastPresentFutureReporterNew {
         // lot size
         Map<String, List<DeliverySpikeDto>> tdySymbolMap = dataService.getRichDataBySymbol(forDate, 1);
         List<DeliverySpikeDto> tdyDtos = symbolMap.values().stream().flatMap(List::stream).collect(Collectors.toList());
-        tdyDtos.forEach( dto -> dto.setLotSize(RefData.getLotSize(dto.getSymbol())) );
+        tdyDtos.forEach( dto -> {
+            long lotSize = RefData.getLotSize(dto.getSymbol());
+            dto.setLotSize(lotSize);
+            if( null != dto.getFuTotTrdVal() && lotSize != 0) {
+                BigDecimal totalTradeValueOfFutures = dto.getFuTotTrdVal();
+                BigDecimal totalTradedQuantityOfFutures = dto.getFuContracts().multiply(new BigDecimal(lotSize));
+                BigDecimal fuAtp = NumberUtils.divide(totalTradeValueOfFutures, totalTradedQuantityOfFutures);
+                dto.setFuAtp(fuAtp);
+                BigDecimal fuAtpMinusCmAtp = fuAtp.subtract(dto.getAtp());
+                dto.setFuAtpMinusCmAtp(fuAtpMinusCmAtp);
+            }
+                });
         return symbolMap;
     }
 
@@ -137,7 +148,7 @@ public class PastPresentFutureReporterNew {
         //List<CalcRsiTabNew> oldRsiListForDate = calcRsiRepository.findByTradeDateAndForDays(forDate, forMinusDays);
 
         Map<LocalDate, Map<String, DeliverySpikeDto>> tradeDateAndSymbolWise_DoubleMap;
-        tradeDateAndSymbolWise_DoubleMap = dataService.getRichDataByTradeDateAndSymbolWise(forDate, forMinusDays+1);
+        tradeDateAndSymbolWise_DoubleMap = dataService.getRichDataByTradeDateAndSymbol(forDate, forMinusDays+1);
 
         DeliverySpikeDto tdyDto = null;
         DeliverySpikeDto bckDto = null;
@@ -181,7 +192,7 @@ public class PastPresentFutureReporterNew {
         //ReportHelper.enrichMfi(oldMfiList, tradeDateAndSymbolWise_DoubleMap);
 
         Map<LocalDate, Map<String, DeliverySpikeDto>> tradeDateAndSymbolWise_DoubleMap;
-        tradeDateAndSymbolWise_DoubleMap = dataService.getRichDataByTradeDateAndSymbolWise(forDate, forMinusDays+1);
+        tradeDateAndSymbolWise_DoubleMap = dataService.getRichDataByTradeDateAndSymbol(forDate, forMinusDays+1);
 
         DeliverySpikeDto tdyDto = null;
         DeliverySpikeDto bckDto = null;

@@ -5,7 +5,7 @@ import org.pra.nse.csv.data.CalcBeanNew;
 import org.pra.nse.csv.data.MfiBeanNew;
 import org.pra.nse.csv.data.MfiCaoNew;
 import org.pra.nse.db.dto.DeliverySpikeDto;
-import org.pra.nse.service.DataService;
+import org.pra.nse.service.DataServiceI;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.NumberUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -30,13 +30,13 @@ public class MfiCalculatorNew {
     private final String computeFolderName = CalcCons.MFI_DIR_NAME_NEW;
 
 
-    private final DataService dataService;
+    private final DataServiceI dataService;
 
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
 
 
-    public MfiCalculatorNew(DataService dataService,
+    public MfiCalculatorNew(DataServiceI dataService,
                             NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
         this.dataService = dataService;
         this.nseFileUtils = nseFileUtils;
@@ -45,7 +45,7 @@ public class MfiCalculatorNew {
 
 
     public List<MfiBeanNew> calculateAndReturn(LocalDate forDate) {
-        int[] forDaysArray = {20, 10, 5, 3};
+        int[] forDaysArray = {20, 15, 10, 5, 3};
         List<MfiBeanNew> beans = prepareData(forDate, forDaysArray);
         List<CalcBeanNew> calcBeanList = new ArrayList<>();
         beans.forEach( bean -> {
@@ -101,16 +101,19 @@ public class MfiCalculatorNew {
     }
 
     private List<MfiBeanNew> loopIt(LocalDate forDate, int forDays, Map<String, List<DeliverySpikeDto>> symbolDtoMap) {
-        //List<DeliverySpikeDto> dtos_ToBeSaved = new ArrayList<>();
-        //Map<String, MfiBeanNew> beansMap = new HashMap<>();
         List<MfiBeanNew> beans = new ArrayList<>();
-        symbolDtoMap.forEach( (symbol, list) -> {
+        symbolDtoMap.forEach( (mapSymbol, mapDtoList_OfGivenSymbol) -> {
+            String listSymbol = mapDtoList_OfGivenSymbol.get(0).getSymbol();
+            if(!mapSymbol.equals(listSymbol)) {
+                throw new RuntimeException("symbol mismatch");
+            }
+
             MfiBeanNew bean = new MfiBeanNew();
-            bean.setSymbol(list.get(0).getSymbol());
+            bean.setSymbol(mapSymbol);
             bean.setTradeDate(forDate);
             bean.setForDays(forDays);
 
-            calculate(forDate, symbol, list,
+            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {
 //                        if(dto.getSymbol().equals("INDUSINDBK")) {
 //                            LOGGER.info("");
@@ -127,7 +130,7 @@ public class MfiCalculatorNew {
                     },
                     (dto, calculatedValue) -> bean.setVolMfi(calculatedValue)
             );
-            calculate(forDate, symbol, list,
+            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {
                         //LOGGER.info("sym:{}, dt:{}, atp:{}, del:{}", dto.getSymbol(), dto.getTradeDate(), dto.getAtp(), dto.getDelivery());
                         //return dto.getDelivery();

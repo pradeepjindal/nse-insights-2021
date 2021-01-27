@@ -5,7 +5,7 @@ import org.pra.nse.csv.data.AvgBeanNew;
 import org.pra.nse.csv.data.AvgCaoNew;
 import org.pra.nse.csv.data.CalcBeanNew;
 import org.pra.nse.db.dto.DeliverySpikeDto;
-import org.pra.nse.service.DataService;
+import org.pra.nse.service.DataServiceI;
 import org.pra.nse.service.DateService;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.NumberUtils;
@@ -32,11 +32,11 @@ public class AvgCalculatorNew {
 
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
-    private final DataService dataService;
+    private final DataServiceI dataService;
     private final DateService dateService;
 
     public AvgCalculatorNew(NseFileUtils nseFileUtils, PraFileUtils praFileUtils,
-                            DataService dataService,
+                            DataServiceI dataService,
                             DateService dateService) {
         this.nseFileUtils = nseFileUtils;
         this.praFileUtils = praFileUtils;
@@ -77,7 +77,7 @@ public class AvgCalculatorNew {
     }
 
     private List<AvgBeanNew> prepareData(LocalDate forDate) {
-        int[] forDaysArray = {20, 10, 5, 3};
+        int[] forDaysArray = {20, 15, 10, 5, 3};
         return prepareData(forDate, forDaysArray);
     }
     private List<AvgBeanNew> prepareData(LocalDate forDate, int[] forDaysArray) {
@@ -101,28 +101,32 @@ public class AvgCalculatorNew {
 
     private List<AvgBeanNew> loopIt(LocalDate forDate, int forDays,
                         Map<String, List<DeliverySpikeDto>> symbolDtosMap) {
-        //List<DeliverySpikeDto> dtos_ToBeSaved = new ArrayList<>();
         List<AvgBeanNew> beans = new ArrayList<>();
-        symbolDtosMap.forEach( (symbol, list) -> {
+        symbolDtosMap.forEach( (mapSymbol, mapDtoList_OfGivenSymbol) -> {
+            String listSymbol = mapDtoList_OfGivenSymbol.get(0).getSymbol();
+            if(!mapSymbol.equals(listSymbol)) {
+                throw new RuntimeException("symbol mismatch");
+            }
+
             AvgBeanNew bean = new AvgBeanNew();
-            bean.setSymbol(list.get(0).getSymbol());
+            bean.setSymbol(mapSymbol);
             bean.setTradeDate(forDate);
             bean.setForDays(forDays);
 
-            calculate(forDate, symbol, list,
+            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {
 //                        LOGGER.info("dt:{}, val:{}, del:{}, oi:{}", dto.getTradeDate(), dto.getVolume, dto.getDelivery, oiSumMap.get(dto.getSymbol());
                         return dto.getAtp();
                     },
                     (dto, calculatedValue) -> bean.setAtpSma(calculatedValue)
             );
-            calculate(forDate, symbol, list,
+            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {
                         return dto.getVolume();
                     },
                     (dto, calculatedValue) -> bean.setVolSma(calculatedValue)
             );
-            calculate(forDate, symbol, list,
+            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {
                         return dto.getDelivery();
                     },

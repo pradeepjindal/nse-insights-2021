@@ -24,27 +24,31 @@ public class ReportHelperNew {
             previousDate.setValue(null);
             //DeliverySpikeDto firstDto = entry.getValue().get(0);
             String symbol = entry.getKey();
-            CalcAvgTabNew tab = calcAvgMap.get(symbol);
-            if(tab == null) {
+            CalcAvgTabNew calcAvgTabRow = calcAvgMap.get(symbol);
+            if(calcAvgTabRow == null) {
                 LOGGER.error("symbol not found: {} | probably new entry in FnO", symbol);
                 continue;
             }
-            BigDecimal atpFixOnePercent = NumberUtils.onePercent(tab.getAtpSma());
-            BigDecimal volFixOnePercent = NumberUtils.onePercent(tab.getVolSma());
-            BigDecimal delFixOnePercent = NumberUtils.onePercent(tab.getDelSma());
-            BigDecimal foiFixOnePercent = NumberUtils.onePercent(tab.getFoiSma());
+            BigDecimal atpFixOnePercent = NumberUtils.onePercent(calcAvgTabRow.getAtpSma());
+            BigDecimal volFixOnePercent = NumberUtils.onePercent(calcAvgTabRow.getVolSma());
+            BigDecimal delFixOnePercent = NumberUtils.onePercent(calcAvgTabRow.getDelSma());
+            BigDecimal foiFixOnePercent = NumberUtils.onePercent(calcAvgTabRow.getFoiSma());
             //
             sumDelivery.setValue(BigDecimal.ZERO);
-            BigDecimal totalExpectedDeliveryForDuration = tab.getDelSma().multiply(new BigDecimal(entry.getValue().size()));
+            //TODO shd be period of report or ?
+            BigDecimal totalExpectedDeliveryForDuration = calcAvgTabRow.getDelSma().multiply(new BigDecimal(entry.getValue().size()));
             BigDecimal onePercentOfExpectedDelivery = NumberUtils.onePercent(totalExpectedDeliveryForDuration);
 
             entry.getValue().forEach( dto -> {
-                if(!symbol.equals(dto.getSymbol())) LOGGER.error("symbol mismatch");
+                if(!symbol.equals(dto.getSymbol())) {
+                    LOGGER.error("symbol mismatch");
+                    throw new RuntimeException("symbol mismatch");
+                }
                 //CalcAvgTab tab = calcAvgMap.get(dto.getSymbol();
-                BigDecimal atpDynOnePercent = NumberUtils.onePercent(tab.getAtpSma());
-                BigDecimal volDynOnePercent = NumberUtils.onePercent(tab.getVolSma());
-                BigDecimal delDynOnePercent = NumberUtils.onePercent(tab.getDelSma());
-                BigDecimal foiDynOnePercent = NumberUtils.onePercent(tab.getFoiSma());
+                BigDecimal atpDynOnePercent = NumberUtils.onePercent(calcAvgTabRow.getAtpSma());
+                BigDecimal volDynOnePercent = NumberUtils.onePercent(calcAvgTabRow.getVolSma());
+                BigDecimal delDynOnePercent = NumberUtils.onePercent(calcAvgTabRow.getDelSma());
+                BigDecimal foiDynOnePercent = NumberUtils.onePercent(calcAvgTabRow.getFoiSma());
                 //
                 sumDelivery.setValue(sumDelivery.getValue().add(dto.getDelivery()));
                 //TODO refactor it
@@ -52,6 +56,9 @@ public class ReportHelperNew {
                     // sum
                     previousDate.setValue(dto.getTradeDate());
                     dto.setDelAccumulation(NumberUtils.divide(sumDelivery.getValue(), onePercentOfExpectedDelivery));
+                    if(dto.getBackDto().getDelAccumulation() != null) {
+                        dto.setDelDiff(dto.getDelAccumulation().subtract(dto.getBackDto().getDelAccumulation()));
+                    }
                     // fix
                     BigDecimal atpFixGrowth = NumberUtils.divide(dto.getAtp(), atpFixOnePercent);
                     dto.setAtpFixGrowth(atpFixGrowth);

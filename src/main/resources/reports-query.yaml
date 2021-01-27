@@ -137,7 +137,9 @@ sqlDeliverySpikeThreeFor30DayzOrderBySymbolAndTradeDate: >
     tdy.delivered_qty - yes.delivered_qty AS tdydel_minus_yesdel,
 
     tdy.traded_qty volume,
-    tdy.delivered_qty delivery
+    tdy.delivered_qty delivery,
+    tdy.fucontracts,
+    tdy.fu_tot_trd_val
   FROM
     (
       select symbol, min(trade_Date) fut_traded_from_date, max(trade_date) fut_traded_to_date
@@ -154,7 +156,7 @@ sqlDeliverySpikeThreeFor30DayzOrderBySymbolAndTradeDate: >
       where v2.two_trade_date = d2.trade_Date
     ) yes
   WHERE distinct_future_stocks.symbol = tdy.symbol
-  and tdy.one_trade_date = yes.one_trade_Date and tdy.symbol = yes.symbol and tdy.one_rank <=30
+  and tdy.one_trade_date = yes.one_trade_Date and tdy.symbol = yes.symbol and tdy.one_rank <=40
   order by tdy.symbol, tdy.trade_date
 
 sqlPastPresentFuture: >

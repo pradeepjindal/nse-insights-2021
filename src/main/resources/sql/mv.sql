@@ -38,17 +38,17 @@ FROM ((( SELECT nse_cash_market_tab.symbol,
                   nse_delivery_market_tab.delivery_to_trade_ratio AS del_to_trd_ratio
            FROM nse_delivery_market_tab) dmt ON ((((cmt.symbol)::text = (dmt.symbol)::text) AND (cmt.trade_date = dmt.trade_date))))
      LEFT JOIN ( SELECT nfmt.symbol,
-    nfmt.trade_date,
-    nfmt.expiry_date,
-    nfmt.open AS fuopen,
-    nfmt.high AS fuhigh,
-    nfmt.low AS fulow,
-    nfmt.close AS fuclose,
-    nfmt.settle_price AS fulast,
-    nfmt.open_int AS oi
-FROM nse_future_market_tab nfmt,
-    min_expiry_view1 mev
-WHERE (((nfmt.symbol)::text = (mev.symbol)::text) AND (nfmt.trade_date = mev.trade_date) AND (nfmt.expiry_date = mev.min_expiry_date))) fmt ON ((((cmt.symbol)::text = (fmt.symbol)::text) AND (cmt.trade_date = fmt.trade_date))));
+                    nfmt.trade_date,
+                    nfmt.expiry_date,
+                    nfmt.open AS fuopen,
+                    nfmt.high AS fuhigh,
+                    nfmt.low AS fulow,
+                    nfmt.close AS fuclose,
+                    nfmt.settle_price AS fulast,
+                    nfmt.open_int AS oi
+                FROM nse_future_market_tab nfmt, min_expiry_view1 mev
+                WHERE (((nfmt.symbol)::text = (mev.symbol)::text) AND (nfmt.trade_date = mev.trade_date) AND (nfmt.expiry_date = mev.min_expiry_date))
+                ) fmt ON ((((cmt.symbol)::text = (fmt.symbol)::text) AND (cmt.trade_date = fmt.trade_date))));
 
 create view min_expiry_view1 AS
 SELECT nse_future_market_tab.symbol,
@@ -82,3 +82,32 @@ SELECT tt1.trade_date,
        rank() OVER (ORDER BY tt1.trade_date DESC) AS rank_trade_day
 FROM ( SELECT DISTINCT nse_cash_market_tab.trade_date
        FROM nse_cash_market_tab) tt1;
+
+
+
+
+
+SELECT
+--nfmt.symbol,
+--             nfmt.trade_date,
+--             nfmt.expiry_date,
+            nfmt.open AS fuopen,
+            nfmt.high AS fuhigh,
+            nfmt.low AS fulow,
+            nfmt.close AS fuclose,settle_price,
+--             nfmt.settle_price AS fulast,
+--             nfmt.open_int AS oi,
+			nfmt.contracts,
+			nfmt.value_in_lakh fu_tot_trd_val,
+			round((nfmt.value_in_lakh * 100000) / (contracts * 3000), 2) as fuatp,
+			--round((nfmt.value_in_lakh * 100000) / close / contracts, 2) calc_lot_size0,
+			--round((nfmt.value_in_lakh * 100000) / settle_price / contracts, 2) calc_lot_size01,
+			round((nfmt.value_in_lakh * 100000) / ((open+close)/2) / contracts, 2) calc_lot_size,
+			round((nfmt.value_in_lakh * 100000) / ((high+low)/2) / contracts, 2) calc_lot_sizee,
+			--round((nfmt.value_in_lakh * 100000) / ((close+settle_price)/2) / contracts, 2) calc_lot_size2,
+			round((nfmt.value_in_lakh * 100000) / ((high+low+close+settle_price)/4) / contracts, 2) calc_lot_size31,
+			round((nfmt.value_in_lakh * 100000) / ((open+high+low+close+settle_price)/5) / contracts, 2) calc_lot_size3
+           FROM nse_future_market_tab nfmt, min_expiry_mv mev
+		   WHERE nfmt.symbol = mev.symbol and nfmt.trade_date = mev.trade_date and nfmt.expiry_date = mev.min_expiry_date
+		   and nfmt.symbol = 'SBIN'
+

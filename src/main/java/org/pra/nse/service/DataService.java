@@ -17,11 +17,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Component
-public class DataService implements Manager {
+public class DataService implements Manager, DataServiceI {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataService.class);
 
     private final PraFileUtils praFileUtils;
     private final NseReportsDao nseReportsDao;
+    private final DataServiceHelper dataServiceHelper;
     private final DateService dateService;
 
     private final NavigableMap<Integer, LocalDate>  tradeDates_Asc_NavigableMap = new TreeMap<>();
@@ -30,18 +31,22 @@ public class DataService implements Manager {
     private final Map<LocalDate, LocalDate>         backDateMap = new TreeMap<>();
 
     private List<DeliverySpikeDto> dbData = null;
+    private Map<String, Map<LocalDate, DeliverySpikeDto>> dataMap_bySymbolAndTradeDate = new TreeMap<>();
+    private Map<LocalDate, Map<String, DeliverySpikeDto>> dataMap_byTradeDateAndSymbol = new TreeMap<>();
 
     // materialized view date
+    private boolean isDataInRawState = true;
     private LocalDate latestDbMvDate = null;
     private List<LocalDate> latest10Dates = null;
     private List<LocalDate> latest20Dates = null;
-    private boolean isDataInRawState = true;
 
     public DataService(PraFileUtils praFileUtils,
                        NseReportsDao nseReportsDao,
+                       DataServiceHelper dataServiceHelper,
                        DateService dateService) {
         this.praFileUtils = praFileUtils;
         this.nseReportsDao = nseReportsDao;
+        this.dataServiceHelper = dataServiceHelper;
         this.dateService = dateService;
     }
 
@@ -51,27 +56,13 @@ public class DataService implements Manager {
         LOGGER.info("Data Manger - Shop is open..........");
     }
 
-//    public LocalDate getMinDate(LocalDate forDate, int forMinusDays) {
-//        LocalDate latestNseDate = praFileUtils.getLatestNseDate();
-//        if(dbResults == null || latestNseDate.isAfter(latestDbDate)) {
-//            bootUpData();
-//            fillTheCalcFields();
-//            fillTheOi();
-//            fillTheNext();
-//            fillTheIndicators();
-//        }
-//        if(forDate.isAfter(latestDbDate))
-//            return null;
-//        else
-//            return minDate(forDate, forMinusDays);
-//    }
 
     public Map<String, List<DeliverySpikeDto>> getRawDataBySymbol(LocalDate forDate, LocalDate minDate) {
         return getRawDataBySymbol(forDate, minDate, null);
     }
     public Map<String, List<DeliverySpikeDto>> getRawDataBySymbol(LocalDate forDate, LocalDate minDate, String forSymbol) {
         Predicate<DeliverySpikeDto> predicate = initializeRawData(forDate, minDate, forSymbol);
-        return predicate == null ? Collections.EMPTY_MAP : prepareDataBySymbol(predicate);
+        return predicate == null ? Collections.EMPTY_MAP : dataServiceHelper.prepareDataBySymbol(dbData, predicate);
     }
 
     public Map<String, List<DeliverySpikeDto>> getRawDataBySymbol(LocalDate forDate, int forMinusDays) {
@@ -79,7 +70,7 @@ public class DataService implements Manager {
     }
     public Map<String, List<DeliverySpikeDto>> getRawDataBySymbol(LocalDate forDate, int forMinusDays, String forSymbol) {
         Predicate<DeliverySpikeDto> predicate = initializeRawData(forDate, forMinusDays, forSymbol);
-        return predicate == null ? Collections.EMPTY_MAP : prepareDataBySymbol(predicate);
+        return predicate == null ? Collections.EMPTY_MAP : dataServiceHelper.prepareDataBySymbol(dbData, predicate);
     }
 
     public Map<String, List<DeliverySpikeDto>> getRichDataBySymbol(LocalDate forDate, int forMinusDays) {
@@ -87,17 +78,18 @@ public class DataService implements Manager {
     }
     public Map<String, List<DeliverySpikeDto>> getRichDataBySymbol(LocalDate forDate, int forMinusDays, String forSymbol) {
         Predicate<DeliverySpikeDto> predicate =  initializeData(forDate, forMinusDays, forSymbol);
-        return predicate == null ? Collections.EMPTY_MAP : prepareDataBySymbol(predicate);
+        return predicate == null ? Collections.EMPTY_MAP : dataServiceHelper.prepareDataBySymbol(dbData, predicate);
     }
 
-    public Map<LocalDate, Map<String, DeliverySpikeDto>> getRichDataByTradeDateAndSymbolWise(LocalDate forDate, int forMinusDays) {
-        return getRichDataByTradeDateAndSymbolWise(forDate, forMinusDays, null);
+    public Map<LocalDate, Map<String, DeliverySpikeDto>> getRichDataByTradeDateAndSymbol(LocalDate forDate, int forMinusDays) {
+        return getRichDataByTradeDateAndSymbol(forDate, forMinusDays, null);
     }
-    public Map<LocalDate, Map<String, DeliverySpikeDto>> getRichDataByTradeDateAndSymbolWise(LocalDate forDate, int forMinusDays, String forSymbol) {
+    public Map<LocalDate, Map<String, DeliverySpikeDto>> getRichDataByTradeDateAndSymbol(LocalDate forDate, int forMinusDays, String forSymbol) {
         Predicate<DeliverySpikeDto> predicate =  initializeData(forDate, forMinusDays, forSymbol);
-        return predicate == null ? Collections.EMPTY_MAP : prepareDataByTradeDateAndSymbol(predicate);
+        return predicate == null ? Collections.EMPTY_MAP : dataServiceHelper.prepareDataByTradeDateAndSymbol(dbData, predicate);
     }
 
+    //
     private Predicate<DeliverySpikeDto> initializeRawData(LocalDate forDate, int forMinusDays, String forSymbol) {
         if(!dateService.validateTradeDate(forDate)) return null;
         LocalDate latestNseDate = praFileUtils.getLatestNseDateCD();
@@ -159,31 +151,36 @@ public class DataService implements Manager {
 
     private void bootUpRawData() {
         dbData = nseReportsDao.getDeliverySpikeTwo();
+        dataMap_byTradeDateAndSymbol = dataServiceHelper.transformAllData_ByTradeDateAndSymbol(dbData);
+        dataMap_bySymbolAndTradeDate = dataServiceHelper.transformAllData_BySymbolAndTradeDate(dbData);
 
-        NavigableMap<LocalDate, LocalDate> map = new TreeMap<>();
-        dbData.forEach(row-> {
-            map.put(row.getTradeDate(), row.getTradeDate());
-        });
-
-        AtomicInteger dateCount = new AtomicInteger();
-        tradeDates_Asc_NavigableMap.clear();
-        map.keySet().stream().forEach( key -> tradeDates_Asc_NavigableMap.put(dateCount.incrementAndGet(), key));
-        //tradeDates_Asc_NavigableMap.descendingMap();
-
-        tradeDates_Desc_LinkedList.clear();
-        map.descendingKeySet().stream().forEach( key -> tradeDates_Desc_LinkedList.add(key));
-        //tradeDates_SortedLinkedList.reverse();
+        initializeMapOf_AscTradeDates();
+        initializeMapOf_DescTradeDates();
 
         initializeTradeDates();
-        initializeBackTradeDates();
-        initializeNextTradeDates();
+        initializeMapOf_BackTradeDates();
+        initializeMapOf_NextTradeDates();
 
-        dbData.forEach(row-> {
+        if(!isFileCD_DatesAndDbDatesAreSame()) throw new RuntimeException("file nse dates and db mv dates does not match");
+
+        dbData.forEach( row-> {
             row.setBackDate(backDateMap.get(row.getTradeDate()));
             row.setNextDate(nextDateMap.get(row.getTradeDate()));
         });
 
-        if(!isFileDatesAndDbDatesAreSame()) throw new RuntimeException("file nse dates and db mv dates does not match");
+        dbData.forEach( row-> {
+            if(dataMap_bySymbolAndTradeDate.get(row.getSymbol()) != null) {
+                if(row.getBackDate() != null) {
+                    DeliverySpikeDto backDateDto = dataMap_bySymbolAndTradeDate.get(row.getSymbol()).get(row.getBackDate());
+                    row.setBackDto(backDateDto);
+                }
+                if(row.getNextDate() != null) {
+                    DeliverySpikeDto nextDateDto = dataMap_bySymbolAndTradeDate.get(row.getSymbol()).get(row.getNextDate());
+                    row.setNextDto(nextDateDto);
+                }
+            }
+        });
+
         //
         //fillTheOi();
     }
@@ -201,7 +198,43 @@ public class DataService implements Manager {
         latest20Dates = tmpTradeDateList.stream().limit(20).collect(Collectors.toList());
     }
 
-    private boolean isFileDatesAndDbDatesAreSame() {
+    private void initializeMapOf_AscTradeDates() {
+        NavigableMap<LocalDate, LocalDate> tmpMap = new TreeMap<>();
+        dbData.forEach(row-> {
+            tmpMap.put(row.getTradeDate(), row.getTradeDate());
+        });
+
+        AtomicInteger dateCount = new AtomicInteger();
+        tradeDates_Asc_NavigableMap.clear();
+        tmpMap.keySet().stream().forEach( key -> tradeDates_Asc_NavigableMap.put(dateCount.incrementAndGet(), key));
+        //tradeDates_Asc_NavigableMap.descendingMap();
+    }
+    private void initializeMapOf_DescTradeDates() {
+        NavigableMap<LocalDate, LocalDate> tmpMap = new TreeMap<>();
+        dbData.forEach(row-> {
+            tmpMap.put(row.getTradeDate(), row.getTradeDate());
+        });
+
+        tradeDates_Desc_LinkedList.clear();
+        tmpMap.descendingKeySet().stream().forEach( key -> tradeDates_Desc_LinkedList.add(key));
+        //tradeDates_SortedLinkedList.reverse();
+    }
+    private void initializeMapOf_BackTradeDates() {
+        for(int i = 0; i < tradeDates_Desc_LinkedList.size() - 1; i++) {
+            //LOGGER.info("tdy: {}, nxt:{}", i+1, i);
+            backDateMap.put(tradeDates_Desc_LinkedList.get(i), tradeDates_Desc_LinkedList.get(i+1));
+            //LOGGER.info("tdy: {}, nxt:{}", tradeDates_Desc_LinkedList.get(i+1), tradeDates_Desc_LinkedList.get(i));
+        }
+    }
+    private void initializeMapOf_NextTradeDates() {
+        for(int i = 0; i < tradeDates_Desc_LinkedList.size() - 1; i++) {
+            //LOGGER.info("tdy: {}, nxt:{}", i+1, i);
+            nextDateMap.put(tradeDates_Desc_LinkedList.get(i+1), tradeDates_Desc_LinkedList.get(i));
+            //LOGGER.info("tdy: {}, nxt:{}", tradeDates_Desc_LinkedList.get(i+1), tradeDates_Desc_LinkedList.get(i));
+        }
+    }
+
+    private boolean isFileCD_DatesAndDbDatesAreSame() {
         LocalDate latestNseDate = praFileUtils.getLatestNseDateCD();
         if (latestNseDate.equals(latestDbMvDate)) {
             return true;
@@ -210,25 +243,14 @@ public class DataService implements Manager {
         }
     }
 
-    private void initializeBackTradeDates() {
-        for(int i = 0; i < tradeDates_Desc_LinkedList.size() - 1; i++) {
-            //LOGGER.info("tdy: {}, nxt:{}", i+1, i);
-            backDateMap.put(tradeDates_Desc_LinkedList.get(i), tradeDates_Desc_LinkedList.get(i+1));
-            //LOGGER.info("tdy: {}, nxt:{}", tradeDates_Desc_LinkedList.get(i+1), tradeDates_Desc_LinkedList.get(i));
-        }
-    }
-    private void initializeNextTradeDates() {
-        for(int i = 0; i < tradeDates_Desc_LinkedList.size() - 1; i++) {
-            //LOGGER.info("tdy: {}, nxt:{}", i+1, i);
-            nextDateMap.put(tradeDates_Desc_LinkedList.get(i+1), tradeDates_Desc_LinkedList.get(i));
-            //LOGGER.info("tdy: {}, nxt:{}", tradeDates_Desc_LinkedList.get(i+1), tradeDates_Desc_LinkedList.get(i));
-        }
-    }
-
     private LocalDate minDate(LocalDate forDate, int forMinusDays) {
         int fromIndex = tradeDates_Desc_LinkedList.indexOf(forDate);
         int toIndexDesc = fromIndex + forMinusDays -1;
         //LocalDate maxDate = tradeDates_Desc_LinkedList.get(fromIndex);
+        if(toIndexDesc > tradeDates_Desc_LinkedList.size() -1) {
+            int lastIndex = tradeDates_Desc_LinkedList.size() -1;
+            throw new RuntimeException("more old data requited then the the available data " + tradeDates_Desc_LinkedList.get(lastIndex));
+        }
         LocalDate minDate = tradeDates_Desc_LinkedList.get(toIndexDesc);
         LOGGER.info("forDate:{}, minusDays:{}, minDate:{}, maxDate:{}", forDate, forMinusDays, minDate, forDate);
         return minDate;
@@ -268,6 +290,8 @@ public class DataService implements Manager {
             //hlm
             highLowDiffByHalf = NumberUtils.divide(diff, TWO);
             row.setHighLowMid(row.getLow().add(highLowDiffByHalf));
+            //hlm-atp
+            row.setHlmMatp(row.getHighLowMid().subtract(row.getAtp()));
 
             //hlp
             onePercent = NumberUtils.onePercent(row.getOpen());
@@ -299,7 +323,7 @@ public class DataService implements Manager {
     private void fillNextFields() {
         LOGGER.info("DataManager - fillTheNext");
         Predicate<DeliverySpikeDto> predicate = dto -> true;
-        Map<LocalDate, Map<String, DeliverySpikeDto>> tradeDateAndSymbolMap = prepareDataByTradeDateAndSymbol(predicate);
+        Map<LocalDate, Map<String, DeliverySpikeDto>> tradeDateAndSymbolMap = dataServiceHelper.prepareDataByTradeDateAndSymbol(dbData, predicate);
         for(DeliverySpikeDto dto: dbData) {
             LocalDate nextDate = nextDateMap.get(dto.getTradeDate());
             //if(nextDate.compareTo(latestDbDate) == 1) continue;
@@ -320,7 +344,7 @@ public class DataService implements Manager {
         LOGGER.info("DataManager - fillTheNext");
         LocalDate minDate = minDate(latestDbMvDate, 20);
         Predicate<DeliverySpikeDto> predicate = dto -> filterDate(dto, minDate, latestDbMvDate);
-        Map<LocalDate, Map<String, DeliverySpikeDto>> tradeDateAndSymbolMap = prepareDataByTradeDateAndSymbol(predicate);
+        Map<LocalDate, Map<String, DeliverySpikeDto>> tradeDateAndSymbolMap = dataServiceHelper.prepareDataByTradeDateAndSymbol(dbData, predicate);
         //TODO use tradeDateAndSymbolMap instead of dbResults BUT dbResults keep the order while map not
         long ctr = dbData.stream()
                 .filter( row -> row.getTradeDate().isAfter(tradeDates_Desc_LinkedList.get(20))
@@ -388,52 +412,5 @@ public class DataService implements Manager {
 //                    return true;
 //                }).count();
 //    }
-
-    private Map<String, List<DeliverySpikeDto>> prepareDataBySymbol(Predicate<DeliverySpikeDto> filterPredicate) {
-        // aggregate trade by symbols
-        // symbol wise trade list
-        Map<String, List<DeliverySpikeDto>> localMap = new TreeMap<>();
-        long rowCount = dbData.stream()
-                .filter( filterPredicate )
-                //.filter( passedRow -> "ACC".toUpperCase().equals(passedRow.getSymbol()))
-                .map( filteredRow -> {
-                    if(localMap.containsKey(filteredRow.getSymbol())) {
-                        localMap.get(filteredRow.getSymbol()).add(filteredRow);
-                    } else {
-                        List<DeliverySpikeDto> list = new ArrayList<>();
-                        list.add(filteredRow);
-                        localMap.put(filteredRow.getSymbol(), list);
-                    }
-                    return true;
-                })
-                .count();
-        return localMap;
-    }
-    private Map<LocalDate, Map<String, DeliverySpikeDto>> prepareDataByTradeDateAndSymbol(Predicate<DeliverySpikeDto> filterPredicate) {
-        // aggregate trade by symbols
-        // tradeDateAndSymbolWise_DoubleMap
-//        Map<LocalDate, Map<String, DeliverySpikeDto>> localMap = new HashMap<>();
-        Map<LocalDate, Map<String, DeliverySpikeDto>> localMap = new TreeMap<>();
-        long rowCount = dbData.stream()
-                .filter( filterPredicate )
-                .map( filteredRow -> {
-                    if(localMap.containsKey(filteredRow.getTradeDate())) {
-                        if(localMap.get(filteredRow.getTradeDate()).containsKey(filteredRow.getSymbol())) {
-                            LOGGER.warn("tradeDate-symbol | matched tradeDate {} symbol {}", filteredRow.getTradeDate(), filteredRow.getSymbol());
-                        } else {
-                            localMap.get(filteredRow.getTradeDate()).put(filteredRow.getSymbol(), filteredRow);
-                        }
-                    } else {
-//                        Map<String, DeliverySpikeDto> map = new HashMap<>();
-                        Map<String, DeliverySpikeDto> map = new TreeMap<>();
-                        map.put(filteredRow.getSymbol(), filteredRow);
-                        localMap.put(filteredRow.getTradeDate(), map);
-                        //LOGGER.info("tradeDate-symbol | tradeDate {}", filteredRow.getTradeDate());
-                    }
-                    return true;
-                })
-                .count();
-        return localMap;
-    }
 
 }
