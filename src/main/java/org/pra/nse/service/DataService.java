@@ -291,7 +291,7 @@ public class DataService implements Manager, DataServiceI {
             highLowDiffByHalf = NumberUtils.divide(diff, TWO);
             row.setHighLowMid(row.getLow().add(highLowDiffByHalf));
             //hlm-atp
-            row.setHlmMatp(row.getHighLowMid().subtract(row.getAtp()));
+            row.setAtpMhlm(row.getAtp().subtract(row.getHighLowMid()));
 
             //hlp
             onePercent = NumberUtils.onePercent(row.getOpen());

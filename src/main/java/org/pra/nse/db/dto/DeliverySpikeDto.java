@@ -21,7 +21,7 @@ public class DeliverySpikeDto {
     private BigDecimal ohlc;
     private BigDecimal atp;
     private BigDecimal highLowMid; //hlm
-    private BigDecimal hlmMatp;
+    private BigDecimal atpMhlm;
     private BigDecimal highLowDiff;
     private BigDecimal highLowPct;
 
@@ -64,6 +64,7 @@ public class DeliverySpikeDto {
 
     private BigDecimal volume;
     private BigDecimal delivery;
+    private BigDecimal volumeMdelivery;
     private BigDecimal fuOi;
     private BigDecimal fuContracts;
     private BigDecimal fuTotTrdVal;
@@ -164,7 +165,7 @@ public class DeliverySpikeDto {
                 + ohlc + ","
                 + atp + ","
                 + highLowMid + ","
-                + hlmMatp + ","
+                + atpMhlm + ","
                 + highLowDiff + ","
                 + highLowPct + ","
                 + closeToLastPercent + ","
@@ -207,6 +208,7 @@ public class DeliverySpikeDto {
 //                + lastRsi + ","
                 + lotSize + ","
                 + volume.divide(new BigDecimal(100000), 0, RoundingMode.HALF_DOWN) + ","
+                + volume.subtract(delivery).divide(new BigDecimal(100000), 0, RoundingMode.HALF_DOWN) + ","
                 + delivery.divide(new BigDecimal(100000), 0, RoundingMode.HALF_DOWN) + ","
                 + vdr + ","
                 + fuAtp + ","
@@ -765,12 +767,12 @@ public class DeliverySpikeDto {
         this.fuAtpMinusCmAtp = fuAtpMinusCmAtp;
     }
 
-    public BigDecimal getHlmMatp() {
-        return hlmMatp;
+    public BigDecimal getAtpMhlm() {
+        return atpMhlm;
     }
 
-    public void setHlmMatp(BigDecimal hlmMatp) {
-        this.hlmMatp = hlmMatp;
+    public void setAtpMhlm(BigDecimal atpMhlm) {
+        this.atpMhlm = atpMhlm;
     }
 
     public BigDecimal getDelDiff() {
