@@ -39,6 +39,7 @@ public class NseReportsDao {
     public List<DeliverySpikeDto> getDeliverySpikeTwo() {
         jdbcTemplate.execute("REFRESH MATERIALIZED VIEW cm_trade_date_ranking_mv WITH DATA ");
         jdbcTemplate.execute("REFRESH MATERIALIZED VIEW cfd_data_cd_left_join_f_mv WITH DATA ");
+        jdbcTemplate.execute("REFRESH MATERIALIZED VIEW cfd_data_cd_left_join_f_mv2 WITH DATA ");
         List<DeliverySpikeDto> result = jdbcTemplate.query(deliverySpikeThree, new BeanPropertyRowMapper<DeliverySpikeDto>(DeliverySpikeDto.class));
         return result;
     }

@@ -3,6 +3,7 @@ package org.pra.nse.service;
 import org.pra.nse.Manager;
 import org.pra.nse.db.dao.NseReportsDao;
 import org.pra.nse.db.dto.DeliverySpikeDto;
+import org.pra.nse.refdata.RefData;
 import org.pra.nse.util.NumberUtils;
 import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
@@ -121,8 +122,9 @@ public class DataService implements Manager, DataServiceI {
             isDataInRawState = true;
         }
         if (isDataInRawState) {
-            fillCalcFields();
+            fillCmCalcFields();
             fillNextFields();
+            //fillFuCalcFields();
             //fillTheIndicators();
             isDataInRawState = false;
         }
@@ -151,6 +153,7 @@ public class DataService implements Manager, DataServiceI {
 
     private void bootUpRawData() {
         dbData = nseReportsDao.getDeliverySpikeTwo();
+        dataServiceHelper.enrichWithFutureLotData(dbData);
         dataMap_byTradeDateAndSymbol = dataServiceHelper.transformAllData_ByTradeDateAndSymbol(dbData);
         dataMap_bySymbolAndTradeDate = dataServiceHelper.transformAllData_BySymbolAndTradeDate(dbData);
 
@@ -267,7 +270,7 @@ public class DataService implements Manager, DataServiceI {
         return symbol.toUpperCase().equals(dto.getSymbol());
     }
 
-    private void fillCalcFields() {
+    private void fillCmCalcFields() {
         LOGGER.info("DataManager - fillTheCalcFields");
         BigDecimal TWO = new BigDecimal(2);
         BigDecimal FOUR = new BigDecimal(4);
@@ -318,6 +321,25 @@ public class DataService implements Manager, DataServiceI {
             row.setVdr(NumberUtils.divide(row.getVolume(), row.getDelivery()));
 
         }
+    }
+
+    private void fillFuCalcFields() {
+        dbData.forEach( dto -> {
+            if( null != dto.getFuTotTrdVal() && dto.getLotSize() != 0) {
+                BigDecimal lotSiz = new BigDecimal(dto.getLotSize());
+                BigDecimal totalTradedQuantityOfFutures = dto.getFuContracts().multiply(lotSiz);
+                dto.setFuVol(totalTradedQuantityOfFutures);
+                BigDecimal totalTradeValueOfFutures = dto.getFuTotTrdVal();
+                BigDecimal fuAtp = NumberUtils.divide(totalTradeValueOfFutures, totalTradedQuantityOfFutures);
+                dto.setFuAtp(fuAtp);
+                BigDecimal fuAtpMinusCmAtp = fuAtp.subtract(dto.getAtp());
+                dto.setFuAtpMinusCmAtp(fuAtpMinusCmAtp);
+                BigDecimal fuOiLots = NumberUtils.divide(dto.getFuOi(), lotSiz);
+                dto.setFuOiLots(fuOiLots);
+                //
+
+            }
+        });
     }
 
     private void fillNextFields() {

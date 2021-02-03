@@ -1,10 +1,13 @@
 package org.pra.nse.service;
 
 import org.pra.nse.db.dto.DeliverySpikeDto;
+import org.pra.nse.refdata.RefData;
+import org.pra.nse.util.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,6 +113,13 @@ public class DataServiceHelper {
                 })
                 .count();
         return localMap;
+    }
+
+    void enrichWithFutureLotData(List<DeliverySpikeDto> dbData) {
+        dbData.forEach( dto -> {
+            long lotSize = RefData.getLotSize(dto.getSymbol());
+            dto.setLotSize(lotSize);
+        });
     }
 
 }

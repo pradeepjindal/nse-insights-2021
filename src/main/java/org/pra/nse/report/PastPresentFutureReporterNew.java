@@ -126,12 +126,18 @@ public class PastPresentFutureReporterNew {
             long lotSize = RefData.getLotSize(dto.getSymbol());
             dto.setLotSize(lotSize);
             if( null != dto.getFuTotTrdVal() && lotSize != 0) {
+                BigDecimal lotSiz = new BigDecimal(lotSize);
+                BigDecimal totalTradedQuantityOfFutures = dto.getFuContracts().multiply(lotSiz);
+                dto.setFuVol(totalTradedQuantityOfFutures);
                 BigDecimal totalTradeValueOfFutures = dto.getFuTotTrdVal();
-                BigDecimal totalTradedQuantityOfFutures = dto.getFuContracts().multiply(new BigDecimal(lotSize));
                 BigDecimal fuAtp = NumberUtils.divide(totalTradeValueOfFutures, totalTradedQuantityOfFutures);
                 dto.setFuAtp(fuAtp);
                 BigDecimal fuAtpMinusCmAtp = fuAtp.subtract(dto.getAtp());
                 dto.setFuAtpMinusCmAtp(fuAtpMinusCmAtp);
+//                BigDecimal fuOiLots = NumberUtils.divide(dto.getFuOi(), lotSiz);
+//                dto.setFuOiLots(fuOiLots);
+            } else {
+                LOGGER.warn("{} - lot size not found in refDate", dto.getSymbol());
             }
                 });
         return symbolMap;

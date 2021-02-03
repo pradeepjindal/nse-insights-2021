@@ -70,6 +70,8 @@ public class DeliverySpikeDto {
     private BigDecimal fuTotTrdVal;
     private BigDecimal fuAtp;
     private BigDecimal fuAtpMinusCmAtp;
+    private BigDecimal fuVol;
+    private BigDecimal fuOiLots;
 
     private BigDecimal volAtpMfi;
     private BigDecimal delAtpMfi;
@@ -797,5 +799,29 @@ public class DeliverySpikeDto {
 
     public void setNextDto(DeliverySpikeDto nextDto) {
         this.nextDto = nextDto;
+    }
+
+    public BigDecimal getVolumeMdelivery() {
+        return volumeMdelivery;
+    }
+
+    public void setVolumeMdelivery(BigDecimal volumeMdelivery) {
+        this.volumeMdelivery = volumeMdelivery;
+    }
+
+    public BigDecimal getFuVol() {
+        return fuVol;
+    }
+
+    public void setFuVol(BigDecimal fuVol) {
+        this.fuVol = fuVol;
+    }
+
+    public BigDecimal getFuOiLots() {
+        return fuOiLots;
+    }
+
+    public void setFuOiLots(BigDecimal fuOiLots) {
+        this.fuOiLots = fuOiLots;
     }
 }
