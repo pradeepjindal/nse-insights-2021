@@ -62,6 +62,8 @@ public class DeliverySpikeDto {
     private BigDecimal tdyatpMinusYesatp;
     private BigDecimal tdydelMinusYesdel;
 
+    private String atpDelTrend;
+    private String atpOiTrend;
     private BigDecimal volume;
     private BigDecimal delivery;
     private BigDecimal volumeMdelivery;
@@ -165,7 +167,14 @@ public class DeliverySpikeDto {
 
                 //calculated fields
                 + ohlc + ","
+                + open.add(close).divide(new BigDecimal(2), 2, RoundingMode.HALF_EVEN) + ","
+                + close.subtract(open) + ","
+                + atpDelTrend + ","
+                + delivery.divide(new BigDecimal(100000), 2, RoundingMode.HALF_EVEN) + ","
                 + atp + ","
+                + fuOiLots + ","
+                + atpOiTrend + ","
+
                 + highLowMid + ","
                 + atpMhlm + ","
                 + highLowDiff + ","
@@ -209,9 +218,10 @@ public class DeliverySpikeDto {
 //                + closeRsi + ","
 //                + lastRsi + ","
                 + lotSize + ","
-                + volume.divide(new BigDecimal(100000), 0, RoundingMode.HALF_DOWN) + ","
-                + volume.subtract(delivery).divide(new BigDecimal(100000), 0, RoundingMode.HALF_DOWN) + ","
-                + delivery.divide(new BigDecimal(100000), 0, RoundingMode.HALF_DOWN) + ","
+
+                + volume.divide(new BigDecimal(100000), 2, RoundingMode.HALF_EVEN) + ","
+                + volume.subtract(delivery).divide(new BigDecimal(100000), 2, RoundingMode.HALF_EVEN) + ","
+                + delivery.divide(new BigDecimal(100000), 2, RoundingMode.HALF_EVEN) + ","
                 + vdr + ","
                 + fuAtp + ","
                 + fuAtpMinusCmAtp;
@@ -823,5 +833,21 @@ public class DeliverySpikeDto {
 
     public void setFuOiLots(BigDecimal fuOiLots) {
         this.fuOiLots = fuOiLots;
+    }
+
+    public String getAtpDelTrend() {
+        return atpDelTrend;
+    }
+
+    public void setAtpDelTrend(String atpDelTrend) {
+        this.atpDelTrend = atpDelTrend;
+    }
+
+    public String getAtpOiTrend() {
+        return atpOiTrend;
+    }
+
+    public void setAtpOiTrend(String atpOiTrend) {
+        this.atpOiTrend = atpOiTrend;
     }
 }

@@ -124,7 +124,7 @@ public class DataService implements Manager, DataServiceI {
         if (isDataInRawState) {
             fillCmCalcFields();
             fillNextFields();
-            //fillFuCalcFields();
+            fillFuCalcFields();
             //fillTheIndicators();
             isDataInRawState = false;
         }
@@ -334,8 +334,10 @@ public class DataService implements Manager, DataServiceI {
                 dto.setFuAtp(fuAtp);
                 BigDecimal fuAtpMinusCmAtp = fuAtp.subtract(dto.getAtp());
                 dto.setFuAtpMinusCmAtp(fuAtpMinusCmAtp);
-                BigDecimal fuOiLots = NumberUtils.divide(dto.getFuOi(), lotSiz);
-                dto.setFuOiLots(fuOiLots);
+                if (dto.getFuOi() != null) {
+                    BigDecimal fuOiLots = NumberUtils.divide(dto.getFuOi(), lotSiz);
+                    dto.setFuOiLots(fuOiLots);
+                }
                 //
 
             }

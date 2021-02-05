@@ -84,6 +84,35 @@ public class ReportHelperNew {
         }
     }
 
+    public static void enrichAtpDelTrend(Map<String, List<DeliverySpikeDto>> symbolMap) {
+        for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
+            entry.getValue().forEach( dto -> {
+                float atpDiff = dto.getAtp().subtract(dto.getBackDto().getAtp()).floatValue();
+                boolean atpPositive = atpDiff > 1;
+                boolean atpNegative = atpDiff < -1;
+                //
+                float delDiff = dto.getDelivery().subtract(dto.getBackDto().getDelivery()).floatValue();
+                boolean delPositive = delDiff > 1;
+                boolean delNegative = delDiff < -1;
+                     if (atpPositive && delPositive) dto.setAtpDelTrend("buyer-charging-up (demand-high)");
+                else if (atpPositive && delNegative) dto.setAtpDelTrend("buyer-hesitating  (demand-hiccup)");
+                else if (atpNegative && delPositive) dto.setAtpDelTrend("saler-flooding-dn (supply-high)");
+                else if (atpNegative && delNegative) dto.setAtpDelTrend("saler-hesitating  (supply-hiccup)");
+                else dto.setAtpDelTrend("");
+
+                //
+                float oiDiff = dto.getFuOiLots().subtract(dto.getBackDto().getFuOiLots()).floatValue();
+                boolean oiPositive = oiDiff > 1;
+                boolean oiNegative = oiDiff < -1;
+                     if (atpPositive && oiPositive) dto.setAtpOiTrend("retailCust(B)-aggressive-buy  (long-buildup)");
+                else if (atpPositive && oiNegative) dto.setAtpOiTrend("retailCust(B)-hesitating (profit-booking)-i-loss-booking");
+                else if (atpNegative && oiPositive) dto.setAtpOiTrend("institute(S) -aggressive-sale (short-buildup)");
+                else if (atpNegative && oiNegative) dto.setAtpOiTrend("institute(S) -hesitating (profit-booking)-r-loss-booking");
+                else dto.setAtpOiTrend("");
+            });
+        }
+    }
+
 //    public static void fillTheIndicatorsChg(LocalDate forDate, int forMinusDays) {
 //        LOGGER.info("DataManager - fillTheIndicators");
 //        LocalDate minDate = minDate(forDate, forMinusDays);

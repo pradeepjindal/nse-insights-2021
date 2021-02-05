@@ -118,28 +118,31 @@ public class PastPresentFutureReporterNew {
 
         Map<String, List<DeliverySpikeDto>> symbolMap = dataService.getRichDataBySymbol(forDate, forMinusDays);
         ReportHelperNew.enrichGrowth(calcAvgMap, symbolMap);
+        ReportHelperNew.enrichAtpDelTrend(symbolMap);
+        //atpDelTrend
+
 
         // lot size
-        Map<String, List<DeliverySpikeDto>> tdySymbolMap = dataService.getRichDataBySymbol(forDate, 1);
-        List<DeliverySpikeDto> tdyDtos = symbolMap.values().stream().flatMap(List::stream).collect(Collectors.toList());
-        tdyDtos.forEach( dto -> {
-            long lotSize = RefData.getLotSize(dto.getSymbol());
-            dto.setLotSize(lotSize);
-            if( null != dto.getFuTotTrdVal() && lotSize != 0) {
-                BigDecimal lotSiz = new BigDecimal(lotSize);
-                BigDecimal totalTradedQuantityOfFutures = dto.getFuContracts().multiply(lotSiz);
-                dto.setFuVol(totalTradedQuantityOfFutures);
-                BigDecimal totalTradeValueOfFutures = dto.getFuTotTrdVal();
-                BigDecimal fuAtp = NumberUtils.divide(totalTradeValueOfFutures, totalTradedQuantityOfFutures);
-                dto.setFuAtp(fuAtp);
-                BigDecimal fuAtpMinusCmAtp = fuAtp.subtract(dto.getAtp());
-                dto.setFuAtpMinusCmAtp(fuAtpMinusCmAtp);
-//                BigDecimal fuOiLots = NumberUtils.divide(dto.getFuOi(), lotSiz);
-//                dto.setFuOiLots(fuOiLots);
-            } else {
-                LOGGER.warn("{} - lot size not found in refDate", dto.getSymbol());
-            }
-                });
+//        Map<String, List<DeliverySpikeDto>> tdySymbolMap = dataService.getRichDataBySymbol(forDate, 1);
+//        List<DeliverySpikeDto> tdyDtos = symbolMap.values().stream().flatMap(List::stream).collect(Collectors.toList());
+//        tdyDtos.forEach( dto -> {
+//            long lotSize = RefData.getLotSize(dto.getSymbol());
+//            dto.setLotSize(lotSize);
+//            if( null != dto.getFuTotTrdVal() && lotSize != 0) {
+//                BigDecimal lotSiz = new BigDecimal(lotSize);
+//                BigDecimal totalTradedQuantityOfFutures = dto.getFuContracts().multiply(lotSiz);
+//                dto.setFuVol(totalTradedQuantityOfFutures);
+//                BigDecimal totalTradeValueOfFutures = dto.getFuTotTrdVal();
+//                BigDecimal fuAtp = NumberUtils.divide(totalTradeValueOfFutures, totalTradedQuantityOfFutures);
+//                dto.setFuAtp(fuAtp);
+//                BigDecimal fuAtpMinusCmAtp = fuAtp.subtract(dto.getAtp());
+//                dto.setFuAtpMinusCmAtp(fuAtpMinusCmAtp);
+////                BigDecimal fuOiLots = NumberUtils.divide(dto.getFuOi(), lotSiz);
+////                dto.setFuOiLots(fuOiLots);
+//            } else {
+//                LOGGER.warn("{} - lot size not found in refDate", dto.getSymbol());
+//            }
+//                });
         return symbolMap;
     }
 

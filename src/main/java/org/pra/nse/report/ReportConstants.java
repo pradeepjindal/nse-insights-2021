@@ -44,7 +44,9 @@ public class ReportConstants {
     static final String PPF_CSV_HEADER_NEW =
             "symbol,trade_date,day," +
 //            "open,high,low,hlp,close,last,closingBell,closeToLastPct,atp,hlm,ohlc," +
-                    "open,high,low,close,last,ohlc,atp,hlm,atpMhlm,hld,hlp,cToL_Pct," +
+                    "open,high,low,close,last,ohlc,ocMid,cMo," +
+                    "AtpDelTrend,delLakh,atp,fuOiLots,AtpOiTrend," +
+                    "hlMid,atpMhlm,hld,hlp,cToL_Pct," +
 
 //            "calcAtpFixGrowth,calcAtpDynGrowth,atpChgPct," +
 //            "calcVolFixGrowth,calcVolDynGrowth,volChgPct," +
@@ -55,7 +57,7 @@ public class ReportConstants {
                     "vdr,sumDel,sumDelDiff," +
                     "calcDelFixGrowth,delChgPct," +
 //                    "calcFoiFixGrowth,foiChgPct," +
-//
+
 //                    "premium," +
                     "nxtCloseToOpenPct,nxtOptoHighPct,nxtOptoLowPct,nxtOptoAtpPct," +
                     "VolAtpMfi,DelAtpMfi,DelAtpMfiChg," +
