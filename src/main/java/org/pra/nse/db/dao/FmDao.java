@@ -16,7 +16,7 @@ public class FmDao {
     private final JdbcTemplate jdbcTemplate;
 
     @Value("${fmDataCountForDateSql}")
-    private String fmDataCountForDateSql;
+    private String rowsCountForTradeDateSql;
 
     @Value("${activeFutureScriptsForGivenDateSql}")
     private String activeFutureScriptsForGivenDateSql;
@@ -27,8 +27,10 @@ public class FmDao {
 
 
     public int dataCount(LocalDate tradeDate) {
-        Object[] args = new Object[] {tradeDate.toString()};
-        return jdbcTemplate.queryForObject(fmDataCountForDateSql, args, Integer.class);
+        return jdbcTemplate.queryForObject(
+                rowsCountForTradeDateSql,
+                Integer.class,
+                tradeDate.toString());
     }
 
     public List<String> activeScripts(LocalDate tradeDate) {

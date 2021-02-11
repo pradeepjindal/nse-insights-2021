@@ -46,17 +46,17 @@ public class NseFileUtils {
         zis.closeEntry();
         zis.close();
     }
-    public void unzipNew(String outputDirAndFileName, String filePrefix) throws IOException {
+    public void unzipNew(String sourceDirAndFileName, String filePrefix) throws IOException {
         //TODO remove the target file logic name, and get it via parameter
-        int lastIndex = outputDirAndFileName.lastIndexOf(File.separator);
-        File destDir = new File(outputDirAndFileName.substring(0, lastIndex));
+        int lastIndex = sourceDirAndFileName.lastIndexOf(File.separator);
+        File destDir = new File(sourceDirAndFileName.substring(0, lastIndex));
         byte[] buffer = new byte[1024];
         ZipInputStream zis = null;
-        zis = new ZipInputStream(new FileInputStream(outputDirAndFileName));
+        zis = new ZipInputStream(new FileInputStream(sourceDirAndFileName));
         ZipEntry zipEntry;
         zipEntry = zis.getNextEntry();
         while (zipEntry != null) {
-            String csvFilePathAndName = destDir + File.separator + filePrefix + DateUtils.extractDateString(zipEntry.getName()) + ApCo.REPORTS_FILE_EXT;
+            String csvFilePathAndName = destDir + File.separator + filePrefix + DateUtils.extractDateString(zipEntry.getName()) + ApCo.DEFAULT_FILE_EXT;
             File csvFile = new File(csvFilePathAndName);
             FileOutputStream fos = new FileOutputStream(csvFile);
             int len;

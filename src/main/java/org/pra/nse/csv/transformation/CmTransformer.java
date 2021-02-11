@@ -63,7 +63,7 @@ public class CmTransformer extends BaseTransformer {
 //        });
         filePairMap = TransformationHelper.prepareFileNames(sourceFileNames,
                 NseCons.NSE_CM_FILE_NAME_DATE_REGEX, NseCons.NSE_CM_FILE_NAME_DATE_FORMAT,
-                ApCo.PRA_CM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, ApCo.yyyyMMdd_DTF);
+                ApCo.PRA_CM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, ApCo.DATA_FILE_NAME_DTF);
         return filePairMap;
     }
 

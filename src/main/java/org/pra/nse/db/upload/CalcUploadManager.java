@@ -38,11 +38,11 @@ public class CalcUploadManager implements Manager {
 //        calcRsiUploaderNew.uploadFromLastDate();
 
         LOGGER.info("----------");
-        calcAvgUploaderNew.uploadFromDate(ApCo.UPLOAD_CALC_FROM_DATE);
+//        calcAvgUploaderNew.uploadFromDate(ApCo.UPLOAD_CALC_FROM_DATE);
         LOGGER.info("----------");
-        calcMfiUploaderNew.uploadFromDate(ApCo.UPLOAD_CALC_FROM_DATE);
+//        calcMfiUploaderNew.uploadFromDate(ApCo.UPLOAD_CALC_FROM_DATE);
         LOGGER.info("----------");
-        calcRsiUploaderNew.uploadFromDate(ApCo.UPLOAD_CALC_FROM_DATE);
+//        calcRsiUploaderNew.uploadFromDate(ApCo.UPLOAD_CALC_FROM_DATE);
 
         LOGGER.info("======================================== CALC - Upload Manager");
     }

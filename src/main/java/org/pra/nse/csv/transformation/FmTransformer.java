@@ -62,7 +62,7 @@ public class FmTransformer extends BaseTransformer {
 //        });
         filePairMap = TransformationHelper.prepareFileNames(sourceFileNames,
                 NseCons.NSE_FM_FILE_NAME_DATE_REGEX, NseCons.NSE_FM_FILE_NAME_DATE_FORMAT,
-                ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, ApCo.yyyyMMdd_DTF);
+                ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, ApCo.DATA_FILE_NAME_DTF);
         return filePairMap;
     }
 

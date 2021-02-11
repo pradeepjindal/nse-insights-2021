@@ -29,22 +29,20 @@ public class NseFmUploader extends BaseUploader {
     private static final Logger LOGGER = LoggerFactory.getLogger(NseFmUploader.class);
 
     private final NseFmRepo futureMarketRepository;
-    private final NseOmRepo optionMarketRepository;
     private final FmDao dao;
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
     private final FmCsvReader csvReader;
 
-    public NseFmUploader(NseFmRepo nseFmRepo,
+    public NseFmUploader(NseFmRepo repository,
                          NseOmRepo nseOmRepo,
-                         FmDao fmDao,
+                         FmDao dao,
                          NseFileUtils nseFileUtils,
                          PraFileUtils praFileUtils,
                          FmCsvReader fmCsvReader) {
         super(praFileUtils, NseCons.FM_DIR_NAME, ApCo.PRA_FM_FILE_PREFIX);
-        this.futureMarketRepository = nseFmRepo;
-        this.optionMarketRepository = nseOmRepo;
-        this.dao = fmDao;
+        this.futureMarketRepository = repository;
+        this.dao = dao;
         this.nseFileUtils = nseFileUtils;
         this.praFileUtils = praFileUtils;
         this.csvReader = fmCsvReader;
@@ -121,6 +119,7 @@ public class NseFmUploader extends BaseUploader {
 
         });
         LOGGER.info("FM-upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
+        if (recordFailed.get() > 0) throw new RuntimeException("FM-upload | some record could not be persisted");
     }
 
 }

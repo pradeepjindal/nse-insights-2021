@@ -5,8 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-
 @Component
 public class TransformationManager implements Manager {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransformationManager.class);
@@ -15,15 +13,18 @@ public class TransformationManager implements Manager {
     private final FmTransformer fmTransformer;
     private final DmTransformer dmTransformer;
     private final AbTransformer abTransformer;
+    private final IdxTransformer idxTransformer;
 
     public TransformationManager(CmTransformer cmTransformer,
                                  FmTransformer fmTransformer,
                                  DmTransformer dmTransformer,
-                                 AbTransformer abTransformer) {
+                                 AbTransformer abTransformer,
+                                 IdxTransformer idxTransformer) {
         this.cmTransformer = cmTransformer;
         this.fmTransformer = fmTransformer;
         this.dmTransformer = dmTransformer;
         this.abTransformer = abTransformer;
+        this.idxTransformer = idxTransformer;
     }
 
 
@@ -39,6 +40,8 @@ public class TransformationManager implements Manager {
         dmTransformer.transformFromDefaultDate();
         LOGGER.info("----------");
         abTransformer.transformFromDefaultDate();
+        LOGGER.info("----------");
+        idxTransformer.transformFromDefaultDate();
 
 //        cmTransformer.transformFromLastDate();
 //        LOGGER.info("----------");

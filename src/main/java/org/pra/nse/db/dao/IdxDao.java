@@ -10,24 +10,23 @@ import java.time.LocalDate;
 
 @Component
 @PropertySource(value = "classpath:upload-queries.yaml", factory = YamlPropertyLoaderFactory.class)
-public class DmDao {
+public class IdxDao {
     private final JdbcTemplate jdbcTemplate;
 
-    @Value("${dmDataCountForDateSql}")
+    @Value("${dxDataCountForDateSql}")
     private String rowsCountForTradeDateSql;
 
-    DmDao(JdbcTemplate jdbcTemplate) {
+    IdxDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
 
     public int dataCount(LocalDate tradeDate) {
-//        Object[] args = new Object[] {tradeDate.toString()};
-//        return jdbcTemplate.queryForObject(dmDataCountForDateSql, args, Integer.class);
         return jdbcTemplate.queryForObject(
                 rowsCountForTradeDateSql,
                 Integer.class,
-                tradeDate.toString());
+                tradeDate.toString()
+                );
     }
 
 }

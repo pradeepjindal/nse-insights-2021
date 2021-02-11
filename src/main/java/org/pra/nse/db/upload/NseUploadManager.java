@@ -4,6 +4,7 @@ import org.pra.nse.Manager;
 import org.pra.nse.db.upload.nse.NseCmUploader;
 import org.pra.nse.db.upload.nse.NseDmUploader;
 import org.pra.nse.db.upload.nse.NseFmUploader;
+import org.pra.nse.db.upload.nse.NseIdxUploader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -15,13 +16,16 @@ public class NseUploadManager implements Manager {
     private final NseCmUploader nseCmUploader;
     private final NseFmUploader nseFmUploader;
     private final NseDmUploader nseDmUploader;
+    private final NseIdxUploader nseIdxUploader;
 
     public NseUploadManager(NseCmUploader nseCmUploader,
                             NseFmUploader nseFmUploader,
-                            NseDmUploader nseDmUploader) {
+                            NseDmUploader nseDmUploader,
+                            NseIdxUploader nseIdxUploader) {
         this.nseCmUploader = nseCmUploader;
         this.nseFmUploader = nseFmUploader;
         this.nseDmUploader = nseDmUploader;
+        this.nseIdxUploader = nseIdxUploader;
     }
 
     @Override
@@ -29,11 +33,13 @@ public class NseUploadManager implements Manager {
         LOGGER.info(".");
         LOGGER.info("____________________ NSE - Upload Manager");
 
-        nseCmUploader.uploadFromDefaultDate();
+//        nseCmUploader.uploadFromDefaultDate();
         LOGGER.info("----------");
-        nseFmUploader.uploadFromDefaultDate();
+//        nseFmUploader.uploadFromDefaultDate();
         LOGGER.info("----------");
-        nseDmUploader.uploadFromDefaultDate();
+//        nseDmUploader.uploadFromDefaultDate();
+        LOGGER.info("----------");
+        nseIdxUploader.uploadFromDefaultDate();
 
 //        nseCmUploader.uploadFromLastDate();
 //        LOGGER.info("----------");

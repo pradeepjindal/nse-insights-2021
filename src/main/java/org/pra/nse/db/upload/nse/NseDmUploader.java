@@ -31,14 +31,14 @@ public class NseDmUploader extends BaseUploader {
     private final PraFileUtils praFileUtils;
     private final DmCsvReader csvReader;
 
-    public NseDmUploader(NseDmRepo nseDmRepo,
-                         DmDao dmDao,
+    public NseDmUploader(NseDmRepo repository,
+                         DmDao dao,
                          NseFileUtils nseFileUtils,
                          PraFileUtils praFileUtils,
                          DmCsvReader csvReader) {
         super(praFileUtils, NseCons.DM_DIR_NAME, ApCo.PRA_DM_FILE_PREFIX);
-        this.repository = nseDmRepo;
-        this.dao = dmDao;
+        this.repository = repository;
+        this.dao = dao;
         this.nseFileUtils = nseFileUtils;
         this.praFileUtils = praFileUtils;
         this.csvReader = csvReader;
@@ -81,6 +81,7 @@ public class NseDmUploader extends BaseUploader {
             }
         });
         LOGGER.info("DM-upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
+        if (recordFailed.get() > 0) throw new RuntimeException("DM-upload | some record could not be persisted");
     }
 
 }

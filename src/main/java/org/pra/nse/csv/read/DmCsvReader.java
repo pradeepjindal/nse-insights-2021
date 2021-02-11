@@ -52,19 +52,19 @@ public class DmCsvReader {
         }
         final CellProcessor[] processors = getProcessors();
 
-        DmBean matBean;
+        DmBean bean;
         String[] header;
         Map<String, DmBean> mtBeanMap = new HashMap<>();
         try {
             header = beanReader.getHeader(true);
-            while( (matBean = beanReader.read(DmBean.class, header, processors)) != null ) {
+            while( (bean = beanReader.read(DmBean.class, header, processors)) != null ) {
                 //LOGGER.info(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(), beanReader.getRowNumber(), matBean));
-                if("EQ".equals(matBean.getSecurityType())) {
-                    if(mtBeanMap.containsKey(matBean.getSymbol())) {
+                if("EQ".equals(bean.getSecurityType())) {
+                    if(mtBeanMap.containsKey(bean.getSymbol())) {
                         LOGGER.warn("Symbol already present in map: old value = [{}], new value = [{}]",
-                                mtBeanMap.get(matBean.getSymbol()), matBean);
+                                mtBeanMap.get(bean.getSymbol()), bean);
                     }
-                    mtBeanMap.put(matBean.getSymbol(), matBean);
+                    mtBeanMap.put(bean.getSymbol(), bean);
                 }
             }
         } catch (IOException e) {

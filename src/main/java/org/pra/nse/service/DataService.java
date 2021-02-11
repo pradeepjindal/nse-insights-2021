@@ -318,8 +318,9 @@ public class DataService implements Manager, DataServiceI {
             }
 
             //vdr
-            row.setVdr(NumberUtils.divide(row.getVolume(), row.getDelivery()));
-
+//            row.setVdr(NumberUtils.divide(row.getVolume(), row.getDelivery()));
+            BigDecimal onePercentOfVolume = NumberUtils.onePercent(row.getVolume());
+            row.setVdr(NumberUtils.divide(row.getDelivery(), onePercentOfVolume));
         }
     }
 

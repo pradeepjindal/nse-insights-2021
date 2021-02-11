@@ -217,7 +217,7 @@ public class MfiCalculatorNew {
         //===========================================
 
         if(latestDto != null) biConsumer.accept(latestDto, mfi);
-        else LOGGER.warn("skipping mfi, latestDto is null symbol {}, dt {}, may be phasing out from FnO", symbol, forDate);
+        else LOGGER.warn("skipping mfi, latestDto is null for symbol {}, dt {}, may be phasing out from FnO", symbol, forDate);
         //LOGGER.info("for symbol = {}, mfi = {}", symbol, mfi);
     }
 

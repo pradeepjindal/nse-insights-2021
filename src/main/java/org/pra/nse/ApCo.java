@@ -10,14 +10,14 @@ public class ApCo {
     public static final LocalTime DAILY_DOWNLOAD_TIME = LocalTime.of(18,0,0,0);
     //
     //public static final LocalDate DOWNLOAD_FROM_DATE    = LocalDate.of(2020,7,25);
-    public static final LocalDate DOWNLOAD_NSE_FROM_DATE = LocalDate.of(2021,2,1);
-    public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2021,2,1);
+    public static final LocalDate DOWNLOAD_NSE_FROM_DATE = LocalDate.of(2021,2,11);
+    public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2021,2,11);
 
-    public static final LocalDate CALC_FROM_DATE_NEW    = LocalDate.of(2021,2,1);
-    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,2,1);
+    public static final LocalDate CALC_FROM_DATE_NEW    = LocalDate.of(2021,2,11);
+    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,2,11);
 
-    public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2021,2,1);
-    public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2021,2,1);
+    public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2021,2,11);
+    public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2021,2,11);
 
 
     public static final boolean EMAIL_ENABLED = false;
@@ -57,6 +57,7 @@ public class ApCo {
     public static final String PRA_FM_FILE_PREFIX = "fm-";
     public static final String PRA_DM_FILE_PREFIX = "dm-";
     public static final String PRA_BP_FILE_PREFIX = "bp-";
+    public static final String PRA_IDX_FILE_PREFIX = "nx-";
 
 
     public static final String DATE_REGEX_yyyyMMdd = "\\d{4}-\\d{2}-\\d{2}";
@@ -68,6 +69,7 @@ public class ApCo {
     public static final String ddMMyyyy_DATE_FORMAT = "ddMMyyyy";
     public static final String yyyyMMdd_DATE_FORMAT = "yyyyMMdd";
     public static final String yyyy_D_MM_D_dd_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String dd_D_MM_D_yyyy_DATE_FORMAT = "dd-MM-yyyy";
     public static final String dd_D_MMM_D_yyyy_DATE_FORMAT = "dd-MMM-yyyy";
 
     //DateTimeFormatter.ISO_LOCAL_DATE;
@@ -78,6 +80,7 @@ public class ApCo {
     public static final String PRA_CM_DATA_DATE_FORMAT = dd_D_MMM_D_yyyy_DATE_FORMAT;
     public static final String PRA_FM_DATA_DATE_FORMAT = dd_D_MMM_D_yyyy_DATE_FORMAT;
     public static final String PRA_DM_DATA_DATE_FORMAT = yyyy_D_MM_D_dd_DATE_FORMAT;
+    public static final String PRA_IDX_DATA_DATE_FORMAT = dd_D_MM_D_yyyy_DATE_FORMAT;
     public static final String AB_DATA_DATE_FORMAT = yyyyMMdd_DATE_FORMAT;
     public static final String REPORTS_DATE_FORMAT = dd_D_MMM_D_yyyy_DATE_FORMAT;
     public static final String FIX_HOLIDAYS_DATE_FORMAT = "dd-MMM";

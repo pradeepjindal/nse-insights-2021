@@ -84,16 +84,22 @@ public class ReportHelperNew {
         }
     }
 
-    public static void enrichAtpDelTrend(Map<String, List<DeliverySpikeDto>> symbolMap) {
+    public static void enrichAtpDelAndOiTrend(Map<String, List<DeliverySpikeDto>> symbolMap) {
         for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
             entry.getValue().forEach( dto -> {
                 float atpDiff = dto.getAtp().subtract(dto.getBackDto().getAtp()).floatValue();
+                float atpDiffPercent = atpDiff / NumberUtils.onePercent(dto.getBackDto().getAtp()).floatValue();
                 boolean atpPositive = atpDiff > 1;
                 boolean atpNegative = atpDiff < -1;
+//                boolean atpPositive = atpDiffPercent > 1;
+//                boolean atpNegative = atpDiffPercent < -1;
                 //
                 float delDiff = dto.getDelivery().subtract(dto.getBackDto().getDelivery()).floatValue();
+                float delDiffPercent = delDiff / NumberUtils.onePercent(dto.getBackDto().getDelivery()).floatValue();
                 boolean delPositive = delDiff > 1;
                 boolean delNegative = delDiff < -1;
+//                boolean delPositive = delDiffPercent > 1;
+//                boolean delNegative = delDiffPercent < -1;
                      if (atpPositive && delPositive) dto.setAtpDelTrend("buyer-charging-up (demand-high)");
                 else if (atpPositive && delNegative) dto.setAtpDelTrend("buyer-hesitating  (demand-hiccup)");
                 else if (atpNegative && delPositive) dto.setAtpDelTrend("saler-flooding-dn (supply-high)");
@@ -102,8 +108,11 @@ public class ReportHelperNew {
 
                 //
                 float oiDiff = dto.getFuOiLots().subtract(dto.getBackDto().getFuOiLots()).floatValue();
+                float oiDiffPercent = oiDiff / NumberUtils.onePercent(dto.getBackDto().getFuOiLots()).floatValue();
                 boolean oiPositive = oiDiff > 1;
                 boolean oiNegative = oiDiff < -1;
+//                boolean oiPositive = oiDiffPercent > 1;
+//                boolean oiNegative = oiDiffPercent < -1;
                      if (atpPositive && oiPositive) dto.setAtpOiTrend("retailCust(B)-aggressive-buy  (long-buildup)");
                 else if (atpPositive && oiNegative) dto.setAtpOiTrend("retailCust(B)-hesitating (profit-booking)-i-loss-booking");
                 else if (atpNegative && oiPositive) dto.setAtpOiTrend("institute(S) -aggressive-sale (short-buildup)");

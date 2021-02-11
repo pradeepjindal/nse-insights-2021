@@ -118,7 +118,7 @@ public class PastPresentFutureReporterNew {
 
         Map<String, List<DeliverySpikeDto>> symbolMap = dataService.getRichDataBySymbol(forDate, forMinusDays);
         ReportHelperNew.enrichGrowth(calcAvgMap, symbolMap);
-        ReportHelperNew.enrichAtpDelTrend(symbolMap);
+        ReportHelperNew.enrichAtpDelAndOiTrend(symbolMap);
         //atpDelTrend
 
 

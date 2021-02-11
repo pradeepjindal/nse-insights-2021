@@ -32,14 +32,14 @@ public class NseCmUploader extends BaseUploader {
     private final PraFileUtils praFileUtils;
     private final CmCsvReader csvReader;
 
-    public NseCmUploader(NseCmRepo nseCmRepo,
-                         CmDao cmDao,
+    public NseCmUploader(NseCmRepo repository,
+                         CmDao dao,
                          NseFileUtils nseFileUtils,
                          PraFileUtils praFileUtils,
                          CmCsvReader cmCsvReader ) {
         super(praFileUtils, NseCons.CM_DIR_NAME, ApCo.PRA_CM_FILE_PREFIX);
-        this.repository = nseCmRepo;
-        this.dao = cmDao;
+        this.repository = repository;
+        this.dao = dao;
         this.nseFileUtils = nseFileUtils;
         this.praFileUtils = praFileUtils;
         this.csvReader = cmCsvReader;
@@ -91,6 +91,7 @@ public class NseCmUploader extends BaseUploader {
             }
         });
         LOGGER.info("CM-upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
+        if (recordFailed.get() > 0) throw new RuntimeException("CM-upload | some record could not be persisted");
     }
 
 }
