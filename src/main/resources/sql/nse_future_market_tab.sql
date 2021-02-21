@@ -24,7 +24,8 @@ CREATE TABLE public.nse_future_market_tab (
                                               value_in_lakh numeric(18,2),
                                               open_int bigint,
                                               change_in_oi bigint,
-                                              trade_date date
+                                              trade_date date NOT NULL,
+                                              tds character varying(10)
 );
 
 ALTER TABLE public.nse_future_market_tab OWNER TO postgres;

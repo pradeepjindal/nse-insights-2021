@@ -19,6 +19,9 @@ public class CmDao {
     @Value("${cmDataCountForDateSql}")
     private String rowsCountForTradeDateSql;
 
+    @Value("${cmDeleteForDateSql}")
+    private String rowsDeleteForTradeDateSql;
+
     CmDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -30,6 +33,14 @@ public class CmDao {
                 Integer.class,
                 tradeDate.toString()
                 );
+    }
+
+    public int dataDelete(LocalDate tradeDate) {
+        return jdbcTemplate.update(
+                rowsDeleteForTradeDateSql,
+                Integer.class,
+                tradeDate.toString()
+        );
     }
 
 }

@@ -9,10 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Predicate;
 
 @Component
@@ -81,7 +78,7 @@ public class DataServiceHelper {
                     if(localMap.containsKey(filteredRow.getSymbol())) {
                         localMap.get(filteredRow.getSymbol()).add(filteredRow);
                     } else {
-                        List<DeliverySpikeDto> list = new ArrayList<>();
+                        List<DeliverySpikeDto> list = new LinkedList<>();
                         list.add(filteredRow);
                         localMap.put(filteredRow.getSymbol(), list);
                     }

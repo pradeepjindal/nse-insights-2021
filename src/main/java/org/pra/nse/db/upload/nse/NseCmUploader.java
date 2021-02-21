@@ -37,7 +37,7 @@ public class NseCmUploader extends BaseUploader {
                          NseFileUtils nseFileUtils,
                          PraFileUtils praFileUtils,
                          CmCsvReader cmCsvReader ) {
-        super(praFileUtils, NseCons.CM_DIR_NAME, ApCo.PRA_CM_FILE_PREFIX);
+        super(praFileUtils, NseCons.CM_DIR_NAME, ApCo.PRA_CM_FILE_PREFIX, ApCo.UPLOAD_NSE_FROM_DATE);
         this.repository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;
@@ -52,7 +52,7 @@ public class NseCmUploader extends BaseUploader {
             LOGGER.info("CM-upload | SKIPPING - already uploaded | for date:[{}]", forDate);
             return;
         } else {
-            LOGGER.info("CM-upload | uploading | for date:[{}]", forDate);
+//            LOGGER.info("CM-upload | uploading - for date:[{}]", forDate);
         }
 
         String fromFile = NseCons.CM_FILES_PATH + File.separator+ ApCo.PRA_CM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;

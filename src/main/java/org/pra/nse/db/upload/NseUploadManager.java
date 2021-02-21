@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class NseUploadManager implements Manager {
     private static final Logger LOGGER = LoggerFactory.getLogger(NseUploadManager.class);
@@ -28,28 +30,34 @@ public class NseUploadManager implements Manager {
         this.nseIdxUploader = nseIdxUploader;
     }
 
+
     @Override
     public void execute() {
         LOGGER.info(".");
         LOGGER.info("____________________ NSE - Upload Manager");
 
-//        nseCmUploader.uploadFromDefaultDate();
+        nseCmUploader.uploadFromDefaultDate();
         LOGGER.info("----------");
-//        nseFmUploader.uploadFromDefaultDate();
+        nseDmUploader.uploadFromDefaultDate();
         LOGGER.info("----------");
-//        nseDmUploader.uploadFromDefaultDate();
-        LOGGER.info("----------");
-        nseIdxUploader.uploadFromDefaultDate();
+        nseFmUploader.uploadFromDefaultDate();
+//        LOGGER.info("----------");
+//        nseIdxUploader.uploadFromDefaultDate();
 
-//        nseCmUploader.uploadFromLastDate();
+//        nseCmUploader.uploadFromLatestDate();
 //        LOGGER.info("----------");
-//        nseFmUploader.uploadFromLastDate();
+//        nseDmUploader.uploadFromLatestDate();
 //        LOGGER.info("----------");
-//        nseDmUploader.uploadFromLastDate();
+//        nseFmUploader.uploadFromLatestDate();
+        LOGGER.info("----------");
+        nseIdxUploader.uploadFromLatestDate();
+
 
 //        cashMarketUploader.uploadFromDate(LocalDate.of(2017,1,1));
 //        LOGGER.info("----------");
 //        deliveryMarketUploader.uploadFromDate(LocalDate.of(2017,1,1));
+//        LOGGER.info("----------");
+//        nseIdxUploader.uploadFromDate(LocalDate.of(2020,1,1));
 
         LOGGER.info("======================================== NSE - Upload Manager");
     }

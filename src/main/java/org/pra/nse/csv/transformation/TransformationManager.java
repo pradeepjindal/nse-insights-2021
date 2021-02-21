@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class TransformationManager implements Manager {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransformationManager.class);
@@ -54,6 +56,8 @@ public class TransformationManager implements Manager {
 //        cmTransformer.transformFromDate(LocalDate.of(2016,1,1));
 //        LOGGER.info("----------");
 //        dmTransformer.transformFromDate(LocalDate.of(2016,1,1));
+//        LOGGER.info("----------");
+//        idxTransformer.transformFromDate(LocalDate.of(2020,1,1));
 
         LOGGER.info("======================================== Transform Manager");
     }

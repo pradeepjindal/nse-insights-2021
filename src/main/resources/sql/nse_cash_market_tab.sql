@@ -20,7 +20,8 @@ CREATE TABLE public.nse_cash_market_tab (
                                             prev_close numeric(18,2),
                                             tot_trd_qty bigint,
                                             tot_trd_val numeric(18,2),
-                                            trade_date date,
+                                            trade_date date NOT NULL,
+                                            tds character varying(10),
                                             total_trades bigint,
                                             isin character(16)
 );

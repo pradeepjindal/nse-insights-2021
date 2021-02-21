@@ -45,6 +45,9 @@ public class NseReportsDao {
         List<DeliverySpikeDto> result = jdbcTemplate.query(
                 deliverySpikeThree,
                 new BeanPropertyRowMapper<DeliverySpikeDto>(DeliverySpikeDto.class));
+//        result.forEach(rec -> {
+//            System.out.println(rec);
+//        });
         return result;
     }
 //    public List<DeliverySpikeDto> getDeliverySpike(LocalDate forDate) {

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class MfiBeanNew implements CalcBeanNew {
+public class AvgBean implements CalcBean {
 
     private String symbol;
     //@JsonFormat(pattern="yyyy-MM-dd")
@@ -18,16 +18,20 @@ public class MfiBeanNew implements CalcBeanNew {
     private LocalDate tradeDate;
     private Integer forDays;
 
-    private BigDecimal volMfi;
-    private BigDecimal delMfi;
+    private BigDecimal atpSma;
+    private BigDecimal volSma;
+    private BigDecimal delSma;
+    private BigDecimal foiSma;
 
     public String toCsvString() {
         return symbol +
                 "," + tradeDate +
                 "," + forDays +
 
-                "," + volMfi +
-                "," + delMfi;
+                "," + atpSma +
+                "," + volSma +
+                "," + delSma +
+                "," + foiSma;
     }
 
     public String getSymbol() {
@@ -54,21 +58,35 @@ public class MfiBeanNew implements CalcBeanNew {
         this.forDays = forDays;
     }
 
-    public BigDecimal getVolMfi() {
-        return volMfi;
+    public BigDecimal getAtpSma() {
+        return atpSma;
     }
 
-    public MfiBeanNew setVolMfi(BigDecimal volMfi) {
-        this.volMfi = volMfi;
-        return this;
+    public void setAtpSma(BigDecimal atpSma) {
+        this.atpSma = atpSma;
     }
 
-    public BigDecimal getDelMfi() {
-        return delMfi;
+    public BigDecimal getVolSma() {
+        return volSma;
     }
 
-    public MfiBeanNew setDelMfi(BigDecimal delMfi) {
-        this.delMfi = delMfi;
-        return this;
+    public void setVolSma(BigDecimal volSma) {
+        this.volSma = volSma;
+    }
+
+    public BigDecimal getDelSma() {
+        return delSma;
+    }
+
+    public void setDelSma(BigDecimal delSma) {
+        this.delSma = delSma;
+    }
+
+    public BigDecimal getFoiSma() {
+        return foiSma;
+    }
+
+    public void setFoiSma(BigDecimal foiSma) {
+        this.foiSma = foiSma;
     }
 }

@@ -13,8 +13,11 @@ import java.time.LocalDate;
 public class IdxDao {
     private final JdbcTemplate jdbcTemplate;
 
-    @Value("${dxDataCountForDateSql}")
+    @Value("${nxDataCountForDateSql}")
     private String rowsCountForTradeDateSql;
+
+    @Value("${nxDeleteForDateSql}")
+    private String rowsDeleteForTradeDateSql;
 
     IdxDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -27,6 +30,14 @@ public class IdxDao {
                 Integer.class,
                 tradeDate.toString()
                 );
+    }
+
+    public int dataDelete(LocalDate tradeDate) {
+        return jdbcTemplate.update(
+                rowsDeleteForTradeDateSql,
+                Integer.class,
+                tradeDate.toString()
+        );
     }
 
 }

@@ -3,17 +3,33 @@ cmDataCountForDateSql: >
   FROM nse_cash_market_tab t
   WHERE t.trade_date = to_date(?,'yyyy-mm-dd')
 
-fmDataCountForDateSql: >
-  SELECT count(*)
-  FROM nse_future_market_tab t
-  WHERE t.trade_date = to_date(?,'yyyy-mm-dd')
-
 dmDataCountForDateSql: >
   SELECT count(*)
   FROM nse_delivery_market_tab t
   WHERE t.trade_date = to_date(?,'yyyy-mm-dd')
 
-dxDataCountForDateSql: >
+fmDataCountForDateSql: >
+  SELECT count(*)
+  FROM nse_future_market_tab t
+  WHERE t.trade_date = to_date(?,'yyyy-mm-dd')
+
+nxDataCountForDateSql: >
   SELECT count(*)
   FROM nse_index_market_tab t
+  WHERE t.trade_date = to_date(?,'yyyy-mm-dd')
+
+cmDeleteForDateSql: >
+  DELETE FROM nse_cash_market_tab t
+  WHERE t.trade_date = to_date(?,'yyyy-mm-dd')
+
+dmDeleteForDateSql: >
+  DELETE FROM nse_delivery_market_tab t
+  WHERE t.trade_date = to_date(?,'yyyy-mm-dd')
+
+fmDeleteForDateSql: >
+  DELETE FROM nse_future_market_tab t
+  WHERE t.trade_date = to_date(?,'yyyy-mm-dd')
+
+nxDeleteForDateSql: >
+  DELETE FROM nse_index_market_tab t
   WHERE t.trade_date = to_date(?,'yyyy-mm-dd')

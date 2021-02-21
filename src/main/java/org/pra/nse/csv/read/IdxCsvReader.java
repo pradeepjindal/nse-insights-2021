@@ -36,7 +36,7 @@ public class IdxCsvReader {
     public Map<String, IdxBean> read(String fromFile) {
         String toFile = PathHelper.fileNameWithFullPath(NseCons.IDX_DIR_NAME, ApCo.PRA_IDX_FILE_PREFIX, fromFile);
         if(nseFileUtils.isFileExist(toFile)) {
-            LOGGER.info("IDX file exists: [{}]", toFile);
+//            LOGGER.info("IDX file exists: [{}]", toFile);
         } else {
             LOGGER.error("IDX file does not exist: [{}]", toFile);
         }

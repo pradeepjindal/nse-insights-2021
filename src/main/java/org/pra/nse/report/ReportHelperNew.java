@@ -3,6 +3,7 @@ package org.pra.nse.report;
 import org.pra.nse.db.dto.DeliverySpikeDto;
 import org.pra.nse.db.model.*;
 import org.pra.nse.util.NumberUtils;
+import org.pra.nse.util.Du;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,15 +17,20 @@ import java.util.Map;
 public class ReportHelperNew {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportHelperNew.class);
 
-    public static void enrichGrowth(Map<String, CalcAvgTabNew> calcAvgMap, Map<String, List<DeliverySpikeDto>> symbolMap) {
+    public static void enrichGrowth(Map<String, CalcAvgTab> calcAvgMap, Map<String, List<DeliverySpikeDto>> symbolMap) {
         Map.Entry<String, LocalDate> previousDate = new AbstractMap.SimpleEntry<>("tradeDate", null);
         Map.Entry<String, BigDecimal> sumDelivery = new AbstractMap.SimpleEntry<>("sumDelivery", BigDecimal.ZERO);
-
+        LOGGER.info("DSR | enrichment - total symbols: {}", symbolMap.size());
         for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
+            String symbol = entry.getKey();
+            int fromIndex = 0;
+            LocalDate dataFromDate = entry.getValue().get(fromIndex).getTradeDate();
+            int toIndex = entry.getValue().size() - 1;
+            LocalDate dataToDate = entry.getValue().get(toIndex).getTradeDate();
+            LOGGER.info("DSR | enrichment - {}, rows:{}, fromDt:{}, toDt:{}", Du.symbol(symbol), entry.getValue().size(), dataFromDate, dataToDate);
             previousDate.setValue(null);
             //DeliverySpikeDto firstDto = entry.getValue().get(0);
-            String symbol = entry.getKey();
-            CalcAvgTabNew calcAvgTabRow = calcAvgMap.get(symbol);
+            CalcAvgTab calcAvgTabRow = calcAvgMap.get(symbol);
             if(calcAvgTabRow == null) {
                 LOGGER.error("symbol not found: {} | probably new entry in FnO", symbol);
                 continue;
@@ -39,7 +45,9 @@ public class ReportHelperNew {
             BigDecimal totalExpectedDeliveryForDuration = calcAvgTabRow.getDelSma().multiply(new BigDecimal(entry.getValue().size()));
             BigDecimal onePercentOfExpectedDelivery = NumberUtils.onePercent(totalExpectedDeliveryForDuration);
 
-            entry.getValue().forEach( dto -> {
+            List<DeliverySpikeDto> sortedList = entry.getValue();
+            for(DeliverySpikeDto dto:entry.getValue()) {
+//                LOGGER.info("DSR | enrichment - looping symbol:{} for date: {} ", dto.getSymbol(), dto.getTradeDate());
                 if(!symbol.equals(dto.getSymbol())) {
                     LOGGER.error("symbol mismatch");
                     throw new RuntimeException("symbol mismatch");
@@ -53,6 +61,7 @@ public class ReportHelperNew {
                 sumDelivery.setValue(sumDelivery.getValue().add(dto.getDelivery()));
                 //TODO refactor it
                 if(previousDate.getValue() == null || previousDate.getValue().isBefore(dto.getTradeDate())) {
+//                    LOGGER.info("DSR | enrichment - for symbol:{}, previousDate:{}, currentDate:{}", dto.getSymbol(), previousDate.getValue(), dto.getTradeDate());
                     // sum
                     previousDate.setValue(dto.getTradeDate());
                     dto.setDelAccumulation(NumberUtils.divide(sumDelivery.getValue(), onePercentOfExpectedDelivery));
@@ -78,10 +87,12 @@ public class ReportHelperNew {
 //                    BigDecimal foiDynGrowth = NumberUtils.divide(dto.getOi(), foiDynOnePercent);
 //                    dto.setFoiDynGrowth(foiDynGrowth);
                 } else {
-                    LOGGER.error("enrichCalc | unknown condition - previousDate:{}, currentDate:{}", previousDate.getValue(), dto.getTradeDate());
+                    LOGGER.error("DSR | enrichment - Date Flow MISMATCH for symbol:{}, previousDate:{}, currentDate:{}", dto.getSymbol(), previousDate.getValue(), dto.getTradeDate());
+                    throw new RuntimeException("Date Flow MISMATCH");
                 }
-            });
+            }
         }
+        LOGGER.info("report enrichment done");
     }
 
     public static void enrichAtpDelAndOiTrend(Map<String, List<DeliverySpikeDto>> symbolMap) {

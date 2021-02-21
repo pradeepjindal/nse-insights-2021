@@ -1,47 +1,81 @@
-package org.pra.nse.csv.data;
+package org.pra.nse.db.model;
 
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-
+import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class RsiBeanNew implements CalcBeanNew {
+@Entity
+@Table(name = "Calc_Rsi_Tab")
+public class CalcRsiTab implements Serializable {
+    private static final long serialVersionUID = 1;
 
+    @Id
+    @SequenceGenerator(name = "calc_rsi_seq", sequenceName = "calc_rsi_seq", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "calc_rsi_seq")
+    private Long id;
     private String symbol;
-    //@JsonFormat(pattern="yyyy-MM-dd")
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate tradeDate;
+
+    private String tds;
     private Integer forDays;
 
+    @Column(name = "open_rsi_Sma")
     private BigDecimal openRsiSma;
+
+    @Column(name = "high_rsi_Sma")
     private BigDecimal highRsiSma;
+
+    @Column(name = "low_rsi_Sma")
     private BigDecimal lowRsiSma;
+
+    @Column(name = "close_rsi_Sma")
     private BigDecimal closeRsiSma;
+
+    @Column(name = "last_rsi_Sma")
     private BigDecimal lastRsiSma;
+
+    @Column(name = "atp_rsi_Sma")
     private BigDecimal atpRsiSma;
+
+    @Column(name = "hlm_rsi_Sma")
     private BigDecimal hlmRsiSma;
+
+    @Column(name = "ohlc_rsi_Sma")
     private BigDecimal ohlcRsiSma;
+
+    @Column(name = "del_rsi_Sma")
     private BigDecimal delRsiSma;
 
-    public String toCsvString() {
-        return symbol +
-                "," + tradeDate +
-                "," + forDays +
+    public void reset() {
+        id = null;
+        symbol = null;
+        tradeDate = null;
+        tds = null;
+        forDays = null;
 
-                "," + openRsiSma +
-                "," + highRsiSma +
-                "," + lowRsiSma +
-                "," + closeRsiSma +
-                "," + lastRsiSma +
-                "," + atpRsiSma +
-                "," + hlmRsiSma +
-                "," + ohlcRsiSma +
-                "," + delRsiSma;
+        openRsiSma = null;
+        highRsiSma = null;
+        lowRsiSma = null;
+        closeRsiSma = null;
+        lastRsiSma = null;
+        atpRsiSma = null;
+        hlmRsiSma = null;
+        ohlcRsiSma = null;
+        delRsiSma = null;
+    }
+
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getSymbol() {
@@ -58,6 +92,14 @@ public class RsiBeanNew implements CalcBeanNew {
 
     public void setTradeDate(LocalDate tradeDate) {
         this.tradeDate = tradeDate;
+    }
+
+    public String getTds() {
+        return tds;
+    }
+
+    public void setTds(String tds) {
+        this.tds = tds;
     }
 
     public Integer getForDays() {

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +23,7 @@ public class FmCsvReader {
 
     public Map<FmBean, FmBean> read(Map<FmBean, FmBean> foBeanMap, String fileName) {
         Map<FmBean, FmBean> localFoBeanMap = new HashMap<>();
-        LOGGER.info("FO file : [{}]", fileName);
+//        LOGGER.info("FM file : [{}]", fileName);
 
         FmBean fmBean;
         //int missing = 0;
@@ -68,7 +69,7 @@ public class FmCsvReader {
             MappingIterator<FmBean> it = mapper.readerFor(FmBean.class).with(schema).readValues(csvFile);
             //return it.readAll();
             beans = new ArrayList<>();
-            LOGGER.warn("OPTIDX and OPTSTK are disbled, hence would not be loaded");
+//            LOGGER.warn("OPTIDX and OPTSTK are disbled, hence would not be loaded");
             while (it.hasNextValue()) {
                 FmBean fmBean = it.nextValue();
                 if("FUTSTK".equals(fmBean.getInstrument().trim()) || "FUTIDX".equals(fmBean.getInstrument().trim())) {
@@ -76,9 +77,9 @@ public class FmCsvReader {
                 }
             }
             LOGGER.info("CSV, Total Rows Count: [{}]", beans.size());
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOGGER.error("Error occurred while loading object list from file: {}", e);
-            //return Collections.emptyList();
+            new RuntimeException("error reading fm file");
         }
         //System.out.println("TOTAL beans read=" + beans.size());
         //beans.forEach( row -> LOGGER.info("{}", row));

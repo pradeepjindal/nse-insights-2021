@@ -40,7 +40,7 @@ public class NseFmUploader extends BaseUploader {
                          NseFileUtils nseFileUtils,
                          PraFileUtils praFileUtils,
                          FmCsvReader fmCsvReader) {
-        super(praFileUtils, NseCons.FM_DIR_NAME, ApCo.PRA_FM_FILE_PREFIX);
+        super(praFileUtils, NseCons.FM_DIR_NAME, ApCo.PRA_FM_FILE_PREFIX, ApCo.UPLOAD_NSE_FROM_DATE);
         this.futureMarketRepository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;
@@ -54,7 +54,7 @@ public class NseFmUploader extends BaseUploader {
             LOGGER.info("FM-upload | SKIPPING - already uploaded | for date:[{}]", forDate);
             return;
         } else {
-            LOGGER.info("FM-upload | uploading | for date:[{}]", forDate);
+//            LOGGER.info("FM-upload | uploading - for date:[{}]", forDate);
         }
 
         String fromFile = NseCons.FM_FILES_PATH + File.separator+ ApCo.PRA_FM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;

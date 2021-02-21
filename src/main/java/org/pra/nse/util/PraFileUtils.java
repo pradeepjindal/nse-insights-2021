@@ -26,7 +26,7 @@ public class PraFileUtils {
         return getLatestFileNameFor(fileDir, filePrefix, fileExt, occurrence, LocalDate.now());
     }
     public String getLatestFileNameFor(String fileDir, String filePrefix, String fileExt, int occurrence, LocalDate searchBackFromThisDate) {
-        return getLatestFileNameFor(fileDir, filePrefix, fileExt, occurrence, searchBackFromThisDate, ApCo.DOWNLOAD_NSE_FROM_DATE, ApCo.PRA_DTF);
+        return getLatestFileNameFor(fileDir, filePrefix, fileExt, occurrence, searchBackFromThisDate, ApCo.NSE_DATA_AVAILABLE_FROM_DATE, ApCo.PRA_DTF);
     }
     public String getLatestFileNameFor(String fileDir, String filePrefix, String fileExt, int fileOccurrence,
                                        LocalDate searchBackFromThisDate, LocalDate toThisDate, DateTimeFormatter fileNameDtf) {
@@ -119,9 +119,9 @@ public class PraFileUtils {
         } else if (cmDate.equals(mtDate) && mtDate.equals(foDate)) {
             return cmDate;
         } else {
-            LOGGER.warn("Not All files are available: cm=[cm-{}], mt=[mt-{}], fo=[fo-{}]", cmDate, mtDate, foDate);
-            LOGGER.info("fo=[fo-{}]", foDate);
-            LOGGER.info("mt=[mt-{}]", mtDate);
+            LOGGER.warn("Not All files are available: cm=[cm-{}], dm=[dm-{}], fm=[fm-{}]", cmDate, mtDate, foDate);
+            LOGGER.info("fm=[fm-{}]", foDate);
+            LOGGER.info("dm=[dm-{}]", mtDate);
             LOGGER.info("cm=[cm-{}]", cmDate);
             //throw new RuntimeException("All Files Does Not Exist: ABORTING");
             return null;
@@ -130,16 +130,16 @@ public class PraFileUtils {
 
     public String validateDownloadCD() {
         String cmDate = getLatestCmStringDate();
-        String mtDate = getLatestDmStringDate();
+        String dmDate = getLatestDmStringDate();
 
-        if (cmDate == null || mtDate == null) {
+        if (cmDate == null || dmDate == null) {
             return null;
-        } else if (cmDate.equals(mtDate)) {
+        } else if (cmDate.equals(dmDate)) {
             return cmDate;
         } else {
-            LOGGER.warn("Not All files are available: cm=[cm-{}], mt=[mt-{}]", cmDate, mtDate);
+            LOGGER.warn("Not All files are available: cm=[cm-{}], dm=[dm-{}]", cmDate, dmDate);
             LOGGER.info("cm=[cm-{}]", cmDate);
-            LOGGER.info("mt=[mt-{}]", mtDate);
+            LOGGER.info("dm=[dm-{}]", dmDate);
             //throw new RuntimeException("All Files Does Not Exist: ABORTING");
             return null;
         }

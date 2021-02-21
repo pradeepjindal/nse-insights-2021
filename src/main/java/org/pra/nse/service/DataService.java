@@ -4,6 +4,7 @@ import org.pra.nse.Manager;
 import org.pra.nse.db.dao.NseReportsDao;
 import org.pra.nse.db.dto.DeliverySpikeDto;
 import org.pra.nse.refdata.RefData;
+import org.pra.nse.util.Du;
 import org.pra.nse.util.NumberUtils;
 import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
@@ -355,7 +356,7 @@ public class DataService implements Manager, DataServiceI {
             if(nextDate == null) continue;
             DeliverySpikeDto nextDto = tradeDateAndSymbolMap.get(nextDate).get(dto.getSymbol());
             if (nextDto == null) {
-                LOGGER.warn("{} - no next data for: {} (may be symbol has phased out of fno)", dto.getSymbol(), nextDate);
+                LOGGER.warn("{} - no next data for: {} (may be symbol has phased out of fno)", Du.symbol(dto.getSymbol()), nextDate);
             } else {
                 dto.setNxtCloseToOpenPercent(nextDto.getCloseToOpenPercent());
                 dto.setNxtOptoHighPrcnt(nextDto.getOthighPrcnt());
@@ -378,7 +379,7 @@ public class DataService implements Manager, DataServiceI {
                     LocalDate nextDate = nextDateMap.get(filteredRow.getTradeDate());
                     DeliverySpikeDto nextDto = tradeDateAndSymbolMap.get(nextDate).get(filteredRow.getSymbol());
                     if (nextDto == null) {
-                        LOGGER.warn("{} - no next data for: {} (may be symbol has phased out of fno)", filteredRow.getSymbol(), nextDate);
+                        LOGGER.warn("{} - no next data for: {} (may be symbol has phased out of fno)", Du.symbol(filteredRow.getSymbol()), nextDate);
                     } else {
                         filteredRow.setNxtCloseToOpenPercent(nextDto.getCloseToOpenPercent());
                         filteredRow.setNxtOptoHighPrcnt(nextDto.getOthighPrcnt());

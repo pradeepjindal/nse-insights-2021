@@ -18,6 +18,9 @@ public class FmDao {
     @Value("${fmDataCountForDateSql}")
     private String rowsCountForTradeDateSql;
 
+    @Value("${fmDeleteForDateSql}")
+    private String rowsDeleteForTradeDateSql;
+
     @Value("${activeFutureScriptsForGivenDateSql}")
     private String activeFutureScriptsForGivenDateSql;
 
@@ -36,6 +39,14 @@ public class FmDao {
     public List<String> activeScripts(LocalDate tradeDate) {
         Object[] args = new Object[] {tradeDate.toString()};
         return jdbcTemplate.queryForList(activeFutureScriptsForGivenDateSql, args, String.class);
+    }
+
+    public int dataDelete(LocalDate tradeDate) {
+        return jdbcTemplate.update(
+                rowsDeleteForTradeDateSql,
+                Integer.class,
+                tradeDate.toString()
+        );
     }
 
 }

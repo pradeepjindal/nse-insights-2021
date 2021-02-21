@@ -15,7 +15,6 @@ add close = open
 
 atpRsiChange column needs to be added, to find divergence
 
-BATAINDIA, LT
 
 MFI
 MFI generally favors the bulls when the indicator is above 50 and the bears when below 50.
@@ -75,4 +74,3 @@ Traits are Mixins just with some slightly different properties from a programmin
 like Mixins require linearization while Traits are flattened and Traits traditionally don’t contain states. 
 But that shouldn’t worry you too much. For the sake of simplicity we can say Mixins and Traits are the same.
 Ruby's Mixins and Scala's Traits support state and behavior, while Java and Kotlin's interfaces only support behavior.
-

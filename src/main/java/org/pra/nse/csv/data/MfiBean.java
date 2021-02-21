@@ -9,7 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class AvgBeanNew implements CalcBeanNew {
+public class MfiBean implements CalcBean {
 
     private String symbol;
     //@JsonFormat(pattern="yyyy-MM-dd")
@@ -18,20 +18,16 @@ public class AvgBeanNew implements CalcBeanNew {
     private LocalDate tradeDate;
     private Integer forDays;
 
-    private BigDecimal atpSma;
-    private BigDecimal volSma;
-    private BigDecimal delSma;
-    private BigDecimal foiSma;
+    private BigDecimal volMfi;
+    private BigDecimal delMfi;
 
     public String toCsvString() {
         return symbol +
                 "," + tradeDate +
                 "," + forDays +
 
-                "," + atpSma +
-                "," + volSma +
-                "," + delSma +
-                "," + foiSma;
+                "," + volMfi +
+                "," + delMfi;
     }
 
     public String getSymbol() {
@@ -58,35 +54,21 @@ public class AvgBeanNew implements CalcBeanNew {
         this.forDays = forDays;
     }
 
-    public BigDecimal getAtpSma() {
-        return atpSma;
+    public BigDecimal getVolMfi() {
+        return volMfi;
     }
 
-    public void setAtpSma(BigDecimal atpSma) {
-        this.atpSma = atpSma;
+    public MfiBean setVolMfi(BigDecimal volMfi) {
+        this.volMfi = volMfi;
+        return this;
     }
 
-    public BigDecimal getVolSma() {
-        return volSma;
+    public BigDecimal getDelMfi() {
+        return delMfi;
     }
 
-    public void setVolSma(BigDecimal volSma) {
-        this.volSma = volSma;
-    }
-
-    public BigDecimal getDelSma() {
-        return delSma;
-    }
-
-    public void setDelSma(BigDecimal delSma) {
-        this.delSma = delSma;
-    }
-
-    public BigDecimal getFoiSma() {
-        return foiSma;
-    }
-
-    public void setFoiSma(BigDecimal foiSma) {
-        this.foiSma = foiSma;
+    public MfiBean setDelMfi(BigDecimal delMfi) {
+        this.delMfi = delMfi;
+        return this;
     }
 }

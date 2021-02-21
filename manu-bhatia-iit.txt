@@ -1,0 +1,40 @@
+How do you take your intraday trades?
+
+What I look for is an imbalance in the stock.
+I get in after a huge price movement is visible in the stock.
+I then look for an entry to participate in the rally which could either last for a few minutes or a couple of hours.
+Average True Range (ATR) shooting up is one of the criteria that I look out for.
+
+I only trade in cash market in intraday and lookout for stocks where the implied volatility (IV) is at historic high.
+These high volatility stocks make for good candidates for intra-day trading.
+I look to participate in line with the trend but am open to taking a trade in the other direction.
+
+Suppose that a volatile stock is trading close to its all-time high.
+It could either run past these levels or it can test the high and fall.
+These are the points where I look to trade.
+I might take a position where the stock moves first, but I am equally comfortable in changing my direction if a pivot point is taken off.
+
+My stop loss points are generally at pivot lows, or it can be the low of the day, low of the previous day or some such point.
+I normally keep 2 levels of protection for my stop loss points.
+
+For my exits, I look for optimum exit points.
+Suppose if I am risking Rs 10,000 on a trade and if I see a Rs 20,000 profit in it I will move my stop loss closer to protect the profit.
+I might even at times book partially or trail the trade with a very tight stop loss.
+
+In the intra-day strategy,
+my win to loss trades is between 50-60 percent with a risk-reward of Rs 2 for every rupee risked.
+
+
+What about the positional strategy?
+
+Positional strategy is completely different. Here I am looking to enter a sustained trend or a resumption of a trend.
+Here the requirement is that there should be a confluence of multiple things.
+It can be a trendline and a moving average bounce or a support level and moving average.
+Such stocks then come in my watch list.
+
+I then look for triggers in the form of either an increase in open interest or a big candle
+which will confirm that market is respecting this confluence.
+I follow the positional strategy mainly in Nifty and Bank Nifty as I find that doing it for stocks is riskier.
+
+In positional trade,
+the win to loss ratio is better at 65 percent with the same risk-reward as that of intraday trades.

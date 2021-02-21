@@ -88,8 +88,8 @@ public class CmCsvReader {
                 new DMinMax(0L, DMinMax.MAX_DOUBLE), // tot trd val
                 new ParseDate(ApCo.PRA_CM_DATA_DATE_FORMAT), // timestamp
                 new LMinMax(0L, LMinMax.MAX_LONG), // totalTrades
-                new NotNull(), // isin
-                null
+                new NotNull() // isin
+                , null
         };
     }
 

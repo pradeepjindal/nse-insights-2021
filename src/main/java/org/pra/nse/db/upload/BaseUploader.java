@@ -16,22 +16,24 @@ public abstract class BaseUploader {
 
     private final String fileDirName;
     private final String filePrefix;
+    private final LocalDate defaultDate;
 
-    protected BaseUploader(PraFileUtils praFileUtils, String fileDirName, String filePrefix) {
+    protected BaseUploader(PraFileUtils praFileUtils, String fileDirName, String filePrefix, LocalDate defaultDate) {
         this.praFileUtils = praFileUtils;
         this.fileDirName = fileDirName;
         this.filePrefix = filePrefix;
+        this.defaultDate = defaultDate;
     }
 
 
     public void uploadFromDefaultDate() {
-        uploadFromDate(ApCo.UPLOAD_NSE_FROM_DATE);
+        uploadFromDate(defaultDate);
     }
     public void uploadFromDate(LocalDate fromDate) {
         looper(fromDate);
     }
 
-    public void uploadFromLastDate() {
+    public void uploadFromLatestDate() {
         String dataDir = ApCo.ROOT_DIR + File.separator + fileDirName;
         String str = praFileUtils.getLatestFileNameFor(dataDir, filePrefix, ApCo.DATA_FILE_EXT, 1);
         LocalDate dt = str == null ? LocalDate.now() : DateUtils.getLocalDateFromPath(str);
@@ -47,7 +49,7 @@ public abstract class BaseUploader {
         LocalDate processingDate = fromDate.minusDays(1);
         do {
             processingDate = processingDate.plusDays(1);
-            LOGGER.info("upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
+            LOGGER.info("{} | upload processing date: [{}], {}", filePrefix, processingDate, processingDate.getDayOfWeek());
             if(DateUtils.isTradingOnHoliday(processingDate)) {
                 uploadForDate(processingDate);
             } else if (DateUtils.isWeekend(processingDate)) {

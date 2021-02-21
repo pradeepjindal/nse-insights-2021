@@ -16,6 +16,9 @@ public class DmDao {
     @Value("${dmDataCountForDateSql}")
     private String rowsCountForTradeDateSql;
 
+    @Value("${dmDeleteForDateSql}")
+    private String rowsDeleteForTradeDateSql;
+
     DmDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -28,6 +31,14 @@ public class DmDao {
                 rowsCountForTradeDateSql,
                 Integer.class,
                 tradeDate.toString());
+    }
+
+    public int dataDelete(LocalDate tradeDate) {
+        return jdbcTemplate.update(
+                rowsDeleteForTradeDateSql,
+                Integer.class,
+                tradeDate.toString()
+        );
     }
 
 }

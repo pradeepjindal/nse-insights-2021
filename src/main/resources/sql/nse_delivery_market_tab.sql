@@ -15,7 +15,8 @@ CREATE TABLE public.nse_delivery_market_tab (
                                                 traded_qty bigint,
                                                 deliverable_qty bigint,
                                                 delivery_to_trade_ratio numeric(18,2),
-                                                trade_date date NOT NULL
+                                                trade_date date NOT NULL,
+                                                tds character varying(10)
 );
 
 ALTER TABLE public.nse_delivery_market_tab OWNER TO postgres;

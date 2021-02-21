@@ -12,14 +12,14 @@ import java.util.function.Function;
 /**
  * CAO Csv Access Object
  */
-public class RsiCaoNew {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RsiCaoNew.class);
+public class RsiCao {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RsiCao.class);
 
 
     public static void saveOverWrite(String csvHeaderString,
-                                     List<CalcBeanNew> beans,
+                                     List<CalcBean> beans,
                                      String toPath,
-                                     Function<CalcBeanNew, String> csvStringFunction) {
+                                     Function<CalcBean, String> csvStringFunction) {
         // create and collect csv lines
         List<String> csvLines = new ArrayList<>();
         //symbolMap.values().forEach( list -> list.forEach( dto -> csvLines.add(dto.toFullCsvString())));
@@ -38,7 +38,7 @@ public class RsiCaoNew {
         }
     }
 
-    public static void saveAppend(List<RsiBeanNew> dtos) {
+    public static void saveAppend(List<RsiBean> dtos) {
 
         //List<RsiEntity> rsiBeans0 = RsiData.load();
         String toPath = ApCo.ROOT_DIR + File.separator + ApCo.COMPUTE_DIR_NAME + File.separator + "rsi.csv";

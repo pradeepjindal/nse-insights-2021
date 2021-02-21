@@ -1,9 +1,9 @@
 package org.pra.nse.calculation;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.csv.data.AvgBeanNew;
-import org.pra.nse.csv.data.AvgCaoNew;
-import org.pra.nse.csv.data.CalcBeanNew;
+import org.pra.nse.csv.data.AvgBean;
+import org.pra.nse.csv.data.AvgCao;
+import org.pra.nse.csv.data.CalcBean;
 import org.pra.nse.db.dto.DeliverySpikeDto;
 import org.pra.nse.service.DataServiceI;
 import org.pra.nse.service.DateService;
@@ -22,8 +22,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 @Component
-public class AvgCalculatorNew {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AvgCalculatorNew.class);
+public class AvgCalculator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AvgCalculator.class);
 
     private final String calc_name = CalcCons.AVG_FILE_PREFIX;
     private final String csv_header = CalcCons.AVG_CSV_HEADER_NEW;
@@ -35,18 +35,18 @@ public class AvgCalculatorNew {
     private final DataServiceI dataService;
     private final DateService dateService;
 
-    public AvgCalculatorNew(NseFileUtils nseFileUtils, PraFileUtils praFileUtils,
-                            DataServiceI dataService,
-                            DateService dateService) {
+    public AvgCalculator(NseFileUtils nseFileUtils, PraFileUtils praFileUtils,
+                         DataServiceI dataService,
+                         DateService dateService) {
         this.nseFileUtils = nseFileUtils;
         this.praFileUtils = praFileUtils;
         this.dataService = dataService;
         this.dateService = dateService;
     }
 
-    public List<AvgBeanNew> calculateAndReturn(LocalDate forDate) {
-        List<AvgBeanNew> beansMap = prepareData(forDate);
-        List<CalcBeanNew> calcBeanList = new ArrayList<>();
+    public List<AvgBean> calculateAndReturn(LocalDate forDate) {
+        List<AvgBean> beansMap = prepareData(forDate);
+        List<CalcBean> calcBeanList = new ArrayList<>();
         beansMap.forEach( bean -> {
             calcBeanList.add(bean);
         });
@@ -65,8 +65,8 @@ public class AvgCalculatorNew {
             return;
         }
 
-        List<AvgBeanNew> beansMap = prepareData(forDate);
-        List<CalcBeanNew> calcBeanList = new ArrayList<>();
+        List<AvgBean> beansMap = prepareData(forDate);
+        List<CalcBean> calcBeanList = new ArrayList<>();
         beansMap.forEach( bean -> {
             calcBeanList.add(bean);
         });
@@ -76,39 +76,39 @@ public class AvgCalculatorNew {
         }
     }
 
-    private List<AvgBeanNew> prepareData(LocalDate forDate) {
+    private List<AvgBean> prepareData(LocalDate forDate) {
         int[] forDaysArray = {20, 15, 10, 5, 3};
         return prepareData(forDate, forDaysArray);
     }
-    private List<AvgBeanNew> prepareData(LocalDate forDate, int[] forDaysArray) {
+    private List<AvgBean> prepareData(LocalDate forDate, int[] forDaysArray) {
         LocalDate latestNseDate = praFileUtils.getLatestNseDateCD();
         if(forDate.isAfter(latestNseDate)) return Collections.emptyList();
 
         Map<String, List<DeliverySpikeDto>> symbolMap;
-        List<AvgBeanNew> beans = new ArrayList<>();
+        List<AvgBean> beans = new ArrayList<>();
 
         //int[] forDaysArray = {20, 10, 5, 3};
         for(int i=0; i<forDaysArray.length; i++) {
             int forDays = forDaysArray[i];
             LOGGER.info("{} calculating for {} days", calc_name, forDays);
             symbolMap = dataService.getRawDataBySymbol(forDate, forDays);
-            List<AvgBeanNew> list = loopIt(forDate, forDays, symbolMap);
+            List<AvgBean> list = loopIt(forDate, forDays, symbolMap);
             beans.addAll(list);
         }
         //
         return beans;
     }
 
-    private List<AvgBeanNew> loopIt(LocalDate forDate, int forDays,
-                        Map<String, List<DeliverySpikeDto>> symbolDtosMap) {
-        List<AvgBeanNew> beans = new ArrayList<>();
+    private List<AvgBean> loopIt(LocalDate forDate, int forDays,
+                                 Map<String, List<DeliverySpikeDto>> symbolDtosMap) {
+        List<AvgBean> beans = new ArrayList<>();
         symbolDtosMap.forEach( (mapSymbol, mapDtoList_OfGivenSymbol) -> {
             String listSymbol = mapDtoList_OfGivenSymbol.get(0).getSymbol();
             if(!mapSymbol.equals(listSymbol)) {
                 throw new RuntimeException("symbol mismatch");
             }
 
-            AvgBeanNew bean = new AvgBeanNew();
+            AvgBean bean = new AvgBean();
             bean.setSymbol(mapSymbol);
             bean.setTradeDate(forDate);
             bean.setForDays(forDays);
@@ -188,9 +188,9 @@ public class AvgCalculatorNew {
         //LOGGER.info("for symbol = {}, avg = {}", symbol, avg);
     }
 
-    private void saveToCsv(LocalDate forDate, List<CalcBeanNew> beans) {
+    private void saveToCsv(LocalDate forDate, List<CalcBean> beans) {
         String computeToFilePath = getComputeOutputPath(forDate);
-        AvgCaoNew.saveOverWrite(csv_header, beans, computeToFilePath, bean -> bean.toCsvString());
+        AvgCao.saveOverWrite(csv_header, beans, computeToFilePath, bean -> bean.toCsvString());
         LOGGER.info("{} | saved on disk ({})", calc_name, computeToFilePath);
     }
 

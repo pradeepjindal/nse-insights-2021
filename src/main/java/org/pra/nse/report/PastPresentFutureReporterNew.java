@@ -2,14 +2,13 @@ package org.pra.nse.report;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.db.dto.DeliverySpikeDto;
-import org.pra.nse.db.model.CalcAvgTabNew;
-import org.pra.nse.db.model.CalcMfiTabNew;
-import org.pra.nse.db.model.CalcRsiTabNew;
-import org.pra.nse.db.repository.CalcAvgRepoNew;
-import org.pra.nse.db.repository.CalcMfiRepoNew;
-import org.pra.nse.db.repository.CalcRsiRepoNew;
+import org.pra.nse.db.model.CalcAvgTab;
+import org.pra.nse.db.model.CalcMfiTab;
+import org.pra.nse.db.model.CalcRsiTab;
+import org.pra.nse.db.repository.CalcAvgRepo;
+import org.pra.nse.db.repository.CalcMfiRepo;
+import org.pra.nse.db.repository.CalcRsiRepo;
 import org.pra.nse.email.EmailService;
-import org.pra.nse.refdata.RefData;
 import org.pra.nse.service.DataServiceI;
 import org.pra.nse.service.DateService;
 import org.pra.nse.util.*;
@@ -34,9 +33,9 @@ public class PastPresentFutureReporterNew {
 
     private final String outputDirName = ApCo.REPORTS_DIR_NAME_PPF_NEW;
 
-    private final CalcRsiRepoNew calcRsiRepository;
-    private final CalcMfiRepoNew calcMfiRepository;
-    private final CalcAvgRepoNew calcAvgRepository;
+    private final CalcRsiRepo calcRsiRepository;
+    private final CalcMfiRepo calcMfiRepository;
+    private final CalcAvgRepo calcAvgRepository;
     private final EmailService emailService;
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
@@ -44,9 +43,9 @@ public class PastPresentFutureReporterNew {
     private final DataServiceI dataService;
     private final DateService dateService;
 
-    PastPresentFutureReporterNew(CalcRsiRepoNew calcRsiRepository,
-                                 CalcMfiRepoNew calcMfiRepository,
-                                 CalcAvgRepoNew calcAvgRepository,
+    PastPresentFutureReporterNew(CalcRsiRepo calcRsiRepository,
+                                 CalcMfiRepo calcMfiRepository,
+                                 CalcAvgRepo calcAvgRepository,
                                  EmailService emailService,
                                  NseFileUtils nseFileUtils,
                                  PraFileUtils praFileUtils,
@@ -112,9 +111,9 @@ public class PastPresentFutureReporterNew {
         loadMfi(forDate, forMinusDays);
 
         // load avg
-        List<CalcAvgTabNew> oldAvgListAll = calcAvgRepository.findAll();
-        List<CalcAvgTabNew> oldAvgList = calcAvgRepository.findByTradeDateAndForDays(minDate, forMinusDays);
-        Map<String, CalcAvgTabNew> calcAvgMap = oldAvgList.stream().collect(Collectors.toMap(row->row.getSymbol(), row-> row));
+        List<CalcAvgTab> oldAvgListAll = calcAvgRepository.findAll();
+        List<CalcAvgTab> oldAvgList = calcAvgRepository.findByTradeDateAndForDays(minDate, forMinusDays);
+        Map<String, CalcAvgTab> calcAvgMap = oldAvgList.stream().collect(Collectors.toMap(row->row.getSymbol(), row-> row));
 
         Map<String, List<DeliverySpikeDto>> symbolMap = dataService.getRichDataBySymbol(forDate, forMinusDays);
         ReportHelperNew.enrichGrowth(calcAvgMap, symbolMap);
@@ -149,8 +148,8 @@ public class PastPresentFutureReporterNew {
     private void loadRsi(LocalDate forDate, int forMinusDays) {
         LocalDate minDate = dateService.getMinTradeDate(forDate, forMinusDays+1);
 
-        List<CalcRsiTabNew> oldRsiListOrdered = calcRsiRepository.findByForDaysAndTradeDateIsBetweenOrderBySymbolAscTradeDateAsc(forMinusDays, minDate, forDate);
-        Map<LocalDate, Map<String, CalcRsiTabNew>> tradeDateAndSymbolWise_RsiDoubleMap;
+        List<CalcRsiTab> oldRsiListOrdered = calcRsiRepository.findByForDaysAndTradeDateIsBetweenOrderBySymbolAscTradeDateAsc(forMinusDays, minDate, forDate);
+        Map<LocalDate, Map<String, CalcRsiTab>> tradeDateAndSymbolWise_RsiDoubleMap;
         tradeDateAndSymbolWise_RsiDoubleMap = ReportUtils.transformRsiInto_TradeDateAndSymbol_DoubleMap(oldRsiListOrdered);
 
         //List<CalcRsiTabNew> oldRsiListForRange = calcRsiRepository.findByForDaysAndTradeDateIsBetween(forMinusDays, minDate, forDate);
@@ -162,7 +161,7 @@ public class PastPresentFutureReporterNew {
         DeliverySpikeDto tdyDto = null;
         DeliverySpikeDto bckDto = null;
         BigDecimal chg = null;
-        for(CalcRsiTabNew oldRsi:oldRsiListOrdered) {
+        for(CalcRsiTab oldRsi:oldRsiListOrdered) {
             if(tradeDateAndSymbolWise_DoubleMap.containsKey(oldRsi.getTradeDate())) {
                 if(tradeDateAndSymbolWise_DoubleMap.get(oldRsi.getTradeDate()).containsKey(oldRsi.getSymbol())) {
                     tdyDto = tradeDateAndSymbolWise_DoubleMap.get(oldRsi.getTradeDate()).get(oldRsi.getSymbol());
@@ -192,8 +191,8 @@ public class PastPresentFutureReporterNew {
 
     private void loadMfi(LocalDate forDate, int forMinusDays) {
         LocalDate minDate = dateService.getMinTradeDate(forDate, forMinusDays+1);
-        List<CalcMfiTabNew> oldMfiListOrdered = calcMfiRepository.findByForDaysAndTradeDateIsBetweenOrderBySymbolAscTradeDateAsc(forMinusDays, minDate, forDate);
-        Map<LocalDate, Map<String, CalcMfiTabNew>> tradeDateAndSymbolWise_MfiDoubleMap;
+        List<CalcMfiTab> oldMfiListOrdered = calcMfiRepository.findByForDaysAndTradeDateIsBetweenOrderBySymbolAscTradeDateAsc(forMinusDays, minDate, forDate);
+        Map<LocalDate, Map<String, CalcMfiTab>> tradeDateAndSymbolWise_MfiDoubleMap;
         tradeDateAndSymbolWise_MfiDoubleMap = ReportUtils.transformMfiInto_TradeDateAndSymbol_DoubleMap(oldMfiListOrdered);
 
         //List<CalcMfiTabNew> oldMfiListForRange = calcMfiRepository.findByForDaysAndTradeDateIsBetween(forMinusDays, minDate, forDate);
@@ -206,7 +205,7 @@ public class PastPresentFutureReporterNew {
         DeliverySpikeDto tdyDto = null;
         DeliverySpikeDto bckDto = null;
         BigDecimal chg = null;
-        for(CalcMfiTabNew oldMfi:oldMfiListOrdered) {
+        for(CalcMfiTab oldMfi:oldMfiListOrdered) {
             if(tradeDateAndSymbolWise_DoubleMap.containsKey(oldMfi.getTradeDate())) {
                 if(tradeDateAndSymbolWise_DoubleMap.get(oldMfi.getTradeDate()).containsKey(oldMfi.getSymbol())) {
                     tdyDto = tradeDateAndSymbolWise_DoubleMap.get(oldMfi.getTradeDate()).get(oldMfi.getSymbol());
@@ -230,7 +229,7 @@ public class PastPresentFutureReporterNew {
         return;
     }
 
-    private boolean filterDate(CalcAvgTabNew pojo, LocalDate minDate, LocalDate maxDate) {
+    private boolean filterDate(CalcAvgTab pojo, LocalDate minDate, LocalDate maxDate) {
         return pojo.getTradeDate().isAfter(minDate.minusDays(1)) && pojo.getTradeDate().isBefore(maxDate.plusDays(1));
     }
 

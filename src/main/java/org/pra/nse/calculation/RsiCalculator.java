@@ -1,9 +1,9 @@
 package org.pra.nse.calculation;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.csv.data.CalcBeanNew;
-import org.pra.nse.csv.data.RsiBeanNew;
-import org.pra.nse.csv.data.RsiCaoNew;
+import org.pra.nse.csv.data.CalcBean;
+import org.pra.nse.csv.data.RsiBean;
+import org.pra.nse.csv.data.RsiCao;
 import org.pra.nse.db.dto.DeliverySpikeDto;
 import org.pra.nse.service.DataServiceI;
 import org.pra.nse.util.NseFileUtils;
@@ -21,8 +21,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 @Component
-public class RsiCalculatorNew {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RsiCalculatorNew.class);
+public class RsiCalculator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RsiCalculator.class);
 
     private final String calc_name = CalcCons.RSI_FILE_PREFIX;
     private final String csv_header = CalcCons.RSI_CSV_HEADER_NEW;
@@ -33,16 +33,16 @@ public class RsiCalculatorNew {
     private final PraFileUtils praFileUtils;
     private final DataServiceI dataService;
 
-    RsiCalculatorNew(NseFileUtils nseFileUtils, PraFileUtils praFileUtils, DataServiceI dataService) {
+    RsiCalculator(NseFileUtils nseFileUtils, PraFileUtils praFileUtils, DataServiceI dataService) {
         this.nseFileUtils = nseFileUtils;
         this.praFileUtils = praFileUtils;
         this.dataService = dataService;
     }
 
-    public List<RsiBeanNew> calculateAndReturn(LocalDate forDate) {
+    public List<RsiBean> calculateAndReturn(LocalDate forDate) {
         int[] forDaysArray = {20, 15, 10, 5, 3};
-        List<RsiBeanNew> beans = prepareData(forDate, forDaysArray);
-        List<CalcBeanNew> calcBeanList = new ArrayList<>();
+        List<RsiBean> beans = prepareData(forDate, forDaysArray);
+        List<CalcBean> calcBeanList = new ArrayList<>();
         beans.forEach( bean -> {
             calcBeanList.add(bean);
         });
@@ -61,8 +61,8 @@ public class RsiCalculatorNew {
             return;
         }
 
-        List<RsiBeanNew> beans = prepareData(forDate);
-        List<CalcBeanNew> calcBeanList = new ArrayList<>();
+        List<RsiBean> beans = prepareData(forDate);
+        List<CalcBean> calcBeanList = new ArrayList<>();
         beans.forEach( bean -> {
             calcBeanList.add(bean);
         });
@@ -72,38 +72,38 @@ public class RsiCalculatorNew {
         }
     }
 
-    private List<RsiBeanNew> prepareData(LocalDate forDate) {
+    private List<RsiBean> prepareData(LocalDate forDate) {
         int[] forDaysArray = {20, 10, 5, 3};
         return prepareData(forDate, forDaysArray);
     }
-    private List<RsiBeanNew> prepareData(LocalDate forDate, int[] forDaysArray) {
+    private List<RsiBean> prepareData(LocalDate forDate, int[] forDaysArray) {
         LocalDate latestNseDate = praFileUtils.getLatestNseDateCD();
         if(forDate.isAfter(latestNseDate)) return Collections.emptyList();
 
         Map<String, List<DeliverySpikeDto>> symbolMap;
-        List<RsiBeanNew> beans = new ArrayList<>();
+        List<RsiBean> beans = new ArrayList<>();
 
         //int[] forDaysArray = {20, 10, 5, 3};
         for(int i=0; i<forDaysArray.length; i++) {
             int forDays = forDaysArray[i];
             LOGGER.info("{} calculating for {} days", calc_name, forDays);
             symbolMap = dataService.getRawDataBySymbol(forDate, forDays);
-            List<RsiBeanNew> list = loopIt(forDate, forDays, symbolMap);
+            List<RsiBean> list = loopIt(forDate, forDays, symbolMap);
             beans.addAll(list);
         }
         //
         return beans;
     }
 
-    private List<RsiBeanNew> loopIt(LocalDate forDate, int forDays, Map<String, List<DeliverySpikeDto>> symbolDtoMap) {
-        List<RsiBeanNew> beans = new ArrayList<>();
+    private List<RsiBean> loopIt(LocalDate forDate, int forDays, Map<String, List<DeliverySpikeDto>> symbolDtoMap) {
+        List<RsiBean> beans = new ArrayList<>();
         symbolDtoMap.forEach( (mapSymbol, mapDtoList_OfGivenSymbol) -> {
             String listSymbol = mapDtoList_OfGivenSymbol.get(0).getSymbol();
             if(!mapSymbol.equals(listSymbol)) {
                 throw new RuntimeException("symbol mismatch");
             }
 
-            RsiBeanNew bean = new RsiBeanNew();
+            RsiBean bean = new RsiBean();
             bean.setSymbol(mapSymbol);
             bean.setTradeDate(forDate);
             bean.setForDays(forDays);
@@ -232,9 +232,9 @@ public class RsiCalculatorNew {
         //LOGGER.info("for symbol = {}, rsi = {}", symbol, rsi);
     }
 
-    private void saveToCsv(LocalDate forDate, List<CalcBeanNew> beans) {
+    private void saveToCsv(LocalDate forDate, List<CalcBean> beans) {
         String computeToFilePath = getComputeOutputPath(forDate);
-        RsiCaoNew.saveOverWrite(csv_header, beans, computeToFilePath, bean -> bean.toCsvString());
+        RsiCao.saveOverWrite(csv_header, beans, computeToFilePath, bean -> bean.toCsvString());
         LOGGER.info("{} | saved on disk ({})", calc_name, computeToFilePath);
     }
     private String getComputeOutputPath(LocalDate forDate) {

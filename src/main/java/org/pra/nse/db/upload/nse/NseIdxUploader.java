@@ -36,7 +36,7 @@ public class NseIdxUploader extends BaseUploader {
                           NseFileUtils nseFileUtils,
                           PraFileUtils praFileUtils,
                           IdxCsvReader csvReader ) {
-        super(praFileUtils, NseCons.IDX_DIR_NAME, ApCo.PRA_IDX_FILE_PREFIX);
+        super(praFileUtils, NseCons.IDX_DIR_NAME, ApCo.PRA_IDX_FILE_PREFIX, ApCo.NSE_IDX_FILE_AVAILABLE_FROM_DATE);
         this.repository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;
@@ -51,7 +51,7 @@ public class NseIdxUploader extends BaseUploader {
             LOGGER.info("IDX-upload | SKIPPING - already uploaded | for date:[{}]", forDate);
             return;
         } else {
-            LOGGER.info("IDX-upload | uploading | for date:[{}]", forDate);
+//            LOGGER.info("IDX-upload | uploading - for date:[{}]", forDate);
         }
 
         String fromFile = NseCons.IDX_FILES_PATH + File.separator+ ApCo.PRA_IDX_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;

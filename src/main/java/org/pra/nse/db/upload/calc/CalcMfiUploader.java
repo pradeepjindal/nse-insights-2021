@@ -1,11 +1,11 @@
 package org.pra.nse.db.upload.calc;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.calculation.AvgCalculatorNew;
 import org.pra.nse.calculation.CalcCons;
-import org.pra.nse.csv.data.AvgBeanNew;
-import org.pra.nse.db.model.CalcAvgTabNew;
-import org.pra.nse.db.repository.CalcAvgRepoNew;
+import org.pra.nse.calculation.MfiCalculator;
+import org.pra.nse.csv.data.MfiBean;
+import org.pra.nse.db.model.CalcMfiTab;
+import org.pra.nse.db.repository.CalcMfiRepo;
 import org.pra.nse.db.upload.BaseUploader;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -19,34 +19,33 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.pra.nse.calculation.CalcCons.AVG_FILE_PREFIX;
-
 @Component
-public class CalcAvgUploaderNew extends BaseUploader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CalcAvgUploaderNew.class);
+public class CalcMfiUploader extends BaseUploader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CalcMfiUploader.class);
 
-    private final String calc_name = CalcCons.AVG_DATA_NAME;
+    private final String calc_name = CalcCons.MFI_DATA_NAME;
 
-    private final CalcAvgRepoNew repo;
-    private final AvgCalculatorNew calculator;
+    private final MfiCalculator calculator;
+    private final CalcMfiRepo repo;
 
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
 
-    public CalcAvgUploaderNew(CalcAvgRepoNew repo, AvgCalculatorNew calculator,
-                              NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
-        super(praFileUtils, CalcCons.AVG_DIR_NAME_NEW, AVG_FILE_PREFIX);
-        this.repo = repo;
+    public CalcMfiUploader(MfiCalculator calculator,
+                           CalcMfiRepo repo,
+                           NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
+        super(praFileUtils, CalcCons.MFI_DIR_NAME_NEW, CalcCons.MFI_FILE_PREFIX, ApCo.UPLOAD_CALC_FROM_DATE);
         this.calculator = calculator;
+        this.repo = repo;
         this.nseFileUtils = nseFileUtils;
         this.praFileUtils = praFileUtils;
     }
 
     public void uploadForDate(LocalDate forDate) {
         //
-        String fileName = CalcCons.AVG_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
-        String fromFile = CalcCons.AVG_FILES_PATH_NEW +File.separator+ fileName;
-        LOGGER.info("{} upload | looking for file Name along with path:[{}]",calc_name, fromFile);
+        String fileName = CalcCons.MFI_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
+        String fromFile = CalcCons.MFI_FILES_PATH_NEW +File.separator+ fileName;
+//        LOGGER.info("{} upload | looking for file Name along with path:[{}]",calc_name, fromFile);
 
         if(!nseFileUtils.isFileExist(fromFile)) {
             LOGGER.warn("{} upload | file does not exist: [{}]", calc_name, fromFile);
@@ -56,7 +55,7 @@ public class CalcAvgUploaderNew extends BaseUploader {
         //
         //int dataCtr = dao.dataCount(forDate);
         int dataCtr = repo.countByTradeDate(forDate);
-//        List<AvgBean> beans = calculator.calculateAndReturn(forDate);
+//        List<MfiBean> beans = calculator.calculateAndReturn(forDate);
 //        if (dataCtr == 0) {
 //            LOGGER.info("{} upload | uploading | for date:[{}]", calc_name, forDate);
 //            upload(beans);
@@ -66,17 +65,22 @@ public class CalcAvgUploaderNew extends BaseUploader {
 //            LOGGER.warn("{} | upload skipped, discrepancy in data dbRecords={}, dtoSize={}", calc_name, dataCtr, beans.size());
 //        }
         if (dataCtr == 0) {
-            LOGGER.info("{} upload | uploading | for date:[{}]", calc_name, forDate);
-            List<AvgBeanNew> beans = calculator.calculateAndReturn(forDate);
+            LOGGER.info("{} upload | uploading - for date:[{}]", calc_name, forDate);
+            List<MfiBean> beans = calculator.calculateAndReturn(forDate);
             upload(beans);
+        } else if(dataCtr > 0 && ApCo.RE_UPLOAD_CALC && ApCo.RE_UPLOAD_CALC_FROM_DATE.isBefore(forDate)) {
+            LOGGER.info("{} upload | RE-UPLOADING - for date:[{}]", calc_name, forDate);
+            repo.deleteByTradeDate(forDate);
+        }  else {
+            LOGGER.info("{} upload | SKIPPING (already uploaded) - for date:[{}]", calc_name, forDate);
         }
     }
 
-    private void upload(List<AvgBeanNew> beans) {
+    private void upload(List<MfiBean> beans) {
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();
 
-        CalcAvgTabNew tab = new CalcAvgTabNew();
+        CalcMfiTab tab = new CalcMfiTab();
         beans.forEach(bean -> {
             tab.reset();
             tab.setSymbol(bean.getSymbol());
@@ -85,10 +89,8 @@ public class CalcAvgUploaderNew extends BaseUploader {
             //tab.setTds(bean.getTradeDate().toString());
             tab.setForDays(bean.getForDays());
 
-            tab.setAtpSma(bean.getAtpSma());
-            tab.setVolSma(bean.getVolSma());
-            tab.setDelSma(bean.getDelSma());
-            tab.setFoiSma(bean.getFoiSma());
+            tab.setVolAtpMfiSma(bean.getVolMfi());
+            tab.setDelAtpMfiSma(bean.getDelMfi());
 
             try {
                 repo.save(tab);

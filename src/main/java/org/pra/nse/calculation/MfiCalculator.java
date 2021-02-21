@@ -1,9 +1,9 @@
 package org.pra.nse.calculation;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.csv.data.CalcBeanNew;
-import org.pra.nse.csv.data.MfiBeanNew;
-import org.pra.nse.csv.data.MfiCaoNew;
+import org.pra.nse.csv.data.CalcBean;
+import org.pra.nse.csv.data.MfiBean;
+import org.pra.nse.csv.data.MfiCao;
 import org.pra.nse.db.dto.DeliverySpikeDto;
 import org.pra.nse.service.DataServiceI;
 import org.pra.nse.util.NseFileUtils;
@@ -21,8 +21,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 @Component
-public class MfiCalculatorNew {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MfiCalculatorNew.class);
+public class MfiCalculator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MfiCalculator.class);
 
     private final String calc_name = CalcCons.MFI_FILE_PREFIX;
     private final String csv_header = CalcCons.MFI_CSV_HEADER_NEW;
@@ -36,18 +36,18 @@ public class MfiCalculatorNew {
     private final PraFileUtils praFileUtils;
 
 
-    public MfiCalculatorNew(DataServiceI dataService,
-                            NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
+    public MfiCalculator(DataServiceI dataService,
+                         NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
         this.dataService = dataService;
         this.nseFileUtils = nseFileUtils;
         this.praFileUtils = praFileUtils;
     }
 
 
-    public List<MfiBeanNew> calculateAndReturn(LocalDate forDate) {
+    public List<MfiBean> calculateAndReturn(LocalDate forDate) {
         int[] forDaysArray = {20, 15, 10, 5, 3};
-        List<MfiBeanNew> beans = prepareData(forDate, forDaysArray);
-        List<CalcBeanNew> calcBeanList = new ArrayList<>();
+        List<MfiBean> beans = prepareData(forDate, forDaysArray);
+        List<CalcBean> calcBeanList = new ArrayList<>();
         beans.forEach( bean -> {
             calcBeanList.add(bean);
         });
@@ -66,8 +66,8 @@ public class MfiCalculatorNew {
             return;
         }
 
-        List<MfiBeanNew> beans = prepareData(forDate);
-        List<CalcBeanNew> calcBeanList = new ArrayList<>();
+        List<MfiBean> beans = prepareData(forDate);
+        List<CalcBean> calcBeanList = new ArrayList<>();
         beans.forEach( bean -> {
             calcBeanList.add(bean);
         });
@@ -77,38 +77,38 @@ public class MfiCalculatorNew {
         }
     }
 
-    private List<MfiBeanNew> prepareData(LocalDate forDate) {
+    private List<MfiBean> prepareData(LocalDate forDate) {
         int[] forDaysArray = {20, 10, 5, 3};
         return prepareData(forDate, forDaysArray);
     }
-    private List<MfiBeanNew> prepareData(LocalDate forDate, int[] forDaysArray) {
+    private List<MfiBean> prepareData(LocalDate forDate, int[] forDaysArray) {
         LocalDate latestNseDate = praFileUtils.getLatestNseDateCD();
         if(forDate.isAfter(latestNseDate)) return Collections.emptyList();
 
         Map<String, List<DeliverySpikeDto>> symbolMap;
-        List<MfiBeanNew> beans = new ArrayList<>();
+        List<MfiBean> beans = new ArrayList<>();
 
         //int[] forDaysArray = {20, 10, 5, 3};
         for(int i=0; i<forDaysArray.length; i++) {
             int forDays = forDaysArray[i];
             LOGGER.info("{} calculating for {} days", calc_name, forDays);
             symbolMap = dataService.getRawDataBySymbol(forDate, forDays);
-            List<MfiBeanNew> list = loopIt(forDate, forDays, symbolMap);
+            List<MfiBean> list = loopIt(forDate, forDays, symbolMap);
             beans.addAll(list);
         }
         //
         return beans;
     }
 
-    private List<MfiBeanNew> loopIt(LocalDate forDate, int forDays, Map<String, List<DeliverySpikeDto>> symbolDtoMap) {
-        List<MfiBeanNew> beans = new ArrayList<>();
+    private List<MfiBean> loopIt(LocalDate forDate, int forDays, Map<String, List<DeliverySpikeDto>> symbolDtoMap) {
+        List<MfiBean> beans = new ArrayList<>();
         symbolDtoMap.forEach( (mapSymbol, mapDtoList_OfGivenSymbol) -> {
             String listSymbol = mapDtoList_OfGivenSymbol.get(0).getSymbol();
             if(!mapSymbol.equals(listSymbol)) {
                 throw new RuntimeException("symbol mismatch");
             }
 
-            MfiBeanNew bean = new MfiBeanNew();
+            MfiBean bean = new MfiBean();
             bean.setSymbol(mapSymbol);
             bean.setTradeDate(forDate);
             bean.setForDays(forDays);
@@ -221,9 +221,9 @@ public class MfiCalculatorNew {
         //LOGGER.info("for symbol = {}, mfi = {}", symbol, mfi);
     }
 
-    private void saveToCsv(LocalDate forDate, List<CalcBeanNew> beans) {
+    private void saveToCsv(LocalDate forDate, List<CalcBean> beans) {
         String computeToFilePath = getComputeOutputPath(forDate);
-        MfiCaoNew.saveOverWrite(csv_header, beans, computeToFilePath, bean -> bean.toCsvString());
+        MfiCao.saveOverWrite(csv_header, beans, computeToFilePath, bean -> bean.toCsvString());
         LOGGER.info("{} | saved on disk ({})", calc_name, computeToFilePath);
     }
 

@@ -37,9 +37,9 @@ public class DownloadManager implements Manager {
 
         cmDownloader.downloadFromDefaultDate();
         LOGGER.info("----------");
-        fmDownloader.downloadFromDefaultDate();
-        LOGGER.info("----------");
         dmDownloader.downloadFromDefaultDate();
+        LOGGER.info("----------");
+        fmDownloader.downloadFromDefaultDate();
         LOGGER.info("----------");
 //        bpDownloader.downloadFromDefaultDate();
 //        LOGGER.info("----------");

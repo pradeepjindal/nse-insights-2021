@@ -17,19 +17,19 @@ public class CalculationManager implements Manager {
 
     private final NseFileUtils nseFileUtils;
 
-    private final AvgCalculatorNew avgCalculatorNew;
-    private final MfiCalculatorNew mfiCalculatorNew;
-    private final RsiCalculatorNew rsiCalculatorNew;
+    private final AvgCalculator avgCalculator;
+    private final MfiCalculator mfiCalculator;
+    private final RsiCalculator rsiCalculator;
 
 
     public CalculationManager(NseFileUtils nseFileUtils,
-                              AvgCalculatorNew avgCalculatorNew,
-                              MfiCalculatorNew mfiCalculatorNew,
-                              RsiCalculatorNew rsiCalculatorNew) {
+                              AvgCalculator avgCalculator,
+                              MfiCalculator mfiCalculator,
+                              RsiCalculator rsiCalculator) {
         this.nseFileUtils = nseFileUtils;
-        this.avgCalculatorNew = avgCalculatorNew;
-        this.mfiCalculatorNew = mfiCalculatorNew;
-        this.rsiCalculatorNew = rsiCalculatorNew;
+        this.avgCalculator = avgCalculator;
+        this.mfiCalculator = mfiCalculator;
+        this.rsiCalculator = rsiCalculator;
     }
 
     @Override
@@ -44,36 +44,36 @@ public class CalculationManager implements Manager {
         //mfiCalculatorNew.calculateAndSave(LocalDate.of(2020,2,14));
 
         LOGGER.info("----------");
-        nseFileUtils.getDatesToBeComputed(()-> AVG_FILE_PREFIX, CalcCons.AVG_DIR_NAME_NEW, ApCo.CALC_FROM_DATE_NEW)
+        nseFileUtils.getDatesToBeComputed(()-> AVG_FILE_PREFIX, CalcCons.AVG_DIR_NAME_NEW, ApCo.DO_CALC_FROM_DATE)
                 .forEach( forDate -> {
                     LOGGER.info(".");
                     LOGGER.info("calc-{} | for:{}", AVG_FILE_PREFIX, forDate.toString());
                     try {
-                        avgCalculatorNew.calculateAndSave(forDate);
+                        avgCalculator.calculateAndSave(forDate);
                     } catch (Exception e) {
                         LOGGER.error("ERROR: {}", e);
                     }
                 });
 
         LOGGER.info("----------");
-        nseFileUtils.getDatesToBeComputed(()-> MFI_FILE_PREFIX, CalcCons.MFI_DIR_NAME_NEW, ApCo.CALC_FROM_DATE_NEW)
+        nseFileUtils.getDatesToBeComputed(()-> MFI_FILE_PREFIX, CalcCons.MFI_DIR_NAME_NEW, ApCo.DO_CALC_FROM_DATE)
                 .forEach( forDate -> {
                     LOGGER.info(".");
                     LOGGER.info("calc-{} | for:{}", MFI_FILE_PREFIX, forDate.toString());
                     try {
-                        mfiCalculatorNew.calculateAndSave(forDate);
+                        mfiCalculator.calculateAndSave(forDate);
                     } catch (Exception e) {
                         LOGGER.error("ERROR: {}", e);
                     }
                 });
-
+//
         LOGGER.info("----------");
-        nseFileUtils.getDatesToBeComputed(()-> RSI_FILE_PREFIX, CalcCons.RSI_DIR_NAME_NEW, ApCo.CALC_FROM_DATE_NEW)
+        nseFileUtils.getDatesToBeComputed(()-> RSI_FILE_PREFIX, CalcCons.RSI_DIR_NAME_NEW, ApCo.DO_CALC_FROM_DATE)
                 .forEach( forDate -> {
                     LOGGER.info(".");
                     LOGGER.info("calc-{} | for:{}", RSI_FILE_PREFIX, forDate.toString());
                     try {
-                        rsiCalculatorNew.calculateAndSave(forDate);
+                        rsiCalculator.calculateAndSave(forDate);
                     } catch (Exception e) {
                         LOGGER.error("ERROR: {}", e);
                     }

@@ -1,6 +1,6 @@
 package org.pra.nse.calculation;
 
-import org.pra.nse.csv.data.CalcBeanNew;
+import org.pra.nse.csv.data.CalcBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import java.util.Set;
 public class CalcHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(CalcHelper.class);
 
-    public static boolean validateForSavingNew(LocalDate forDate, List<CalcBeanNew> dtos, String filePrefix) {
+    public static boolean validateForSavingNew(LocalDate forDate, List<CalcBean> dtos, String filePrefix) {
         if (dtos == null || dtos.isEmpty()) {
             LOGGER.info("{} | saving skipped, no data supplied", filePrefix);
             return false;

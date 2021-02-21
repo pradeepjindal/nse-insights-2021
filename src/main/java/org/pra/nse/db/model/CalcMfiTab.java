@@ -6,13 +6,13 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "Calc_Mfi_Tab_new")
-public class CalcMfiTabNew implements Serializable {
+@Table(name = "Calc_Mfi_Tab")
+public class CalcMfiTab implements Serializable {
     private static final long serialVersionUID = 1;
 
     @Id
-    @SequenceGenerator(name = "calc_mfi_seq_new", sequenceName = "calc_mfi_seq_new", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "calc_mfi_seq_new")
+    @SequenceGenerator(name = "calc_mfi_seq", sequenceName = "calc_mfi_seq", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "calc_mfi_seq")
     private Long id;
     private String symbol;
     private LocalDate tradeDate;

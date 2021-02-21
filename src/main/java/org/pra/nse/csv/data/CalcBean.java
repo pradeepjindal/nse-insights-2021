@@ -2,7 +2,7 @@ package org.pra.nse.csv.data;
 
 import java.time.LocalDate;
 
-public interface CalcBeanNew {
+public interface CalcBean {
     public String getSymbol();
     public void setSymbol(String symbol);
 
