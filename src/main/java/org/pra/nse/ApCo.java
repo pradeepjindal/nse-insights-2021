@@ -15,6 +15,7 @@ public class ApCo {
     //
     //public static final LocalDate DOWNLOAD_FROM_DATE    = LocalDate.of(2020,7,25);
     public static final LocalDate DOWNLOAD_NSE_FROM_DATE = LocalDate.of(2021,3,1);
+    public static final LocalDate TRANSFORM_NSE_FROM_DATE  = LocalDate.of(2021,2,20);
     public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2021,2,20);
 
     public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2021,2,20);

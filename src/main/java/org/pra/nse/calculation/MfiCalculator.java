@@ -6,6 +6,7 @@ import org.pra.nse.csv.data.MfiBean;
 import org.pra.nse.csv.data.MfiCao;
 import org.pra.nse.db.dto.DeliverySpikeDto;
 import org.pra.nse.service.DataServiceI;
+import org.pra.nse.util.Du;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.NumberUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -190,10 +191,10 @@ public class MfiCalculator {
 //            LOGGER.warn("mfi | forSymbol = {}, forDate = {}, upCtr = {}, dnCtr = {}", symbol, forDate, upCtr, dnCtr);
 //        }
         if(upCtr == 3 && dnCtr == 0) {
-            LOGGER.info("mfi+ | forSymbol = {}, forDate = {}, upCtr = {}, dnCtr = {}", symbol, forDate, upCtr, dnCtr);
+            LOGGER.info("mfi+ | {}, forDate = {}, upCtr = {}, dnCtr = {}", Du.symbol(symbol), forDate, upCtr, dnCtr);
         }
         if(upCtr == 0 && dnCtr == 3) {
-            LOGGER.info("mfi- | forSymbol = {}, forDate = {}, upCtr = {}, dnCtr = {}", symbol, forDate, upCtr, dnCtr);
+            LOGGER.info("mfi- | {}, forDate = {}, upCtr = {}, dnCtr = {}", Du.symbol(symbol), forDate, upCtr, dnCtr);
         }
 
         BigDecimal moneyFlowRatio;

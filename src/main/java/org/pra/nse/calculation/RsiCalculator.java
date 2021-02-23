@@ -6,6 +6,7 @@ import org.pra.nse.csv.data.RsiBean;
 import org.pra.nse.csv.data.RsiCao;
 import org.pra.nse.db.dto.DeliverySpikeDto;
 import org.pra.nse.service.DataServiceI;
+import org.pra.nse.util.Du;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.NumberUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -175,10 +176,10 @@ public class RsiCalculator {
                 dn = dn.add(rawPriceStrength);
                 LOGGER.debug("dn, rawPriceStrength {}, dn {}, dnCtr {}", rawPriceStrength, dn, dnCtr);
             } else {
-                LOGGER.error("rsi | {}, UNKNOWN CONDITION", symbol);
+                LOGGER.error("rsi | {}, UNKNOWN CONDITION", Du.symbol(symbol));
             }
         }
-        LOGGER.debug("rsi | forSymbol = {}, forDate = {}, upCtr = {}, dnCtr = {}", symbol, forDate, upCtr, dnCtr);
+        LOGGER.debug("rsi | {}, forDate = {}, upCtr = {}, dnCtr = {}", Du.symbol(symbol), forDate, upCtr, dnCtr);
 //        if(upCtr == 0 || dnCtr == 0) {
 //            LOGGER.warn("rsi | forSymbol = {}, forDate = {}, upCtr = {}, dnCtr = {}", symbol, forDate, upCtr, dnCtr);
 //        }
@@ -197,38 +198,38 @@ public class RsiCalculator {
 
         BigDecimal rs = BigDecimal.ZERO;
         if(up.compareTo(BigDecimal.ZERO) == 0 && dn.abs().compareTo(BigDecimal.ZERO) == 0) {
-            LOGGER.warn("rsi | {}, Up and Dn both are Zero", symbol);
+            LOGGER.warn("rsi | {}, Up and Dn both are Zero", Du.symbol(symbol));
             rs = BigDecimal.ZERO;
         } else if (up.compareTo(BigDecimal.ZERO) == 1 && dn.abs().compareTo(BigDecimal.ZERO) == 0) {
-            LOGGER.debug("rsi | {}, all closing are Up ({})", symbol, upAvg);
+            LOGGER.debug("rsi | {}, all closing are Up ({})", Du.symbol(symbol), upAvg);
             //rs = up.divide(BigDecimal.ONE, 2, RoundingMode.HALF_UP);
             rs = upAvg;
         } else if (up.compareTo(BigDecimal.ZERO) == 0 && dn.abs().compareTo(BigDecimal.ZERO) == 1) {
-            LOGGER.debug("rsi | {}, all closing are Dn ({})", symbol, dnAvg);
+            LOGGER.debug("rsi | {}, all closing are Dn ({})", Du.symbol(symbol), dnAvg);
             //rs = up.divide(dn.abs(), 2, RoundingMode.HALF_UP);
             rs = BigDecimal.ZERO;
         } else {
-            LOGGER.debug("rsi | {}, Up and Dn both are non-Zero  ({})  ({})", symbol, upAvg, dnAvg);
+            LOGGER.debug("rsi | {}, Up and Dn both are non-Zero  ({})  ({})", Du.symbol(symbol), upAvg, dnAvg);
             //rs = up.divide(dn.abs(), 2, RoundingMode.HALF_UP);
             rs = NumberUtils.divide(upAvg, dnAvg.abs());
         }
-        LOGGER.debug("rsi | {}, (rs) ={}, upAvg = {}, dnAvg = {}", symbol, rs, upAvg, dnAvg);
+        LOGGER.debug("rsi | {}, (rs) ={}, upAvg = {}, dnAvg = {}", Du.symbol(symbol), rs, upAvg, dnAvg);
 
         //rsi = 100 - (100 / (1 + rs));
         //------------------------------------------
         //(1 + rs)
         BigDecimal rsi = rs.add(BigDecimal.ONE);
-        LOGGER.debug("rsi | {}, (1 + rs) = {}", symbol, rsi);
+        LOGGER.debug("rsi | {}, (1 + rs) = {}", Du.symbol(symbol), rsi);
         //(100 / (1 + rs)
         rsi = NumberUtils.divide(NumberUtils.HUNDRED, rsi);
-        LOGGER.debug("rsi | {}, (100 / (1 + rs) = {}", symbol, rsi);
+        LOGGER.debug("rsi | {}, (100 / (1 + rs) = {}", Du.symbol(symbol), rsi);
         //100 - (100 / (1 + rs))
         rsi = NumberUtils.HUNDRED.subtract(rsi);
-        LOGGER.debug("rsi | {}, 100 - (100 / (1 + rs)) = {}", symbol, rsi);
+        LOGGER.debug("rsi | {}, 100 - (100 / (1 + rs)) = {}", Du.symbol(symbol), rsi);
         //===========================================
 
         if(latestDto != null) biConsumer.accept(latestDto, rsi);
-        else LOGGER.warn("skipping rsi, latestDto is null for symbol {}, may be phasing out from FnO", symbol);
+        else LOGGER.warn("skipping rsi, latestDto is null for {}, may be phasing out from FnO", Du.symbol(symbol));
         //LOGGER.info("for symbol = {}, rsi = {}", symbol, rsi);
     }
 

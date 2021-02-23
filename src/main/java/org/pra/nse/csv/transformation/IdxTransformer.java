@@ -35,7 +35,7 @@ public class IdxTransformer extends BaseTransformer {
 
 
     public void transformFromDefaultDate() {
-        transformFromDate(ApCo.DOWNLOAD_NSE_FROM_DATE);
+        transformFromDate(ApCo.TRANSFORM_NSE_FROM_DATE);
     }
     public void transformFromDate(LocalDate fromDate) {
         Map<String, String> filePairMap = prepare(fromDate);

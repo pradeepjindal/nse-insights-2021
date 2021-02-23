@@ -7,6 +7,7 @@ import org.pra.nse.csv.data.CalcBean;
 import org.pra.nse.db.dto.DeliverySpikeDto;
 import org.pra.nse.service.DataServiceI;
 import org.pra.nse.service.DateService;
+import org.pra.nse.util.Du;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.NumberUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -173,10 +174,10 @@ public class AvgCalculator {
             }
         }
         if(ctr != spikeDtoList.size()) {
-            LOGGER.warn("avg | for symbol = {}, ctr mismatch {}", symbol, ctr);
+            LOGGER.warn("avg | {}, ctr mismatch {}", Du.symbol(symbol), ctr);
         }
         if(ctr == 0) {
-            LOGGER.info("avg | for symbol = {}, ctr = {}", symbol, ctr);
+            LOGGER.info("avg | {}, ctr = {}", Du.symbol(symbol), ctr);
         }
 
         //LOGGER.info("latestDto = {}", latestDto.toFullCsvString());
@@ -184,7 +185,7 @@ public class AvgCalculator {
         //===========================================
 
         if(latestDto != null) biConsumer.accept(latestDto, avg);
-        else LOGGER.warn("skipping avg, latestDto is null for symbol {}, may be phasing out from FnO", symbol);
+        else LOGGER.warn("skipping avg, latestDto is null for {}, may be phasing out from FnO", Du.symbol(symbol));
         //LOGGER.info("for symbol = {}, avg = {}", symbol, avg);
     }
 
