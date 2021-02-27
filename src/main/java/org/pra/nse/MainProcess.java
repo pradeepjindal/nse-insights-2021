@@ -6,8 +6,7 @@ import org.pra.nse.csv.transformation.TransformationManager;
 import org.pra.nse.db.upload.CalcUploadManager;
 import org.pra.nse.db.upload.NseUploadManager;
 import org.pra.nse.processor.*;
-import org.pra.nse.refdata.RefData;
-import org.pra.nse.report.ReportManagerNew;
+import org.pra.nse.report.ReportManager;
 import org.pra.nse.statistics.StatisticsManager;
 import org.pra.nse.util.DirUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -16,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
 
 @Component
 public class MainProcess implements ApplicationRunner {
@@ -31,7 +28,7 @@ public class MainProcess implements ApplicationRunner {
     private final CalculationManager calculationManager;
     private final CalcUploadManager calcUploadManager;
     private final ProcessManager processManager;
-    private final ReportManagerNew reportManagerNew;
+    private final ReportManager reportManager;
     private final StatisticsManager statisticsManager;
 
     public MainProcess(PraFileUtils praFileUtils,
@@ -40,7 +37,7 @@ public class MainProcess implements ApplicationRunner {
                        NseUploadManager nseUploadManager,
                        CalculationManager calculationManager,
                        CalcUploadManager calcUploadManager, ProcessManager processManager,
-                       ReportManagerNew reportManagerNew, StatisticsManager statisticsManager) {
+                       ReportManager reportManager, StatisticsManager statisticsManager) {
         this.praFileUtils = praFileUtils;
         this.downloadManager = downloadManager;
         this.transformationManager = transformationManager;
@@ -48,7 +45,7 @@ public class MainProcess implements ApplicationRunner {
         this.calculationManager = calculationManager;
         this.calcUploadManager = calcUploadManager;
         this.processManager = processManager;
-        this.reportManagerNew = reportManagerNew;
+        this.reportManager = reportManager;
         this.statisticsManager = statisticsManager;
     }
 
@@ -67,7 +64,7 @@ public class MainProcess implements ApplicationRunner {
             if(praFileUtils.validateDownloadCD() != null) {
                 calculationManager.execute();
                 calcUploadManager.execute();
-                reportManagerNew.execute();
+                reportManager.execute();
             }
 
 //            if(praFileUtils.validateDownloadCDF() != null) {

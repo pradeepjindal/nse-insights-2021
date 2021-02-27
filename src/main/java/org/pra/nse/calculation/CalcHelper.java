@@ -13,7 +13,7 @@ import java.util.Set;
 public class CalcHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(CalcHelper.class);
 
-    public static boolean validateForSavingNew(LocalDate forDate, List<CalcBean> dtos, String filePrefix) {
+    public static boolean validateForSaving(LocalDate forDate, List<CalcBean> dtos, String filePrefix) {
         if (dtos == null || dtos.isEmpty()) {
             LOGGER.info("{} | saving skipped, no data supplied", filePrefix);
             return false;

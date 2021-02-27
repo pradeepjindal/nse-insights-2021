@@ -28,8 +28,8 @@ import static org.pra.nse.report.ReportConstants.PPF_CSV_HEADER_NEW;
 import static org.pra.nse.report.ReportConstants.PPF_NEW;
 
 @Component
-public class PastPresentFutureReporterNew {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PastPresentFutureReporterNew.class);
+public class PastPresentFutureReporter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PastPresentFutureReporter.class);
 
     private final String outputDirName = ApCo.REPORTS_DIR_NAME_PPF_NEW;
 
@@ -43,13 +43,13 @@ public class PastPresentFutureReporterNew {
     private final DataServiceI dataService;
     private final DateService dateService;
 
-    PastPresentFutureReporterNew(CalcRsiRepo calcRsiRepository,
-                                 CalcMfiRepo calcMfiRepository,
-                                 CalcAvgRepo calcAvgRepository,
-                                 EmailService emailService,
-                                 NseFileUtils nseFileUtils,
-                                 PraFileUtils praFileUtils,
-                                 DataServiceI dataService, DateService dateService) {
+    PastPresentFutureReporter(CalcRsiRepo calcRsiRepository,
+                              CalcMfiRepo calcMfiRepository,
+                              CalcAvgRepo calcAvgRepository,
+                              EmailService emailService,
+                              NseFileUtils nseFileUtils,
+                              PraFileUtils praFileUtils,
+                              DataServiceI dataService, DateService dateService) {
         this.calcRsiRepository = calcRsiRepository;
         this.calcMfiRepository = calcMfiRepository;
         this.calcAvgRepository = calcAvgRepository;
@@ -116,8 +116,8 @@ public class PastPresentFutureReporterNew {
         Map<String, CalcAvgTab> calcAvgMap = oldAvgList.stream().collect(Collectors.toMap(row->row.getSymbol(), row-> row));
 
         Map<String, List<DeliverySpikeDto>> symbolMap = dataService.getRichDataBySymbol(forDate, forMinusDays);
-        ReportHelperNew.enrichGrowth(calcAvgMap, symbolMap);
-        ReportHelperNew.enrichAtpDelAndOiTrend(symbolMap);
+        ReportHelper.enrichGrowth(calcAvgMap, symbolMap);
+        ReportHelper.enrichAtpDelAndOiTrend(symbolMap);
         //atpDelTrend
 
 

@@ -52,7 +52,7 @@ public class MfiCalculator {
         beans.forEach( bean -> {
             calcBeanList.add(bean);
         });
-        if(CalcHelper.validateForSavingNew(forDate, calcBeanList, calc_name)) {
+        if(CalcHelper.validateForSaving(forDate, calcBeanList, calc_name)) {
             return beans;
         } else {
             return Collections.emptyList();
@@ -72,7 +72,7 @@ public class MfiCalculator {
         beans.forEach( bean -> {
             calcBeanList.add(bean);
         });
-        if(CalcHelper.validateForSavingNew(forDate, calcBeanList, calc_name)) {
+        if(CalcHelper.validateForSaving(forDate, calcBeanList, calc_name)) {
             saveToCsv(forDate, calcBeanList);
             //saveToDb(forDate, mfiBeanList);
         }

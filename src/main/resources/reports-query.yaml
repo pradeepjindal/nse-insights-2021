@@ -159,6 +159,7 @@ sqlDeliverySpikeThreeFor30DayzOrderBySymbolAndTradeDate: >
   WHERE tdy.symbol = distinct_future_stocks.symbol
   and tdy.trade_date >= distinct_future_stocks.fut_traded_from_date and tdy.trade_date <= distinct_future_stocks.fut_traded_to_date
   and tdy.one_trade_date = yes.one_trade_Date and tdy.symbol = yes.symbol
+  and tdy.fuOi is not null
   order by tdy.symbol, tdy.trade_date
 
 sqlPastPresentFuture: >

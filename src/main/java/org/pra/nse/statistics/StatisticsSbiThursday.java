@@ -32,7 +32,7 @@ public class StatisticsSbiThursday {
 
         for(List<DeliverySpikeDto> dtos:symbolMap.values()) {
             symbol = dtos.get(0).getSymbol();
-            lotSize = RefData.getLotSize(symbol);
+            lotSize = RefData.getLotSizeValue(symbol);
             if(!"SBIN".equals(symbol)) {
                 //LOGGER.info("");
                 continue;

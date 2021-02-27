@@ -33,7 +33,7 @@ public class StatisticsTopRunner {
 
         for(List<DeliverySpikeDto> dtos:symbolMap.values()) {
             symbol = dtos.get(0).getSymbol();
-            lotSize = RefData.getLotSize(symbol);
+            lotSize = RefData.getLotSizeValue(symbol);
             if("INDUSINDBK".equals(symbol)) {
                 LOGGER.info("");
             }
@@ -90,7 +90,7 @@ public class StatisticsTopRunner {
         long lotSize = 0L;
         for (List<DeliverySpikeDto> dtos : symbolMap.values()) {
             symbol = dtos.get(0).getSymbol();
-            lotSize = RefData.getLotSize(symbol);
+            lotSize = RefData.getLotSizeValue(symbol);
             if ("INDUSINDBK".equals(symbol)) {
                 LOGGER.info("");
             }

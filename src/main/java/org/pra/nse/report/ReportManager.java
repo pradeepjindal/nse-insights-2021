@@ -5,8 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-
 /**
  * polymorphism is not letting me share the data in base class
  * inheritance letting me share the common code, constants but not the date from base
@@ -34,13 +32,13 @@ import java.time.LocalDate;
  */
 
 @Component
-public class ReportManagerNew implements Manager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReportManagerNew.class);
+public class ReportManager implements Manager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportManager.class);
 
-    private final PastPresentFutureReporterNew pastPresentFutureReporterNew;
+    private final PastPresentFutureReporter pastPresentFutureReporter;
 
-    public ReportManagerNew(PastPresentFutureReporterNew pastPresentFutureReporterNew) {
-        this.pastPresentFutureReporterNew = pastPresentFutureReporterNew;
+    public ReportManager(PastPresentFutureReporter pastPresentFutureReporter) {
+        this.pastPresentFutureReporter = pastPresentFutureReporter;
     }
 
     @Override
@@ -51,11 +49,11 @@ public class ReportManagerNew implements Manager {
         //pastPresentFutureReporterNew.reportFromLast(2);
 //        pastPresentFutureReporterNew.reportFromLast(3);
 //        pastPresentFutureReporterNew.reportFromLast(5);
-        pastPresentFutureReporterNew.reportFromLast(10);
-        pastPresentFutureReporterNew.reportFromLast(15);
-        pastPresentFutureReporterNew.reportFromLast(20);
+        pastPresentFutureReporter.reportFromLast(10);
+        pastPresentFutureReporter.reportFromLast(15);
+        pastPresentFutureReporter.reportFromLast(20);
 
-        pastPresentFutureReporterNew.reportForDate(LocalDate.of(2021,2,18),20);
+//        pastPresentFutureReporterNew.reportForDate(LocalDate.of(2021,2,18),20);
 
         LOGGER.info("======================================== Report Manager New");
     }

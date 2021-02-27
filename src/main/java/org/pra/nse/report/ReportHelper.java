@@ -14,25 +14,26 @@ import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 
-public class ReportHelperNew {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReportHelperNew.class);
+public class ReportHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportHelper.class);
 
     public static void enrichGrowth(Map<String, CalcAvgTab> calcAvgMap, Map<String, List<DeliverySpikeDto>> symbolMap) {
+        LOGGER.info("enrichGrowth - ");
+        LOGGER.info("enrichGrowth - total symbols: {}", symbolMap.size());
         Map.Entry<String, LocalDate> previousDate = new AbstractMap.SimpleEntry<>("tradeDate", null);
         Map.Entry<String, BigDecimal> sumDelivery = new AbstractMap.SimpleEntry<>("sumDelivery", BigDecimal.ZERO);
-        LOGGER.info("DSR | enrichment - total symbols: {}", symbolMap.size());
         for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
             String symbol = entry.getKey();
             int fromIndex = 0;
             LocalDate dataFromDate = entry.getValue().get(fromIndex).getTradeDate();
             int toIndex = entry.getValue().size() - 1;
             LocalDate dataToDate = entry.getValue().get(toIndex).getTradeDate();
-            LOGGER.info("DSR | enrichment - {}, rows:{}, fromDt:{}, toDt:{}", Du.symbol(symbol), entry.getValue().size(), dataFromDate, dataToDate);
+            LOGGER.info("enrichGrowth - {}, rows:{}, fromDt:{}, toDt:{}", Du.symbol(symbol), entry.getValue().size(), dataFromDate, dataToDate);
             previousDate.setValue(null);
             //DeliverySpikeDto firstDto = entry.getValue().get(0);
             CalcAvgTab calcAvgTabRow = calcAvgMap.get(symbol);
             if(calcAvgTabRow == null) {
-                LOGGER.error("symbol not found: {} | probably new entry in FnO", symbol);
+                LOGGER.error("enrichGrowth - {}, skipping, calcAvg not found (probably new entry in FnO)", Du.symbol(symbol));
                 continue;
             }
             BigDecimal atpFixOnePercent = NumberUtils.onePercent(calcAvgTabRow.getAtpSma());
@@ -47,10 +48,10 @@ public class ReportHelperNew {
 
             List<DeliverySpikeDto> sortedList = entry.getValue();
             for(DeliverySpikeDto dto:entry.getValue()) {
-//                LOGGER.info("DSR | enrichment - looping symbol:{} for date: {} ", dto.getSymbol(), dto.getTradeDate());
+//                LOGGER.info("enrichGrowth - looping symbol:{} for date: {} ", dto.getSymbol(), dto.getTradeDate());
                 if(!symbol.equals(dto.getSymbol())) {
-                    LOGGER.error("symbol mismatch");
-                    throw new RuntimeException("symbol mismatch");
+                    LOGGER.error("enrichGrowth - symbol mismatch");
+                    throw new RuntimeException("enrichGrowth - symbol mismatch");
                 }
                 //CalcAvgTab tab = calcAvgMap.get(dto.getSymbol();
                 BigDecimal atpDynOnePercent = NumberUtils.onePercent(calcAvgTabRow.getAtpSma());
@@ -61,7 +62,7 @@ public class ReportHelperNew {
                 sumDelivery.setValue(sumDelivery.getValue().add(dto.getDelivery()));
                 //TODO refactor it
                 if(previousDate.getValue() == null || previousDate.getValue().isBefore(dto.getTradeDate())) {
-//                    LOGGER.info("DSR | enrichment - for symbol:{}, previousDate:{}, currentDate:{}", dto.getSymbol(), previousDate.getValue(), dto.getTradeDate());
+//                    LOGGER.info("enrichGrowth - for symbol:{}, previousDate:{}, currentDate:{}", dto.getSymbol(), previousDate.getValue(), dto.getTradeDate());
                     // sum
                     previousDate.setValue(dto.getTradeDate());
                     dto.setDelAccumulation(NumberUtils.divide(sumDelivery.getValue(), onePercentOfExpectedDelivery));
@@ -87,36 +88,75 @@ public class ReportHelperNew {
 //                    BigDecimal foiDynGrowth = NumberUtils.divide(dto.getOi(), foiDynOnePercent);
 //                    dto.setFoiDynGrowth(foiDynGrowth);
                 } else {
-                    LOGGER.error("DSR | enrichment - Date Flow MISMATCH for symbol:{}, previousDate:{}, currentDate:{}", dto.getSymbol(), previousDate.getValue(), dto.getTradeDate());
-                    throw new RuntimeException("Date Flow MISMATCH");
+                    LOGGER.error("enrichGrowth - Date Flow MISMATCH for symbol:{}, previousDate:{}, currentDate:{}", dto.getSymbol(), previousDate.getValue(), dto.getTradeDate());
+                    throw new RuntimeException("enrichGrowth - Date Flow MISMATCH");
                 }
             }
         }
-        LOGGER.info("report enrichment done");
+        LOGGER.info("enrichGrowth - completed");
     }
 
     public static void enrichAtpDelAndOiTrend(Map<String, List<DeliverySpikeDto>> symbolMap) {
+        LOGGER.info("enrichTrend - ");
+        LOGGER.info("enrichTrend - total symbols: {}", symbolMap.size());
         for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
-            entry.getValue().forEach( dto -> {
+            LOGGER.info("enrichTrend - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
+            enrichTrendForEachSymbol(entry.getValue());
+        }
+        LOGGER.info("enrichTrend - completed");
+    }
+
+    private static void enrichTrendForEachSymbol(List<DeliverySpikeDto> DeliverySpikeDtoList) {
+        int i = 0;
+        for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
+            try {
+                if(dto.getBackDto() == null) {
+                    LOGGER.info("enrichTrend - {}, skipping, no back data (seems new entry in FnO)", Du.symbol(dto.getSymbol()));
+                    break;
+                } else {
+                    //enable for debugging logs
+//                    LOGGER.info("enrichTrend - {}, trdDt: {}, oi: {}", Du.symbol(dto.getSymbol()), dto.getTradeDate(), dto.getFuOi());
+                }
+                float fuOi = dto.getFuOi().floatValue();
+                if(fuOi == 0) {
+                    LOGGER.warn("enrichTrend - {}, oi: {}, fuTrdVal: {}", Du.symbol(dto.getSymbol()), dto.getFuOi(), dto.getFuTotTrdVal());
+                }
                 float atpDiff = dto.getAtp().subtract(dto.getBackDto().getAtp()).floatValue();
-                float atpDiffPercent = atpDiff / NumberUtils.onePercent(dto.getBackDto().getAtp()).floatValue();
+                float atpDiffPercent = atpDiff / NumberUtils.onePercent(dto.getBackDto().getAtp()).intValue();
                 boolean atpPositive = atpDiff > 1;
                 boolean atpNegative = atpDiff < -1;
-//                boolean atpPositive = atpDiffPercent > 1;
-//                boolean atpNegative = atpDiffPercent < -1;
+                boolean atpNeutral = !atpPositive && !atpNegative;
+                boolean atpPositive2 = atpDiffPercent > 1;
+                boolean atpNegative2 = atpDiffPercent < -1;
+                boolean atpNeutral2 = !atpPositive2 && !atpNegative2;
                 //
                 float delDiff = dto.getDelivery().subtract(dto.getBackDto().getDelivery()).floatValue();
-                float delDiffPercent = delDiff / NumberUtils.onePercent(dto.getBackDto().getDelivery()).floatValue();
+                float delDiffPercent = delDiff / NumberUtils.onePercent(dto.getBackDto().getDelivery()).intValue();
                 boolean delPositive = delDiff > 1;
                 boolean delNegative = delDiff < -1;
-//                boolean delPositive = delDiffPercent > 1;
-//                boolean delNegative = delDiffPercent < -1;
-                     if (atpPositive && delPositive) dto.setAtpDelTrend("buyer-charging-up (demand-high)");
-                else if (atpPositive && delNegative) dto.setAtpDelTrend("buyer-hesitating  (demand-hiccup)");
-                else if (atpNegative && delPositive) dto.setAtpDelTrend("saler-flooding-dn (supply-high)");
-                else if (atpNegative && delNegative) dto.setAtpDelTrend("saler-hesitating  (supply-hiccup)");
-                else dto.setAtpDelTrend("");
-
+                boolean delNeutral = !delPositive && !delNegative;
+                boolean delPositive2 = delDiffPercent > 1;
+                boolean delNegative2 = delDiffPercent < -1;
+                boolean delNeutral2 = !delPositive2 && !delNegative2;
+//                     if (atpPositive && delPositive) dto.setAtpDelTrend("buyer-charging-up (demand-high)");
+//                else if (atpPositive && delNegative) dto.setAtpDelTrend("buyer-hesitating  (demand-hiccup)");
+//                else if (atpNegative && delPositive) dto.setAtpDelTrend("saler-flooding-dn (supply-high)");
+//                else if (atpNegative && delNegative) dto.setAtpDelTrend("saler-hesitating  (supply-hiccup)");
+//                else dto.setAtpDelTrend("");
+                if (atpPositive && delPositive) dto.setAtpDelForUpTrend("Long- buyer-charging-up (high-demand)");
+                else if (atpNegative && delPositive) dto.setAtpDelForUpTrend("Shrt- saler-pressing-dn (high-supply)");
+                else if (atpPositive && delNegative) dto.setAtpDelForUpTrend("- fever-buyer  (low-demand)");
+                else if (atpNegative && delNegative) dto.setAtpDelForUpTrend("- fever-saler  (low-supply)");
+                else if (atpNeutral  && delPositive) dto.setAtpDelForUpTrend("Peek- balance-bearish (seler incresing)");
+                else if (atpNeutral  && delNegative) dto.setAtpDelForUpTrend("Peek- balance-bearish (buyer holding)");
+                else dto.setAtpDelForUpTrend("");
+                if (atpPositive2 && delPositive2) dto.setAtpDelForDnTrend("Long- buyer-charging-up (high-demand)");
+                else if (atpNegative2 && delPositive2) dto.setAtpDelForDnTrend("Shrt- saler-pressing-dn (high-supply)");
+                else if (atpPositive2 && delNegative2) dto.setAtpDelForDnTrend("- fever-buyer  (low-demand)");
+                else if (atpNegative2 && delNegative2) dto.setAtpDelForDnTrend("- fever-saler  (low-supply)");
+                else if (atpNeutral2  && delPositive2) dto.setAtpDelForDnTrend("Botm- balance-bullish (buyer incresing)");
+                else if (atpNeutral2  && delNegative2) dto.setAtpDelForDnTrend("Botm- balance-bullish (seler holding)");
+                else dto.setAtpDelForDnTrend("");
                 //
                 float oiDiff = dto.getFuOiLots().subtract(dto.getBackDto().getFuOiLots()).floatValue();
                 float oiDiffPercent = oiDiff / NumberUtils.onePercent(dto.getBackDto().getFuOiLots()).floatValue();
@@ -124,12 +164,16 @@ public class ReportHelperNew {
                 boolean oiNegative = oiDiff < -1;
 //                boolean oiPositive = oiDiffPercent > 1;
 //                boolean oiNegative = oiDiffPercent < -1;
-                     if (atpPositive && oiPositive) dto.setAtpOiTrend("retailCust(B)-aggressive-buy  (long-buildup)");
+                if (atpPositive && oiPositive) dto.setAtpOiTrend("retailCust(B)-aggressive-buy  (long-buildup)");
                 else if (atpPositive && oiNegative) dto.setAtpOiTrend("retailCust(B)-hesitating (profit-booking)-i-loss-booking");
                 else if (atpNegative && oiPositive) dto.setAtpOiTrend("institute(S) -aggressive-sale (short-buildup)");
                 else if (atpNegative && oiNegative) dto.setAtpOiTrend("institute(S) -hesitating (profit-booking)-r-loss-booking");
                 else dto.setAtpOiTrend("");
-            });
+            } catch(Exception ex) {
+                LOGGER.error("", ex);
+                String errMsg = "enrichTrend - " + Du.symbol(dto.getSymbol()) + ", ERROR";
+                throw new RuntimeException(errMsg);
+            }
         }
     }
 

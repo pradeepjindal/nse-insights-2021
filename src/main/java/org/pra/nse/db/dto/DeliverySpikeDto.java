@@ -62,7 +62,8 @@ public class DeliverySpikeDto {
     private BigDecimal tdyatpMinusYesatp;
     private BigDecimal tdydelMinusYesdel;
 
-    private String atpDelTrend;
+    private String atpDelForUpTrend;
+    private String atpDelForDnTrend;
     private String atpOiTrend;
     private BigDecimal volume;
     private BigDecimal delivery;
@@ -98,7 +99,7 @@ public class DeliverySpikeDto {
 
 
     private BigDecimal delDiff;
-    private long lotSize;
+    private BigDecimal lotSize;
 
     public String toCsvString() {
         return  symbol + ","
@@ -169,7 +170,8 @@ public class DeliverySpikeDto {
                 + ohlc + ","
                 + open.add(close).divide(new BigDecimal(2), 2, RoundingMode.HALF_EVEN) + ","
                 + close.subtract(open) + ","
-                + atpDelTrend + ","
+                + atpDelForUpTrend + ","
+                + atpDelForDnTrend + ","
                 + delivery.divide(new BigDecimal(100000), 2, RoundingMode.HALF_EVEN) + ","
                 + atp + ","
                 + fuOiLots + ","
@@ -739,11 +741,11 @@ public class DeliverySpikeDto {
         this.vdr = vdr;
     }
 
-    public long getLotSize() {
+    public BigDecimal getLotSize() {
         return lotSize;
     }
 
-    public void setLotSize(long lotSize) {
+    public void setLotSize(BigDecimal lotSize) {
         this.lotSize = lotSize;
     }
 
@@ -835,12 +837,20 @@ public class DeliverySpikeDto {
         this.fuOiLots = fuOiLots;
     }
 
-    public String getAtpDelTrend() {
-        return atpDelTrend;
+    public String getAtpDelForUpTrend() {
+        return atpDelForUpTrend;
     }
 
-    public void setAtpDelTrend(String atpDelTrend) {
-        this.atpDelTrend = atpDelTrend;
+    public void setAtpDelForUpTrend(String atpDelForUpTrend) {
+        this.atpDelForUpTrend = atpDelForUpTrend;
+    }
+
+    public String getAtpDelForDnTrend() {
+        return atpDelForDnTrend;
+    }
+
+    public void setAtpDelForDnTrend(String atpDelForDnTrend) {
+        this.atpDelForDnTrend = atpDelForDnTrend;
     }
 
     public String getAtpOiTrend() {

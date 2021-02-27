@@ -6,20 +6,17 @@ import org.pra.nse.csv.transformation.TransformationManager;
 import org.pra.nse.db.upload.CalcUploadManager;
 import org.pra.nse.db.upload.NseUploadManager;
 import org.pra.nse.processor.ProcessManager;
-import org.pra.nse.report.ReportManagerNew;
+import org.pra.nse.report.ReportManager;
 import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.TriggerContext;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.concurrent.ScheduledFuture;
@@ -43,7 +40,7 @@ public class DailyNseJobScheduler implements SchedulingConfigurer {
     private final CalculationManager calculationManager;
     private final CalcUploadManager calcUploadManager;
     private final ProcessManager processManager;
-    private final ReportManagerNew reportManagerNew;
+    private final ReportManager reportManager;
 
     public DailyNseJobScheduler(PraFileUtils praFileUtils,
                                 DownloadManager downloadManager,
@@ -51,7 +48,7 @@ public class DailyNseJobScheduler implements SchedulingConfigurer {
                                 NseUploadManager nseUploadManager,
                                 CalculationManager calculationManager,
                                 CalcUploadManager calcUploadManager, ProcessManager processManager,
-                                ReportManagerNew reportManagerNew) {
+                                ReportManager reportManager) {
         this.praFileUtils = praFileUtils;
         this.downloadManager = downloadManager;
         this.transformationManager = transformationManager;
@@ -59,7 +56,7 @@ public class DailyNseJobScheduler implements SchedulingConfigurer {
         this.calculationManager = calculationManager;
         this.calcUploadManager = calcUploadManager;
         this.processManager = processManager;
-        this.reportManagerNew = reportManagerNew;
+        this.reportManager = reportManager;
     }
 
 
@@ -92,7 +89,7 @@ public class DailyNseJobScheduler implements SchedulingConfigurer {
                             if(praFileUtils.validateDownloadCD() != null) {
                                 calculationManager.execute();
                                 calcUploadManager.execute();
-                                reportManagerNew.execute();
+                                reportManager.execute();
                             }
                             if(praFileUtils.validateDownloadCDF() != null) {
                                 processManager.execute();

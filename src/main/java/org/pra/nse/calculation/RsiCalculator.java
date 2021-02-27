@@ -47,7 +47,7 @@ public class RsiCalculator {
         beans.forEach( bean -> {
             calcBeanList.add(bean);
         });
-        if(CalcHelper.validateForSavingNew(forDate, calcBeanList, calc_name)) {
+        if(CalcHelper.validateForSaving(forDate, calcBeanList, calc_name)) {
             return beans;
         } else {
             return Collections.emptyList();
@@ -67,7 +67,7 @@ public class RsiCalculator {
         beans.forEach( bean -> {
             calcBeanList.add(bean);
         });
-        if(CalcHelper.validateForSavingNew(forDate, calcBeanList, calc_name)) {
+        if(CalcHelper.validateForSaving(forDate, calcBeanList, calc_name)) {
             saveToCsv(forDate, calcBeanList);
             //saveToDb(forDate, rsiBeanList);
         }

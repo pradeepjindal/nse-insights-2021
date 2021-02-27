@@ -51,7 +51,7 @@ public class AvgCalculator {
         beansMap.forEach( bean -> {
             calcBeanList.add(bean);
         });
-        if(CalcHelper.validateForSavingNew(forDate, calcBeanList, calc_name)) {
+        if(CalcHelper.validateForSaving(forDate, calcBeanList, calc_name)) {
             return beansMap;
         } else {
             return Collections.emptyList();
@@ -71,7 +71,7 @@ public class AvgCalculator {
         beansMap.forEach( bean -> {
             calcBeanList.add(bean);
         });
-        if(CalcHelper.validateForSavingNew(forDate, calcBeanList, calc_name)) {
+        if(CalcHelper.validateForSaving(forDate, calcBeanList, calc_name)) {
             saveToCsv(forDate, calcBeanList);
             //saveToDb(forDate, avgBeanList);
         }
@@ -200,4 +200,5 @@ public class AvgCalculator {
         String computePath = ApCo.ROOT_DIR + File.separator + computeFolderName + File.separator + computeFileName;
         return computePath;
     }
+
 }

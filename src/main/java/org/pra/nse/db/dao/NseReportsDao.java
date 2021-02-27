@@ -3,18 +3,26 @@ package org.pra.nse.db.dao;
 import org.pra.nse.config.YamlPropertyLoaderFactory;
 import org.pra.nse.db.dto.DeliverySpikeDto;
 
+import org.pra.nse.db.upload.nse.NseIdxUploaderMigrated;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
 @PropertySource(value = "classpath:reports-query.yaml", factory = YamlPropertyLoaderFactory.class)
 public class NseReportsDao {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NseReportsDao.class);
+
     private final JdbcTemplate jdbcTemplate;
 
     @Value("${sqlDeliverySpike}")
@@ -39,6 +47,8 @@ public class NseReportsDao {
         return result;
     }
     public List<DeliverySpikeDto> getDeliverySpikeTwo() {
+        Instant startTime = Instant.now();
+        LOGGER.info("DAO | fetching data using - deliverySpikeThree");
         jdbcTemplate.execute("REFRESH MATERIALIZED VIEW cm_trade_date_ranking_mv WITH DATA ");
         jdbcTemplate.execute("REFRESH MATERIALIZED VIEW cfd_data_cd_left_join_f_mv WITH DATA ");
         jdbcTemplate.execute("REFRESH MATERIALIZED VIEW cfd_data_cd_left_join_f_mv2 WITH DATA ");
@@ -48,6 +58,11 @@ public class NseReportsDao {
 //        result.forEach(rec -> {
 //            System.out.println(rec);
 //        });
+
+        Instant endTime = Instant.now();
+//        System.out.println(Duration.between(startTime, endTime));
+        Duration duration = Duration.between(startTime, endTime);
+        LOGGER.info("DAO | fetched data using - deliverySpikeThree, time taken: {} seconds", duration.getSeconds());
         return result;
     }
 //    public List<DeliverySpikeDto> getDeliverySpike(LocalDate forDate) {

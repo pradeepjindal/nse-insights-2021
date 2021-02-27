@@ -272,7 +272,8 @@ public class DataService implements Manager, DataServiceI {
     }
 
     private void fillCmCalcFields() {
-        LOGGER.info("DataManager - fillTheCalcFields");
+        LOGGER.info("CmCalc -");
+        LOGGER.info("CmCalc - data rows from db {}", dbData.size());
         BigDecimal TWO = new BigDecimal(2);
         BigDecimal FOUR = new BigDecimal(4);
         BigDecimal HUNDRED = new BigDecimal(100);
@@ -323,12 +324,21 @@ public class DataService implements Manager, DataServiceI {
             BigDecimal onePercentOfVolume = NumberUtils.onePercent(row.getVolume());
             row.setVdr(NumberUtils.divide(row.getDelivery(), onePercentOfVolume));
         }
+        LOGGER.info("CmCalc - completed");
     }
 
     private void fillFuCalcFields() {
-        dbData.forEach( dto -> {
-            if( null != dto.getFuTotTrdVal() && dto.getLotSize() != 0) {
-                BigDecimal lotSiz = new BigDecimal(dto.getLotSize());
+        LOGGER.info("FuCalc -");
+        LOGGER.info("FuCalc - data rows from db {}", dbData.size());
+        for(DeliverySpikeDto dto:dbData) {
+            if(dto.getLotSize() == null) {
+                LOGGER.error("FuCalc | {}, error, lot size is zero", dto.getSymbol());
+                throw new RuntimeException("lot size is zero");
+            }
+            if( null == dto.getFuTotTrdVal()) {
+                //
+            } else {
+                BigDecimal lotSiz = dto.getLotSize();
                 BigDecimal totalTradedQuantityOfFutures = dto.getFuContracts().multiply(lotSiz);
                 dto.setFuVol(totalTradedQuantityOfFutures);
                 BigDecimal totalTradeValueOfFutures = dto.getFuTotTrdVal();
@@ -336,18 +346,20 @@ public class DataService implements Manager, DataServiceI {
                 dto.setFuAtp(fuAtp);
                 BigDecimal fuAtpMinusCmAtp = fuAtp.subtract(dto.getAtp());
                 dto.setFuAtpMinusCmAtp(fuAtpMinusCmAtp);
-                if (dto.getFuOi() != null) {
+                if (dto.getFuOi() == null) {
+                    //LOGGER.warn("oi is null");
+                } else {
                     BigDecimal fuOiLots = NumberUtils.divide(dto.getFuOi(), lotSiz);
                     dto.setFuOiLots(fuOiLots);
                 }
-                //
-
             }
-        });
+        }
+        LOGGER.info("FuCalc - completed");
     }
 
     private void fillNextFields() {
-        LOGGER.info("DataManager - fillTheNext");
+        LOGGER.info("NxtCalc -");
+        LOGGER.info("NxtCalc - data rows from db {}", dbData.size());
         Predicate<DeliverySpikeDto> predicate = dto -> true;
         Map<LocalDate, Map<String, DeliverySpikeDto>> tradeDateAndSymbolMap = dataServiceHelper.prepareDataByTradeDateAndSymbol(dbData, predicate);
         for(DeliverySpikeDto dto: dbData) {
@@ -356,7 +368,7 @@ public class DataService implements Manager, DataServiceI {
             if(nextDate == null) continue;
             DeliverySpikeDto nextDto = tradeDateAndSymbolMap.get(nextDate).get(dto.getSymbol());
             if (nextDto == null) {
-                LOGGER.warn("{} - no next data for: {} (may be symbol has phased out of fno)", Du.symbol(dto.getSymbol()), nextDate);
+                LOGGER.warn("{} - no next data for: {} (may be, phased out of fno)", Du.symbol(dto.getSymbol()), nextDate);
             } else {
                 dto.setNxtCloseToOpenPercent(nextDto.getCloseToOpenPercent());
                 dto.setNxtOptoHighPrcnt(nextDto.getOthighPrcnt());
@@ -364,6 +376,7 @@ public class DataService implements Manager, DataServiceI {
                 dto.setNxtOptoAtpPrcnt(nextDto.getOtatpPrcnt());
             }
         }
+        LOGGER.info("NxtCalc - completed");
     }
 
     private void fillTheNextOld() {
@@ -379,7 +392,7 @@ public class DataService implements Manager, DataServiceI {
                     LocalDate nextDate = nextDateMap.get(filteredRow.getTradeDate());
                     DeliverySpikeDto nextDto = tradeDateAndSymbolMap.get(nextDate).get(filteredRow.getSymbol());
                     if (nextDto == null) {
-                        LOGGER.warn("{} - no next data for: {} (may be symbol has phased out of fno)", Du.symbol(filteredRow.getSymbol()), nextDate);
+                        LOGGER.warn("{} - no next data for: {} (it may phased out of fno)", Du.symbol(filteredRow.getSymbol()), nextDate);
                     } else {
                         filteredRow.setNxtCloseToOpenPercent(nextDto.getCloseToOpenPercent());
                         filteredRow.setNxtOptoHighPrcnt(nextDto.getOthighPrcnt());

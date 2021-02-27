@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ public class RefData {
     private static List<LotSizeBean> lotSizeBeans;
     private static Map<String, Long> lotSizeMap;
 
-    public static long getLotSize(String symbol) {
+    public static long getLotSizeValue(String symbol) {
         if(lotSizeBeans == null) {
             try {
                 //String filePath = ApCo.ROOT_DIR +File.separator+ "ref-data" +File.separator+ "fm-lots.csv";
@@ -32,6 +33,20 @@ public class RefData {
             }
         }
         return lotSizeMap.getOrDefault(symbol, 0L);
+    }
+
+    public static BigDecimal getLotSizeObject(String symbol) {
+        if(lotSizeBeans == null) {
+            try {
+                //String filePath = ApCo.ROOT_DIR +File.separator+ "ref-data" +File.separator+ "fm-lots.csv";
+                //File csvFile = new File(filePath);
+                File refFile = readFile("data/fm-lots.csv");
+                readCsvNew(refFile);
+            } catch (Exception e) {
+                LOGGER.error("Error occurred while loading fm-lots.csv", e);
+            }
+        }
+        return new BigDecimal(lotSizeMap.getOrDefault(symbol, 0L));
     }
 
     private static File readFile(String fileName) {
