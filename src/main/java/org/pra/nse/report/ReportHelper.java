@@ -121,53 +121,62 @@ public class ReportHelper {
                 if(fuOi == 0) {
                     LOGGER.warn("enrichTrend - {}, oi: {}, fuTrdVal: {}", Du.symbol(dto.getSymbol()), dto.getFuOi(), dto.getFuTotTrdVal());
                 }
-                float atpDiff = dto.getAtp().subtract(dto.getBackDto().getAtp()).floatValue();
-                float atpDiffPercent = atpDiff / NumberUtils.onePercent(dto.getBackDto().getAtp()).intValue();
-                boolean atpPositive = atpDiff > 1;
-                boolean atpNegative = atpDiff < -1;
-                boolean atpNeutral = !atpPositive && !atpNegative;
-                boolean atpPositive2 = atpDiffPercent > 1;
-                boolean atpNegative2 = atpDiffPercent < -1;
-                boolean atpNeutral2 = !atpPositive2 && !atpNegative2;
+                float atpDiffAbs = dto.getAtp().subtract(dto.getBackDto().getAtp()).floatValue();
+                float atpDiffPrcnt = atpDiffAbs / NumberUtils.onePercent(dto.getBackDto().getAtp()).intValue();
+                boolean atpPositiveAbs = atpDiffAbs > 1;
+                boolean atpNegativeAbs = atpDiffAbs < -1;
+                boolean atpNeutralAbs = !atpPositiveAbs && !atpNegativeAbs;
+                boolean atpPositivePrcnt = atpDiffPrcnt > 1;
+                boolean atpNegativePrcnt = atpDiffPrcnt < -1;
+                boolean atpNeutralPrcnt = !atpPositivePrcnt && !atpNegativePrcnt;
+                float closeMinusAtp = dto.getClose().subtract(dto.getAtp()).floatValue();
                 //
-                float delDiff = dto.getDelivery().subtract(dto.getBackDto().getDelivery()).floatValue();
-                float delDiffPercent = delDiff / NumberUtils.onePercent(dto.getBackDto().getDelivery()).intValue();
-                boolean delPositive = delDiff > 1;
-                boolean delNegative = delDiff < -1;
-                boolean delNeutral = !delPositive && !delNegative;
-                boolean delPositive2 = delDiffPercent > 1;
-                boolean delNegative2 = delDiffPercent < -1;
-                boolean delNeutral2 = !delPositive2 && !delNegative2;
+                float closeMinusAtpPrcnt = closeMinusAtp / NumberUtils.onePercent(dto.getAtp()).intValue();
+                boolean cMaPositive = closeMinusAtp > 1;
+                boolean cMaPositive2 = closeMinusAtp > 1;
+                //
+                float delDiffAbs = dto.getDelivery().subtract(dto.getBackDto().getDelivery()).floatValue();
+                float delDiffPrcnt = delDiffAbs / NumberUtils.onePercent(dto.getBackDto().getDelivery()).intValue();
+                boolean delPositiveAbs = delDiffAbs > 1;
+                boolean delNegativeAbs = delDiffAbs < -1;
+                boolean delNeutral = !delPositiveAbs && !delNegativeAbs;
+                boolean delPositivePrcnt = delDiffPrcnt > 1;
+                boolean delNegativePrcnt = delDiffPrcnt < -1;
+                boolean delNeutralPrcnt = !delPositivePrcnt && !delNegativePrcnt;
+
 //                     if (atpPositive && delPositive) dto.setAtpDelTrend("buyer-charging-up (demand-high)");
 //                else if (atpPositive && delNegative) dto.setAtpDelTrend("buyer-hesitating  (demand-hiccup)");
 //                else if (atpNegative && delPositive) dto.setAtpDelTrend("saler-flooding-dn (supply-high)");
 //                else if (atpNegative && delNegative) dto.setAtpDelTrend("saler-hesitating  (supply-hiccup)");
 //                else dto.setAtpDelTrend("");
-                if (atpPositive && delPositive) dto.setAtpDelForUpTrend("Long- buyer-charging-up (high-demand)");
-                else if (atpNegative && delPositive) dto.setAtpDelForUpTrend("Shrt- saler-pressing-dn (high-supply)");
-                else if (atpPositive && delNegative) dto.setAtpDelForUpTrend("- fever-buyer  (low-demand)");
-                else if (atpNegative && delNegative) dto.setAtpDelForUpTrend("- fever-saler  (low-supply)");
-                else if (atpNeutral  && delPositive) dto.setAtpDelForUpTrend("Peek- balance-bearish (seler incresing)");
-                else if (atpNeutral  && delNegative) dto.setAtpDelForUpTrend("Peek- balance-bearish (buyer holding)");
+                     if (atpPositiveAbs && delPositiveAbs) dto.setAtpDelForUpTrend("Long- buyer-charging-up (high-demand)");
+                else if (atpNegativeAbs && delPositiveAbs) dto.setAtpDelForUpTrend("Shrt- saler-pressing-dn (high-supply)");
+                // to buy in delivery - supply can not be low, as intraday trader provides unlimited supply on higher price
+                             // but if delivery is
+                // to sel in delivery - demand can not be low, as intraday trader provides unlimited demand on lower price
+                else if (atpPositiveAbs && delNegativeAbs) dto.setAtpDelForUpTrend("- fever-buyer  (low-demand)");
+                else if (atpNegativeAbs && delNegativeAbs) dto.setAtpDelForUpTrend("- fever-saler  (low-supply)");
+                else if (atpNeutralAbs  && delPositiveAbs) dto.setAtpDelForUpTrend("Peek- balance-bearish (seler incresing)");
+                else if (atpNeutralAbs  && delNegativeAbs) dto.setAtpDelForUpTrend("Peek- balance-bearish (buyer holding)");
                 else dto.setAtpDelForUpTrend("");
-                if (atpPositive2 && delPositive2) dto.setAtpDelForDnTrend("Long- buyer-charging-up (high-demand)");
-                else if (atpNegative2 && delPositive2) dto.setAtpDelForDnTrend("Shrt- saler-pressing-dn (high-supply)");
-                else if (atpPositive2 && delNegative2) dto.setAtpDelForDnTrend("- fever-buyer  (low-demand)");
-                else if (atpNegative2 && delNegative2) dto.setAtpDelForDnTrend("- fever-saler  (low-supply)");
-                else if (atpNeutral2  && delPositive2) dto.setAtpDelForDnTrend("Botm- balance-bullish (buyer incresing)");
-                else if (atpNeutral2  && delNegative2) dto.setAtpDelForDnTrend("Botm- balance-bullish (seler holding)");
+                     if (atpPositivePrcnt && delPositivePrcnt) dto.setAtpDelForDnTrend("Long- buyer-charging-up (high-demand)");
+                else if (atpNegativePrcnt && delPositivePrcnt) dto.setAtpDelForDnTrend("Shrt- saler-pressing-dn (high-supply)");
+                else if (atpPositivePrcnt && delNegativePrcnt) dto.setAtpDelForDnTrend("- fever-buyer  (low-demand)");
+                else if (atpNegativePrcnt && delNegativePrcnt) dto.setAtpDelForDnTrend("- fever-saler  (low-supply)");
+                else if (atpNeutralPrcnt  && delPositivePrcnt) dto.setAtpDelForDnTrend("Botm- balance-bullish (buyer incresing)");
+                else if (atpNeutralPrcnt  && delNegativePrcnt) dto.setAtpDelForDnTrend("Botm- balance-bullish (seler holding)");
                 else dto.setAtpDelForDnTrend("");
                 //
                 float oiDiff = dto.getFuOiLots().subtract(dto.getBackDto().getFuOiLots()).floatValue();
-                float oiDiffPercent = oiDiff / NumberUtils.onePercent(dto.getBackDto().getFuOiLots()).floatValue();
+                float oiDiffPrcnt = oiDiff / NumberUtils.onePercent(dto.getBackDto().getFuOiLots()).floatValue();
                 boolean oiPositive = oiDiff > 1;
                 boolean oiNegative = oiDiff < -1;
-//                boolean oiPositive = oiDiffPercent > 1;
-//                boolean oiNegative = oiDiffPercent < -1;
-                if (atpPositive && oiPositive) dto.setAtpOiTrend("retailCust(B)-aggressive-buy  (long-buildup)");
-                else if (atpPositive && oiNegative) dto.setAtpOiTrend("retailCust(B)-hesitating (profit-booking)-i-loss-booking");
-                else if (atpNegative && oiPositive) dto.setAtpOiTrend("institute(S) -aggressive-sale (short-buildup)");
-                else if (atpNegative && oiNegative) dto.setAtpOiTrend("institute(S) -hesitating (profit-booking)-r-loss-booking");
+//                boolean oiPositive = oiDiffPrcnt > 1;
+//                boolean oiNegative = oiDiffPrcnt < -1;
+                     if (atpPositiveAbs && oiPositive) dto.setAtpOiTrend("retailCust(B)-aggressive-buy  (long-buildup)");
+                else if (atpPositiveAbs && oiNegative) dto.setAtpOiTrend("SC- retailCust(B)-hesitating (profit-booking)-i-loss-booking");
+                else if (atpNegativeAbs && oiPositive) dto.setAtpOiTrend("institute(S) -aggressive-sale (short-buildup)");
+                else if (atpNegativeAbs && oiNegative) dto.setAtpOiTrend("LC- institute(S) -hesitating (profit-booking)-r-loss-booking");
                 else dto.setAtpOiTrend("");
             } catch(Exception ex) {
                 LOGGER.error("", ex);

@@ -26,7 +26,7 @@ public class PraFileUtils {
         return getLatestFileNameFor(fileDir, filePrefix, fileExt, occurrence, LocalDate.now());
     }
     public String getLatestFileNameFor(String fileDir, String filePrefix, String fileExt, int occurrence, LocalDate searchBackFromThisDate) {
-        return getLatestFileNameFor(fileDir, filePrefix, fileExt, occurrence, searchBackFromThisDate, ApCo.NSE_DATA_AVAILABLE_FROM_DATE, ApCo.PRA_DTF);
+        return getLatestFileNameFor(fileDir, filePrefix, fileExt, occurrence, searchBackFromThisDate, ApCo.NSE_CM_FILE_AVAILABLE_FROM_DATE, ApCo.PRA_DTF);
     }
     public String getLatestFileNameFor(String fileDir, String filePrefix, String fileExt, int fileOccurrence,
                                        LocalDate searchBackFromThisDate, LocalDate toThisDate, DateTimeFormatter fileNameDtf) {

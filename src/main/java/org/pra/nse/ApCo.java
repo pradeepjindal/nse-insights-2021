@@ -7,25 +7,32 @@ import java.time.format.DateTimeFormatter;
 
 public class ApCo {
 
-    public static final LocalDate NSE_DATA_AVAILABLE_FROM_DATE = LocalDate.of(2016, 1, 1);
+    public static final LocalDate NSE_FM_IDX_FROM_DATE = LocalDate.of(2000, 6, 12);
+    public static final LocalDate NSE_OM_IDX_FROM_DATE = LocalDate.of(2001, 6, 4);
+    public static final LocalDate NSE_OM_STK_FROM_DATE = LocalDate.of(2001, 7, 2);
+    public static final LocalDate NSE_FM_STK_FROM_DATE = LocalDate.of(2001, 11, 9);
+
+    public static final LocalDate NSE_CM_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2016, 1, 1);
+    public static final LocalDate NSE_DM_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2016, 1, 1);
+    public static final LocalDate NSE_FM_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2016, 1, 1);
     public static final LocalDate NSE_IDX_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2020, 1, 1);
 
 
     public static final LocalTime DAILY_DOWNLOAD_TIME = LocalTime.of(18,0,0,0);
     //
     //public static final LocalDate DOWNLOAD_FROM_DATE    = LocalDate.of(2020,7,25);
-    public static final LocalDate DOWNLOAD_NSE_FROM_DATE = LocalDate.of(2021,3,1);
-    public static final LocalDate TRANSFORM_NSE_FROM_DATE  = LocalDate.of(2021,2,20);
-    public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2021,2,20);
+    public static final LocalDate DOWNLOAD_NSE_FROM_DATE = LocalDate.of(2021,3,6);
+    public static final LocalDate TRANSFORM_NSE_FROM_DATE  = LocalDate.of(2021,3,6);
+    public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2021,3,6);
 
-    public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2021,2,20);
-    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2016,3,1);
+    public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2021,3,6);
+    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2016,3,6);
 
-    public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2021,2,17);
-    public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2021,2,17);
+    public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2021,3,6);
+    public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2021,3,6);
 
     public static final boolean RE_UPLOAD_CALC = false;
-    public static final LocalDate RE_UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,2,16);
+    public static final LocalDate RE_UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,3,6);
 
 
     public static final boolean EMAIL_ENABLED = false;
