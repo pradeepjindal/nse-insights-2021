@@ -10,6 +10,10 @@ public class NumberUtils {
         return figure == null ? BigDecimal.ZERO : divide(figure, HUNDRED);
     }
 
+    public static BigDecimal percent(BigDecimal figure, BigDecimal percent) {
+        return figure == null ? BigDecimal.ZERO : divide(figure, percent);
+    }
+
     public static BigDecimal divide(BigDecimal to, BigDecimal by) {
         return by.compareTo(BigDecimal.ZERO) == 0 ? to : to.divide(by, 2, RoundingMode.HALF_UP);
     }

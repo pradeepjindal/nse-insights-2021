@@ -21,7 +21,7 @@ public class CmTransformer extends BaseTransformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(CmTransformer .class);
 
     private final String Data_Dir = ApCo.ROOT_DIR + File.separator + NseCons.CM_DIR_NAME;
-
+    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + "pra-cm";
 
     public CmTransformer(TransformationHelper transformationHelper, NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
         super(transformationHelper, nseFileUtils, praFileUtils);
@@ -70,6 +70,7 @@ public class CmTransformer extends BaseTransformer {
     private void looper(Map<String, String> filePairMap) {
         filePairMap.forEach( (nseFileName, praFileName) -> {
             transformationHelper.transform(Data_Dir, ApCo.PRA_CM_FILE_PREFIX, nseFileName, praFileName);
+            transformationHelper.transform(Data_Dir, Target_Data_Dir, ApCo.PRA_CM_FILE_PREFIX, nseFileName, praFileName);
         });
     }
 

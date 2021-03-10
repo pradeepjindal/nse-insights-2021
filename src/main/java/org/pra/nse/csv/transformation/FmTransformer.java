@@ -21,6 +21,7 @@ public class FmTransformer extends BaseTransformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(FmTransformer.class);
 
     private final String Data_Dir = ApCo.ROOT_DIR + File.separator + NseCons.FM_DIR_NAME;
+    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + "pra-fm";
 
 
     public FmTransformer(TransformationHelper transformationHelper, NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
@@ -70,6 +71,7 @@ public class FmTransformer extends BaseTransformer {
         filePairMap.forEach( (nseFileName, praFileName) -> {
             //TODO - block transforming of 28-Aug-2019 file
             transformationHelper.transform(Data_Dir, ApCo.PRA_FM_FILE_PREFIX, nseFileName, praFileName);
+            transformationHelper.transform(Data_Dir, Target_Data_Dir, ApCo.PRA_FM_FILE_PREFIX, nseFileName, praFileName);
         });
     }
 

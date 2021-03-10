@@ -129,11 +129,16 @@ public class ReportHelper {
                 boolean atpPositivePrcnt = atpDiffPrcnt > 1;
                 boolean atpNegativePrcnt = atpDiffPrcnt < -1;
                 boolean atpNeutralPrcnt = !atpPositivePrcnt && !atpNegativePrcnt;
-                float closeMinusAtp = dto.getClose().subtract(dto.getAtp()).floatValue();
                 //
-                float closeMinusAtpPrcnt = closeMinusAtp / NumberUtils.onePercent(dto.getAtp()).intValue();
-                boolean cMaPositive = closeMinusAtp > 1;
-                boolean cMaPositive2 = closeMinusAtp > 1;
+                BigDecimal halfPercent = new BigDecimal(200);
+                float closeMinusAtpAbs = dto.getClose().subtract(dto.getAtp()).floatValue();
+                float closeMinusAtpPrcnt = closeMinusAtpAbs / NumberUtils.percent(dto.getAtp(), halfPercent).intValue();
+                boolean cMaPositiveAbs = closeMinusAtpAbs > 1;
+                boolean cMaNegativeAbs = closeMinusAtpAbs < -1;
+                boolean cMaNeutralAbs = !cMaPositiveAbs && !cMaNegativeAbs;
+                boolean cMaPositivePrcnt = closeMinusAtpPrcnt > 1;
+                boolean cMaNegativePrcnt = closeMinusAtpPrcnt < -1;
+                boolean cMaNeutralPrcnt = !cMaPositivePrcnt && !cMaNegativePrcnt;
                 //
                 float delDiffAbs = dto.getDelivery().subtract(dto.getBackDto().getDelivery()).floatValue();
                 float delDiffPrcnt = delDiffAbs / NumberUtils.onePercent(dto.getBackDto().getDelivery()).intValue();
@@ -159,6 +164,7 @@ public class ReportHelper {
                 else if (atpNeutralAbs  && delPositiveAbs) dto.setAtpDelForUpTrend("Peek- balance-bearish (seler incresing)");
                 else if (atpNeutralAbs  && delNegativeAbs) dto.setAtpDelForUpTrend("Peek- balance-bearish (buyer holding)");
                 else dto.setAtpDelForUpTrend("");
+                //
                      if (atpPositivePrcnt && delPositivePrcnt) dto.setAtpDelForDnTrend("Long- buyer-charging-up (high-demand)");
                 else if (atpNegativePrcnt && delPositivePrcnt) dto.setAtpDelForDnTrend("Shrt- saler-pressing-dn (high-supply)");
                 else if (atpPositivePrcnt && delNegativePrcnt) dto.setAtpDelForDnTrend("- fever-buyer  (low-demand)");
@@ -171,12 +177,12 @@ public class ReportHelper {
                 float oiDiffPrcnt = oiDiff / NumberUtils.onePercent(dto.getBackDto().getFuOiLots()).floatValue();
                 boolean oiPositive = oiDiff > 1;
                 boolean oiNegative = oiDiff < -1;
-//                boolean oiPositive = oiDiffPrcnt > 1;
-//                boolean oiNegative = oiDiffPrcnt < -1;
-                     if (atpPositiveAbs && oiPositive) dto.setAtpOiTrend("retailCust(B)-aggressive-buy  (long-buildup)");
-                else if (atpPositiveAbs && oiNegative) dto.setAtpOiTrend("SC- retailCust(B)-hesitating (profit-booking)-i-loss-booking");
-                else if (atpNegativeAbs && oiPositive) dto.setAtpOiTrend("institute(S) -aggressive-sale (short-buildup)");
-                else if (atpNegativeAbs && oiNegative) dto.setAtpOiTrend("LC- institute(S) -hesitating (profit-booking)-r-loss-booking");
+                boolean oiPositivePrcnt = oiDiffPrcnt > 1;
+                boolean oiNegativePrcnt = oiDiffPrcnt < -1;
+                     if (atpPositiveAbs && oiPositivePrcnt) dto.setAtpOiTrend("retailCust(B)-aggressive-buy  (long-buildup)");
+                else if (atpPositiveAbs && oiNegativePrcnt) dto.setAtpOiTrend("sb/SC- shrt.booking or shrt.covering");
+                else if (atpNegativeAbs && oiPositivePrcnt) dto.setAtpOiTrend("institute(S) -aggressive-sale (short-buildup)");
+                else if (atpNegativeAbs && oiNegativePrcnt) dto.setAtpOiTrend("LB/LC- long.booking or long.covering");
                 else dto.setAtpOiTrend("");
             } catch(Exception ex) {
                 LOGGER.error("", ex);

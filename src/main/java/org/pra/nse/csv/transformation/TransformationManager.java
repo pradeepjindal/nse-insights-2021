@@ -43,8 +43,8 @@ public class TransformationManager implements Manager {
         fmTransformer.transformFromDefaultDate();
         LOGGER.info("----------");
         idxTransformer.transformFromDefaultDate();
-//        LOGGER.info("----------");
-//        abTransformer.transformFromDefaultDate();
+        LOGGER.info("----------");
+        abTransformer.transformFromDefaultDate();
 
 
 //        cmTransformer.transformFromLastDate();

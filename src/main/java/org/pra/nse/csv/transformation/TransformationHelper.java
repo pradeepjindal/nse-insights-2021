@@ -44,12 +44,12 @@ public class TransformationHelper {
         String source = dataDir + File.separator + nseFileName;
         String target = dataDir + File.separator + praFileName;
         if(nseFileUtils.isFileExist(target)) {
-            LOGGER.info("{} file already transformed - {}", filePrefix, target);
+            LOGGER.info("{} already transformed - {}", filePrefix, target);
         } else if (nseFileUtils.isFileExist(source)) {
             try {
                 //TODO pass on the target file name
                 nseFileUtils.unzipNew(source, filePrefix);
-                LOGGER.info("{} file transformed - {}", filePrefix, target);
+                LOGGER.info("{} transformed - {}", filePrefix, target);
             } catch (FileNotFoundException fnfe) {
                 LOGGER.info("{} file not found - {}", filePrefix, source);
             } catch (IOException e) {
@@ -59,4 +59,25 @@ public class TransformationHelper {
             LOGGER.error("source not found ({})", source);
         }
     }
+
+    void transform(String srcDataDir, String tgtDataDir, String filePrefix, String nseFileName, String praFileName) {
+        String source = srcDataDir + File.separator + nseFileName;
+        String target = tgtDataDir + File.separator + praFileName;
+        if(nseFileUtils.isFileExist(target)) {
+            LOGGER.info("{} already transformed - {}", filePrefix, target);
+        } else if (nseFileUtils.isFileExist(source)) {
+            try {
+                //TODO pass on the target file name
+                nseFileUtils.unzipNew(source, tgtDataDir, filePrefix);
+                LOGGER.info("{} transformed - {}", filePrefix, target);
+            } catch (FileNotFoundException fnfe) {
+                LOGGER.info("{} file not found - {}", filePrefix, source);
+            } catch (IOException e) {
+                LOGGER.warn("Error while unzipping file: {}", e);
+            }
+        } else {
+            LOGGER.error("source not found ({})", source);
+        }
+    }
+
 }

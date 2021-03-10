@@ -45,6 +45,12 @@ public class ApCo {
     //public static final String ROOT_DIR = System.getProperty("user.home");
     public static final String ROOT_DIR = "d:" +File.separator+ "nseEnv-2021" +File.separator+ "nse-data";
 
+    public static final String CM_DIR_NAME = "pra-cm";
+    public static final String DM_DIR_NAME = "pra-dm";
+    public static final String FM_DIR_NAME = "pra-fm";
+    public static final String AB_DIR_NAME = "pra-ab";
+    public static final String NX_DIR_NAME = "pra-nx";
+
     public static final String AVG_DIR_NAME = "calc-avg";
     public static final String RSI_DIR_NAME = "calc-rsi";
     public static final String MFI_DIR_NAME = "calc-mfi";

@@ -28,6 +28,7 @@ public class DmTransformer extends BaseTransformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DmTransformer.class);
 
     private final String Data_Dir = ApCo.ROOT_DIR + File.separator + NseCons.DM_DIR_NAME;
+    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + "pra-dm";
 
 
     public DmTransformer(TransformationHelper transformationHelper, NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
@@ -76,6 +77,7 @@ public class DmTransformer extends BaseTransformer {
     private void looper(Map<String, String> filePairMap) {
         filePairMap.forEach( (nseFileName, praFileName) -> {
             transform(nseFileName, praFileName);
+            transformNew(nseFileName, praFileName);
         });
     }
 
@@ -83,11 +85,11 @@ public class DmTransformer extends BaseTransformer {
         String source = Data_Dir + File.separator + nseFileName;
         String target = Data_Dir + File.separator + praFileName;
         if(nseFileUtils.isFileExist(target)) {
-            LOGGER.info("DM | target exists - {}", target);
+            LOGGER.info("DM | already transformed - {}", target);
         } else if (nseFileUtils.isFileExist(source)) {
             try {
-                int outputRowsCount = transformToDmCsv(source);
-                LOGGER.info("DM | source transformed to - {}, output rows {}", target, outputRowsCount);
+                int outputRowsCount = transformToDmCsv(source, Data_Dir);
+                LOGGER.info("DM | source transformed - {}, output rows {}", target, outputRowsCount);
             } catch (Exception e) {
                 LOGGER.warn("DM | Error while transforming file: {} {}", source, e);
             }
@@ -95,15 +97,31 @@ public class DmTransformer extends BaseTransformer {
             LOGGER.info("DM | source not found - {}", source);
         }
     }
-
-    private int transformToDmCsv(String downloadedDirAndFileName) {
+    private void transformNew(String nseFileName, String praFileName) {
+        String source = Data_Dir + File.separator + nseFileName;
+        String target = Target_Data_Dir + File.separator + praFileName;
+        if(nseFileUtils.isFileExist(target)) {
+            LOGGER.info("DM | already transformed - {}", target);
+        } else if (nseFileUtils.isFileExist(source)) {
+            try {
+                int outputRowsCount = transformToDmCsv(source, Target_Data_Dir);
+                LOGGER.info("DM | transformed - {}, output rows {}", target, outputRowsCount);
+            } catch (Exception e) {
+                LOGGER.warn("DM | Error while transforming file: {} {}", source, e);
+            }
+        } else {
+            LOGGER.info("DM | source not found - {}", source);
+        }
+    }
+    private int transformToDmCsv(String downloadedDirAndFileName, String tgtDataDir) {
         int firstIndex = downloadedDirAndFileName.lastIndexOf("_");
         String tradeDate = DateUtils.transformDate(downloadedDirAndFileName.substring(firstIndex+1, firstIndex+9));
         String csvFileName =
                 ApCo.PRA_DM_FILE_PREFIX
                 + tradeDate
                 + ApCo.REPORTS_FILE_EXT;
-        String toFile = ApCo.ROOT_DIR + File.separator + NseCons.DM_DIR_NAME + File.separator + csvFileName;
+        //String toFile = ApCo.ROOT_DIR + File.separator + NseCons.DM_DIR_NAME + File.separator + csvFileName;
+        String toFile = tgtDataDir + File.separator + csvFileName;
         AtomicInteger atomicInteger = new AtomicInteger();
         AtomicInteger outGoingRows = new AtomicInteger();
         File csvOutputFile = new File(toFile);

@@ -34,6 +34,8 @@ public class AbTransformer extends BaseTransformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbTransformer.class);
 
     private final String Data_Dir = ApCo.ROOT_DIR + File.separator + NseCons.AB_DIR_NAME;
+    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + "pra-ab";
+
 
     private final EmailService emailService;
 
@@ -88,6 +90,7 @@ public class AbTransformer extends BaseTransformer {
     private void looper(Map<String, String> filePairMap) {
         filePairMap.forEach( (nseFileName, abFileName) -> {
             transform(nseFileName, abFileName);
+            transformNew(nseFileName, abFileName);
         });
     }
 
@@ -95,11 +98,28 @@ public class AbTransformer extends BaseTransformer {
         String source = ApCo.ROOT_DIR + File.separator + NseCons.CM_DIR_NAME + File.separator + nseFileName;
         String target = Data_Dir + File.separator + abFileName;
         if(nseFileUtils.isFileExist(target)) {
-            LOGGER.info("AB | target exists - {}", target);
+            LOGGER.info("AB | already transformed - {}", target);
         } else if (nseFileUtils.isFileExist(source)) {
             try {
                 transformToAbCsv(source, target);
-                LOGGER.info("AB | source transformed to - {}", target);
+                LOGGER.info("AB | transformed - {}", target);
+                email(target);
+            } catch (Exception e) {
+                LOGGER.warn("AB | Error while transforming file: {} {}", source, e);
+            }
+        } else {
+            LOGGER.info("AB | source not found - {}", source);
+        }
+    }
+    private void transformNew(String nseFileName, String abFileName) {
+        String source = ApCo.ROOT_DIR + File.separator + NseCons.CM_DIR_NAME + File.separator + nseFileName;
+        String target = Target_Data_Dir + File.separator + abFileName;
+        if(nseFileUtils.isFileExist(target)) {
+            LOGGER.info("AB | already transformed - {}", target);
+        } else if (nseFileUtils.isFileExist(source)) {
+            try {
+                transformToAbCsv(source, target);
+                LOGGER.info("AB | transformed - {}", target);
                 email(target);
             } catch (Exception e) {
                 LOGGER.warn("AB | Error while transforming file: {} {}", source, e);

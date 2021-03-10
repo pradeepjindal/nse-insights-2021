@@ -83,10 +83,11 @@ public class PastPresentFutureReporter {
         if(forDate.isAfter(latestNseDate)) return;
 
         String fixed_width_days_str = "_".concat(forMinusDays.toString());
-        fixed_width_days_str = fixed_width_days_str.substring(fixed_width_days_str.length()-2,fixed_width_days_str.length());
+        fixed_width_days_str = fixed_width_days_str.substring(fixed_width_days_str.length()-2, fixed_width_days_str.length());
         String report_name = PPF_NEW.replace("days", fixed_width_days_str);
 
-        String fileName = report_name + "-" + forDate.toString() + ApCo.REPORTS_FILE_EXT;
+        //String fileName = report_name + "-" + forDate.toString() + ApCo.REPORTS_FILE_EXT;
+        String fileName = report_name + "-" + forDate.toString() + "-a" + ApCo.REPORTS_FILE_EXT;
         String filePath = ApCo.ROOT_DIR + File.separator + outputDirName + File.separator + fileName;
 
         LOGGER.info("{} | for:{}", report_name, forDate.toString());
