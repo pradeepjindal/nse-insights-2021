@@ -37,7 +37,7 @@ public class CalcAvgUploader extends BaseUploader {
                            AvgCalculator calculator,
                            NseFileUtils nseFileUtils,
                            PraFileUtils praFileUtils) {
-        super(praFileUtils, CalcCons.AVG_DIR_NAME_NEW, AVG_FILE_PREFIX, ApCo.UPLOAD_CALC_FROM_DATE);
+        super(praFileUtils, CalcCons.AVG_DIR_NAME, AVG_FILE_PREFIX, ApCo.UPLOAD_CALC_FROM_DATE);
         this.repo = repo;
         this.calculator = calculator;
         this.nseFileUtils = nseFileUtils;
@@ -47,7 +47,7 @@ public class CalcAvgUploader extends BaseUploader {
     public void uploadForDate(LocalDate forDate) {
         //
         String fileName = CalcCons.AVG_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
-        String fromFile = CalcCons.AVG_FILES_PATH_NEW +File.separator+ fileName;
+        String fromFile = CalcCons.AVG_FILES_PATH +File.separator+ fileName;
 //        LOGGER.info("{} upload | looking for file Name along with path:[{}]",calc_name, fromFile);
 
         if(!nseFileUtils.isFileExist(fromFile)) {

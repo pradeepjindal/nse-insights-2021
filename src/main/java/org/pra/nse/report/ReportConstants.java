@@ -64,7 +64,8 @@ public class ReportConstants {
                     "DelRsi,DelRsiChg," +
                     "AtpRsi,AtpRsiChg,lotSize" +
                     ",vol_InLakh,trd_InLakh,del_InLakh,vdr" +
-                    ",fuAtp,fuAtpMcmAtp";
+                    ",fuAtp,fuAtpMcmAtp" +
+                    ",Hammer,NR4,NR7";
 
     static final List<String> SHUVI_TICKERS =
             List.of("ASIANPAINTS", "COLPAL", "DABUR", "ICICIPRULI", "JUBLIENTFOOD", "PIDILITE", "RELIANCE", "SBIN", "TITAN", "UBL");

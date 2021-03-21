@@ -101,6 +101,31 @@ public class DeliverySpikeDto {
     private BigDecimal delDiff;
     private BigDecimal lotSize;
 
+    private String hammer;
+    private float NR4;
+    private float NR7;
+    private float HH;
+    private float HL;
+    private float LH;
+    private float LL;
+
+
+    public DeliverySpikeDto getDto(int num) {
+        DeliverySpikeDto dto = this;
+        if(num<0) {
+            for(int i=0; num<i; i--) {
+                dto = dto.getBackDto();
+            }
+        }
+        if(num>0) {
+            for(int i=0; i<num; i++) {
+                dto = dto.getNextDto();
+            }
+        }
+        return dto;
+    }
+
+
     public String toCsvString() {
         return  symbol + ","
                 + tradeDate + ","
@@ -226,7 +251,10 @@ public class DeliverySpikeDto {
                 + delivery.divide(new BigDecimal(100000), 2, RoundingMode.HALF_EVEN) + ","
                 + vdr + ","
                 + fuAtp + ","
-                + fuAtpMinusCmAtp;
+                + fuAtpMinusCmAtp + ","
+                + hammer + ","
+                + (NR4 == 0 ? "" : NR4) + ","
+                + (NR7 == 0 ? "" : NR7);
     }
 
     public String getSymbol() {
@@ -859,5 +887,61 @@ public class DeliverySpikeDto {
 
     public void setAtpOiTrend(String atpOiTrend) {
         this.atpOiTrend = atpOiTrend;
+    }
+
+    public String getHammer() {
+        return hammer;
+    }
+
+    public void setHammer(String hammer) {
+        this.hammer = hammer;
+    }
+
+    public float getNR4() {
+        return NR4;
+    }
+
+    public void setNR4(float NR4) {
+        this.NR4 = NR4;
+    }
+
+    public float getNR7() {
+        return NR7;
+    }
+
+    public void setNR7(float NR7) {
+        this.NR7 = NR7;
+    }
+
+    public float getHH() {
+        return HH;
+    }
+
+    public void setHH(float HH) {
+        this.HH = HH;
+    }
+
+    public float getHL() {
+        return HL;
+    }
+
+    public void setHL(float HL) {
+        this.HL = HL;
+    }
+
+    public float getLH() {
+        return LH;
+    }
+
+    public void setLH(float LH) {
+        this.LH = LH;
+    }
+
+    public float getLL() {
+        return LL;
+    }
+
+    public void setLL(float LL) {
+        this.LL = LL;
     }
 }

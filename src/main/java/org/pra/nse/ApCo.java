@@ -49,7 +49,7 @@ public class ApCo {
     public static final String DM_DIR_NAME = "pra-dm";
     public static final String FM_DIR_NAME = "pra-fm";
     public static final String AB_DIR_NAME = "pra-ab";
-    public static final String NX_DIR_NAME = "pra-nx";
+    public static final String IDX_DIR_NAME = "pra-nx";
 
     public static final String AVG_DIR_NAME = "calc-avg";
     public static final String RSI_DIR_NAME = "calc-rsi";

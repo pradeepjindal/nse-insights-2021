@@ -111,3 +111,31 @@ SELECT
 		   WHERE nfmt.symbol = mev.symbol and nfmt.trade_date = mev.trade_date and nfmt.expiry_date = mev.min_expiry_date
 		   and nfmt.symbol = 'SBIN'
 
+
+
+create materialized view fm_expiry_date_ranking_mv as
+select a.symbol, a.trade_date, min_expiry_date, b.expiry_date m0_expiry_date, c.expiry_date m1_expiry_date
+FROM
+(
+ SELECT nse_future_market_tab.symbol,
+    nse_future_market_tab.trade_date,
+    min(nse_future_market_tab.expiry_date) AS min_expiry_date
+   FROM nse_future_market_tab
+  GROUP BY nse_future_market_tab.symbol, nse_future_market_tab.trade_date
+) a left join
+(
+ SELECT tt1.symbol, tt1.expiry_date,
+    rank() OVER (partition by symbol ORDER BY tt1.expiry_date)  AS rank_expiry_date
+   FROM ( SELECT DISTINCT symbol, expiry_date
+           FROM nse_future_market_tab) tt1
+) b
+on a.symbol = b.symbol AND a.min_expiry_date = b.expiry_date
+left outer join
+(
+ SELECT tt1.symbol, tt1.expiry_date,
+    rank() OVER (partition by symbol ORDER BY tt1.expiry_date)  AS rank_expiry_date
+   FROM ( SELECT DISTINCT symbol, expiry_date
+           FROM nse_future_market_tab) tt1
+) c
+on b.symbol = c.symbol
+ and b.rank_expiry_date+1 = c.rank_expiry_date

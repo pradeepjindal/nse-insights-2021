@@ -87,7 +87,7 @@ public class PastPresentFutureReporter {
         String report_name = PPF_NEW.replace("days", fixed_width_days_str);
 
         //String fileName = report_name + "-" + forDate.toString() + ApCo.REPORTS_FILE_EXT;
-        String fileName = report_name + "-" + forDate.toString() + "-a" + ApCo.REPORTS_FILE_EXT;
+        String fileName = report_name + "-" + forDate.toString() + "" + ApCo.REPORTS_FILE_EXT;
         String filePath = ApCo.ROOT_DIR + File.separator + outputDirName + File.separator + fileName;
 
         LOGGER.info("{} | for:{}", report_name, forDate.toString());
@@ -119,6 +119,8 @@ public class PastPresentFutureReporter {
         Map<String, List<DeliverySpikeDto>> symbolMap = dataService.getRichDataBySymbol(forDate, forMinusDays);
         ReportHelper.enrichGrowth(calcAvgMap, symbolMap);
         ReportHelper.enrichAtpDelAndOiTrend(symbolMap);
+        ReportHelper.enrichNarrowRange(symbolMap);
+        ReportHelper.enrichHammer(symbolMap);
         //atpDelTrend
 
 

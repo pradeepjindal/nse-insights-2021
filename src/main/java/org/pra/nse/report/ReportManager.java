@@ -49,8 +49,9 @@ public class ReportManager implements Manager {
         //pastPresentFutureReporterNew.reportFromLast(2);
 //        pastPresentFutureReporterNew.reportFromLast(3);
 //        pastPresentFutureReporterNew.reportFromLast(5);
-        pastPresentFutureReporter.reportFromLast(10);
-        pastPresentFutureReporter.reportFromLast(15);
+
+//        pastPresentFutureReporter.reportFromLast(10);
+//        pastPresentFutureReporter.reportFromLast(15);
         pastPresentFutureReporter.reportFromLast(20);
 
 //        pastPresentFutureReporterNew.reportForDate(LocalDate.of(2021,2,18),20);

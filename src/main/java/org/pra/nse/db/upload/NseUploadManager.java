@@ -1,10 +1,7 @@
 package org.pra.nse.db.upload;
 
 import org.pra.nse.Manager;
-import org.pra.nse.db.upload.nse.NseCmUploader;
-import org.pra.nse.db.upload.nse.NseDmUploader;
-import org.pra.nse.db.upload.nse.NseFmUploader;
-import org.pra.nse.db.upload.nse.NseIdxUploader;
+import org.pra.nse.db.upload.nse.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -15,15 +12,15 @@ import java.time.LocalDate;
 public class NseUploadManager implements Manager {
     private static final Logger LOGGER = LoggerFactory.getLogger(NseUploadManager.class);
 
-    private final NseCmUploader nseCmUploader;
-    private final NseFmUploader nseFmUploader;
-    private final NseDmUploader nseDmUploader;
-    private final NseIdxUploader nseIdxUploader;
+    private final NseCmUploaderNew nseCmUploader;
+    private final NseFmUploaderNew nseFmUploader;
+    private final NseDmUploaderNew nseDmUploader;
+    private final NseIdxUploaderNew nseIdxUploader;
 
-    public NseUploadManager(NseCmUploader nseCmUploader,
-                            NseFmUploader nseFmUploader,
-                            NseDmUploader nseDmUploader,
-                            NseIdxUploader nseIdxUploader) {
+    public NseUploadManager(NseCmUploaderNew nseCmUploader,
+                            NseFmUploaderNew nseFmUploader,
+                            NseDmUploaderNew nseDmUploader,
+                            NseIdxUploaderNew nseIdxUploader) {
         this.nseCmUploader = nseCmUploader;
         this.nseFmUploader = nseFmUploader;
         this.nseDmUploader = nseDmUploader;

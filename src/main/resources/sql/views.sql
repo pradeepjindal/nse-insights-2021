@@ -412,3 +412,51 @@ CREATE VIEW public.pivot_oi_view1 AS
   GROUP BY source.symbol, source.instrument, source.trade_date, source.trade_date_rank;
 
 ALTER TABLE public.pivot_oi_view1 OWNER TO postgres;
+
+
+
+create or replace view fut_data_m0_m1_view as
+SELECT a.symbol,
+    a.instrument,
+    a.trade_date,
+    a.expiry_date,
+    a.fuopen,
+    a.fuhigh,
+    a.fulow,
+    a.fuclose,
+    a.fulast,
+    a.fuoi,
+    a.fu_tot_trd_val,
+    a.fucontracts,
+    b.m1_expiry_date,
+    b.fuoi AS m1_fuoi,
+    b.fu_tot_trd_val AS m1_fu_tot_trd_val,
+    b.fucontracts AS m1_fucontracts,
+    a.fuoi + COALESCE(b.fuoi, 0::bigint) AS m0_plus_m1_fuoi,
+    a.fu_tot_trd_val + COALESCE(b.fu_tot_trd_val, 0::bigint) AS m0_plus_m1_fu_tot_trd_val,
+    a.fucontracts + COALESCE(b.fucontracts, 0::bigint) AS m0_plus_m1_fucontracts
+   FROM ( SELECT nfmt.symbol,
+            nfmt.instrument,
+            nfmt.trade_date,
+            nfmt.expiry_date,
+            nfmt.open AS fuopen,
+            nfmt.high AS fuhigh,
+            nfmt.low AS fulow,
+            nfmt.close AS fuclose,
+            nfmt.settle_price AS fulast,
+            nfmt.open_int AS fuoi,
+            nfmt.value_in_lakh * 100000::numeric AS fu_tot_trd_val,
+            nfmt.contracts AS fucontracts
+           FROM nse_future_market_tab nfmt,
+            fm_expiry_date_ranking_mv mev
+          WHERE nfmt.symbol::text = mev.symbol::text AND nfmt.trade_date = mev.trade_date AND nfmt.expiry_date = mev.m0_expiry_date) a
+     LEFT JOIN ( SELECT nfmt.symbol,
+            nfmt.trade_date,
+            nfmt.expiry_date AS m1_expiry_date,
+            nfmt.open_int AS fuoi,
+            nfmt.value_in_lakh * 100000::numeric AS fu_tot_trd_val,
+            nfmt.contracts AS fucontracts
+           FROM nse_future_market_tab nfmt,
+            fm_expiry_date_ranking_mv mev
+          WHERE nfmt.symbol::text = mev.symbol::text AND nfmt.trade_date = mev.trade_date AND nfmt.expiry_date = mev.m1_expiry_date) b ON a.symbol::text = b.symbol::text AND a.trade_date = b.trade_date
+  ORDER BY a.symbol, a.trade_date;

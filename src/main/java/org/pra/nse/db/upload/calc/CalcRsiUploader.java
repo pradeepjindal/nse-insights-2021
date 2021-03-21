@@ -35,7 +35,7 @@ public class CalcRsiUploader extends BaseUploader {
 
     public CalcRsiUploader(CalcRsiRepo repo, RsiCalculator calculator,
                            NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
-        super(praFileUtils, CalcCons.RSI_DIR_NAME_NEW, RSI_FILE_PREFIX, ApCo.UPLOAD_CALC_FROM_DATE);
+        super(praFileUtils, CalcCons.RSI_DIR_NAME, RSI_FILE_PREFIX, ApCo.UPLOAD_CALC_FROM_DATE);
         this.repo = repo;
         this.calculator = calculator;
         this.nseFileUtils = nseFileUtils;
@@ -46,7 +46,7 @@ public class CalcRsiUploader extends BaseUploader {
     public void uploadForDate(LocalDate forDate) {
         //
         String fileName = CalcCons.RSI_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
-        String fromFile = CalcCons.RSI_FILES_PATH_NEW +File.separator+ fileName;
+        String fromFile = CalcCons.RSI_FILES_PATH +File.separator+ fileName;
 //        LOGGER.info("{} upload | looking for file Name along with path:[{}]",calc_name, fromFile);
 
         if(!nseFileUtils.isFileExist(fromFile)) {

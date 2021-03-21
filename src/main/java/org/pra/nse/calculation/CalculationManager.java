@@ -44,7 +44,7 @@ public class CalculationManager implements Manager {
         //mfiCalculatorNew.calculateAndSave(LocalDate.of(2020,2,14));
 
         LOGGER.info("----------");
-        nseFileUtils.getDatesToBeComputed(()-> AVG_FILE_PREFIX, CalcCons.AVG_DIR_NAME_NEW, ApCo.DO_CALC_FROM_DATE)
+        nseFileUtils.getDatesToBeComputed(()-> AVG_FILE_PREFIX, CalcCons.AVG_DIR_NAME, ApCo.DO_CALC_FROM_DATE)
                 .forEach( forDate -> {
                     LOGGER.info(".");
                     LOGGER.info("calc-{} | for:{}", AVG_FILE_PREFIX, forDate.toString());
@@ -56,7 +56,7 @@ public class CalculationManager implements Manager {
                 });
 
         LOGGER.info("----------");
-        nseFileUtils.getDatesToBeComputed(()-> MFI_FILE_PREFIX, CalcCons.MFI_DIR_NAME_NEW, ApCo.DO_CALC_FROM_DATE)
+        nseFileUtils.getDatesToBeComputed(()-> MFI_FILE_PREFIX, CalcCons.MFI_DIR_NAME, ApCo.DO_CALC_FROM_DATE)
                 .forEach( forDate -> {
                     LOGGER.info(".");
                     LOGGER.info("calc-{} | for:{}", MFI_FILE_PREFIX, forDate.toString());
@@ -68,7 +68,7 @@ public class CalculationManager implements Manager {
                 });
 //
         LOGGER.info("----------");
-        nseFileUtils.getDatesToBeComputed(()-> RSI_FILE_PREFIX, CalcCons.RSI_DIR_NAME_NEW, ApCo.DO_CALC_FROM_DATE)
+        nseFileUtils.getDatesToBeComputed(()-> RSI_FILE_PREFIX, CalcCons.RSI_DIR_NAME, ApCo.DO_CALC_FROM_DATE)
                 .forEach( forDate -> {
                     LOGGER.info(".");
                     LOGGER.info("calc-{} | for:{}", RSI_FILE_PREFIX, forDate.toString());

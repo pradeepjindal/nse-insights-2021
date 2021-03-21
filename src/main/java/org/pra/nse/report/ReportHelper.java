@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.AbstractMap;
@@ -96,6 +97,10 @@ public class ReportHelper {
         LOGGER.info("enrichGrowth - completed");
     }
 
+    public void enrichMultiple(Map<String, List<DeliverySpikeDto>> symbolMap) {
+
+    }
+
     public static void enrichAtpDelAndOiTrend(Map<String, List<DeliverySpikeDto>> symbolMap) {
         LOGGER.info("enrichTrend - ");
         LOGGER.info("enrichTrend - total symbols: {}", symbolMap.size());
@@ -104,6 +109,76 @@ public class ReportHelper {
             enrichTrendForEachSymbol(entry.getValue());
         }
         LOGGER.info("enrichTrend - completed");
+    }
+
+    public static void enrichNarrowRange(Map<String, List<DeliverySpikeDto>> symbolMap) {
+        LOGGER.info("enrichNarrowRange - ");
+        LOGGER.info("enrichNarrowRange - total symbols: {}", symbolMap.size());
+        for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
+            LOGGER.info("enrichNarrowRange - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
+            enrichNarrowRangeForEachSymbol(entry.getValue());
+        }
+        LOGGER.info("enrichNarrowRange - completed");
+    }
+
+    public static void enrichHammer(Map<String, List<DeliverySpikeDto>> symbolMap) {
+        LOGGER.info("enrichHammer - ");
+        LOGGER.info("enrichHammer - total symbols: {}", symbolMap.size());
+        for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
+            LOGGER.info("enrichHammer - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
+            enrichHammerForEachSymbol(entry.getValue());
+        }
+        LOGGER.info("enrichHammer - completed");
+    }
+
+    private static void enrichHammerForEachSymbol(List<DeliverySpikeDto> DeliverySpikeDtoList) {
+        String hammer;
+        for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
+            //LOGGER.info("symbol: {}, dt: {}", dto.getSymbol(), dto.getTradeDate());
+            try {
+                hammer = IndicatorUtils.calculateHammer(
+                        dto.getOpen().floatValue(),
+                        dto.getHigh().floatValue(),
+                        dto.getLow().floatValue(),
+                        dto.getClose().floatValue());
+                dto.setHammer(hammer);
+            } catch (NullPointerException npe) {
+                LOGGER.warn("enrichHammer - {}, skipping, no back data (seems new entry in FnO)", Du.symbol(dto.getSymbol()));
+            }
+        }
+    }
+
+    private static void enrichNarrowRangeForEachSymbol(List<DeliverySpikeDto> DeliverySpikeDtoList) {
+//        float[][] nrArray = new float[DeliverySpikeDtoList.size()+5][DeliverySpikeDtoList.size()+5];
+//        int i = 0;
+        for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
+            //LOGGER.info("symbol: {}, dt: {}", dto.getSymbol(), dto.getTradeDate());
+            try {
+                float t1 = dto.getHighLowDiff().floatValue();
+                float t2 = dto.getBackDto().getHighLowDiff().floatValue();
+                float t3 = dto.getBackDto().getBackDto().getHighLowDiff().floatValue();
+                float t4 = dto.getBackDto().getBackDto().getBackDto().getHighLowDiff().floatValue();
+                if( t1 < t2 && t1 < t3 && t1 < t4) {
+                    dto.setNR4(t1);
+                }
+            } catch (NullPointerException npe) {
+                LOGGER.warn("enrichNarrowRange - {}, skipping, no back data (seems new entry in FnO)", Du.symbol(dto.getSymbol()));
+            }
+            try {
+                float t1 = dto.getHighLowDiff().floatValue();
+                float t2 = dto.getDto(-1).getHighLowDiff().floatValue();
+                float t3 = dto.getDto(-2).getHighLowDiff().floatValue();
+                float t4 = dto.getDto(-3).getHighLowDiff().floatValue();
+                float t5 = dto.getDto(-4).getHighLowDiff().floatValue();
+                float t6 = dto.getDto(-5).getHighLowDiff().floatValue();
+                float t7 = dto.getDto(-6).getHighLowDiff().floatValue();
+                if( t1 < t2 && t1 < t3 && t1 < t4 && t1 < t5 && t1 < t6 && t1 < t7) {
+                    dto.setNR7(t1);
+                }
+            } catch (NullPointerException npe) {
+                LOGGER.warn("enrichNarrowRange - {}, skipping, no back data (seems new entry in FnO)", Du.symbol(dto.getSymbol()));
+            }
+        }
     }
 
     private static void enrichTrendForEachSymbol(List<DeliverySpikeDto> DeliverySpikeDtoList) {

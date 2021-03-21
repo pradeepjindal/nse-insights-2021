@@ -34,7 +34,7 @@ public class CalcMfiUploader extends BaseUploader {
     public CalcMfiUploader(MfiCalculator calculator,
                            CalcMfiRepo repo,
                            NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
-        super(praFileUtils, CalcCons.MFI_DIR_NAME_NEW, CalcCons.MFI_FILE_PREFIX, ApCo.UPLOAD_CALC_FROM_DATE);
+        super(praFileUtils, CalcCons.MFI_DIR_NAME, CalcCons.MFI_FILE_PREFIX, ApCo.UPLOAD_CALC_FROM_DATE);
         this.calculator = calculator;
         this.repo = repo;
         this.nseFileUtils = nseFileUtils;
@@ -44,7 +44,7 @@ public class CalcMfiUploader extends BaseUploader {
     public void uploadForDate(LocalDate forDate) {
         //
         String fileName = CalcCons.MFI_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
-        String fromFile = CalcCons.MFI_FILES_PATH_NEW +File.separator+ fileName;
+        String fromFile = CalcCons.MFI_FILES_PATH +File.separator+ fileName;
 //        LOGGER.info("{} upload | looking for file Name along with path:[{}]",calc_name, fromFile);
 
         if(!nseFileUtils.isFileExist(fromFile)) {

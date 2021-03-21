@@ -28,7 +28,7 @@ public class RsiCalculator {
     private final String calc_name = CalcCons.RSI_FILE_PREFIX;
     private final String csv_header = CalcCons.RSI_CSV_HEADER_NEW;
 
-    private final String computeFolderName = CalcCons.RSI_DIR_NAME_NEW;
+    private final String computeFolderName = CalcCons.RSI_DIR_NAME;
 
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
@@ -58,7 +58,7 @@ public class RsiCalculator {
         String computeFilePath = getComputeOutputPath(forDate);
         LOGGER.info("{} | for:{}", calc_name, forDate.toString());
         if(nseFileUtils.isFileExist(computeFilePath)) {
-            LOGGER.warn("{} already present (calculation and saving would be skipped): {}", calc_name, computeFilePath);
+            LOGGER.warn("{} already present (skipping calc and saving): {}", calc_name, computeFilePath);
             return;
         }
 

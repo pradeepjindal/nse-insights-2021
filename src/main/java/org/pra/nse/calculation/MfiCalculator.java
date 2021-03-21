@@ -28,7 +28,7 @@ public class MfiCalculator {
     private final String calc_name = CalcCons.MFI_FILE_PREFIX;
     private final String csv_header = CalcCons.MFI_CSV_HEADER_NEW;
 
-    private final String computeFolderName = CalcCons.MFI_DIR_NAME_NEW;
+    private final String computeFolderName = CalcCons.MFI_DIR_NAME;
 
 
     private final DataServiceI dataService;
@@ -63,7 +63,7 @@ public class MfiCalculator {
         String computeFilePath = getComputeOutputPath(forDate);
         LOGGER.info("{} | for:{}", calc_name, forDate.toString());
         if(nseFileUtils.isFileExist(computeFilePath)) {
-            LOGGER.warn("{} already present (calculation and saving would be skipped): {}", calc_name, computeFilePath);
+            LOGGER.warn("{} already present (skipping calc and saving): {}", calc_name, computeFilePath);
             return;
         }
 

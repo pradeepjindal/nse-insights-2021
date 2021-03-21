@@ -18,9 +18,9 @@ public class CalcCons {
     public static final String MFI_DIR_NAME = CALC_DIR_PREFIX + MFI_DATA_NAME;
     public static final String RSI_DIR_NAME = CALC_DIR_PREFIX + RSI_DATA_NAME;
 
-    public static final String AVG_DIR_NAME_NEW = CALC_DIR_PREFIX + AVG_DATA_NAME + "-new";
-    public static final String MFI_DIR_NAME_NEW = CALC_DIR_PREFIX + MFI_DATA_NAME + "-new";
-    public static final String RSI_DIR_NAME_NEW = CALC_DIR_PREFIX + RSI_DATA_NAME + "-new";
+//    public static final String AVG_DIR_NAME_NEW = CALC_DIR_PREFIX + AVG_DATA_NAME + "-new";
+//    public static final String MFI_DIR_NAME_NEW = CALC_DIR_PREFIX + MFI_DATA_NAME + "-new";
+//    public static final String RSI_DIR_NAME_NEW = CALC_DIR_PREFIX + RSI_DATA_NAME + "-new";
 
     public static final String AVG_FILE_PREFIX = AVG_DATA_NAME + "-";
     public static final String MFI_FILE_PREFIX = MFI_DATA_NAME + "-";
@@ -30,9 +30,9 @@ public class CalcCons {
     public static final String MFI_FILES_PATH = ApCo.ROOT_DIR +File.separator+ MFI_DIR_NAME;
     public static final String RSI_FILES_PATH = ApCo.ROOT_DIR +File.separator+ RSI_DIR_NAME;
 
-    public static final String AVG_FILES_PATH_NEW = ApCo.ROOT_DIR +File.separator+ AVG_DIR_NAME_NEW;
-    public static final String MFI_FILES_PATH_NEW = ApCo.ROOT_DIR +File.separator+ MFI_DIR_NAME_NEW;
-    public static final String RSI_FILES_PATH_NEW = ApCo.ROOT_DIR +File.separator+ RSI_DIR_NAME_NEW;
+//    public static final String AVG_FILES_PATH_NEW = ApCo.ROOT_DIR +File.separator+ AVG_DIR_NAME_NEW;
+//    public static final String MFI_FILES_PATH_NEW = ApCo.ROOT_DIR +File.separator+ MFI_DIR_NAME_NEW;
+//    public static final String RSI_FILES_PATH_NEW = ApCo.ROOT_DIR +File.separator+ RSI_DIR_NAME_NEW;
 
     public static final String AVG_CSV_HEADER
             = "symbol,trade_date," +

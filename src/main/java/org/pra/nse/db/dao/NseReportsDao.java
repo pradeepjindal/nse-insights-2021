@@ -3,7 +3,6 @@ package org.pra.nse.db.dao;
 import org.pra.nse.config.YamlPropertyLoaderFactory;
 import org.pra.nse.db.dto.DeliverySpikeDto;
 
-import org.pra.nse.db.upload.nse.NseIdxUploaderMigrated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
