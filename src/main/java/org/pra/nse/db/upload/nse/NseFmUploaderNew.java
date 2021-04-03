@@ -18,15 +18,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-
 import java.io.File;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class NseFmUploader extends BaseUploader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NseFmUploader.class);
+public class NseFmUploaderNew {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NseFmUploaderNew.class);
 
     private final NseFmRepo futureMarketRepository;
     private final FmDao dao;
@@ -34,13 +33,18 @@ public class NseFmUploader extends BaseUploader {
     private final PraFileUtils praFileUtils;
     private final FmCsvReader csvReader;
 
-    public NseFmUploader(NseFmRepo repository,
-                         NseOmRepo nseOmRepo,
-                         FmDao dao,
-                         NseFileUtils nseFileUtils,
-                         PraFileUtils praFileUtils,
-                         FmCsvReader fmCsvReader) {
-        super(praFileUtils, NseCons.FM_DIR_NAME, ApCo.PRA_FM_FILE_PREFIX, ApCo.UPLOAD_NSE_FROM_DATE);
+    private String fileDirName = ApCo.FM_DIR_NAME;
+    private String filePrefix = ApCo.PRA_FM_FILE_PREFIX;
+    private LocalDate defaultDate = ApCo.UPLOAD_NSE_FROM_DATE;
+
+    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.FM_DIR_NAME;
+
+    public NseFmUploaderNew(NseFmRepo repository,
+                            NseOmRepo nseOmRepo,
+                            FmDao dao,
+                            NseFileUtils nseFileUtils,
+                            PraFileUtils praFileUtils,
+                            FmCsvReader fmCsvReader) {
         this.futureMarketRepository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;
@@ -49,19 +53,49 @@ public class NseFmUploader extends BaseUploader {
     }
 
 
+    public void uploadFromDefaultDate() {
+        uploadFromDate(defaultDate);
+    }
+    public void uploadFromDate(LocalDate fromDate) {
+        looper(fromDate);
+    }
+
+    public void uploadFromLatestDate() {
+        //String dataDir = ApCo.ROOT_DIR + File.separator + fileDirName;
+        String str = praFileUtils.getLatestFileNameFor(Data_Dir, filePrefix, ApCo.DATA_FILE_EXT, 1);
+        LocalDate dt = str == null ? LocalDate.now() : DateUtils.getLocalDateFromPath(str);
+        looper(dt);
+    }
+
+    private void looper(LocalDate fromDate) {
+        LocalDate today = LocalDate.now();
+        LocalDate processingDate = fromDate.minusDays(1);
+        do {
+            processingDate = processingDate.plusDays(1);
+            LOGGER.info("{} | upload processing date: [{}], {}", filePrefix, processingDate, processingDate.getDayOfWeek());
+            if(DateUtils.isTradingOnHoliday(processingDate)) {
+                uploadForDate(processingDate);
+            } else if (DateUtils.isWeekend(processingDate)) {
+                continue;
+            } else {
+                uploadForDate(processingDate);
+            }
+        } while(today.compareTo(processingDate) > 0);
+    }
+
     public void uploadForDate(LocalDate forDate) {
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("FM-upload | SKIPPING - already uploaded | for date:[{}]", forDate);
+            LOGGER.info("FM-upload | already uploaded | for date:[{}]", forDate);
             return;
         } else {
 //            LOGGER.info("FM-upload | uploading - for date:[{}]", forDate);
         }
 
-        String fromFile = NseCons.FM_FILES_PATH + File.separator+ ApCo.PRA_FM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
+        String fromFile = Data_Dir + File.separator+ ApCo.PRA_FM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
         //LOGGER.info("FM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFileExist(fromFile)) {
-            LOGGER.warn("FM-upload | file does not exist: [{}]", fromFile);
+            LOGGER.warn("FM-upload | file not found: [{}]", fromFile);
             return;
         }
         Map<FmBean, FmBean> foBeanMap = csvReader.read(null, fromFile);

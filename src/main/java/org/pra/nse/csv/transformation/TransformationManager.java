@@ -35,25 +35,29 @@ public class TransformationManager implements Manager {
         LOGGER.info(".");
         LOGGER.info("____________________ Transform Manager");
 
-        LOGGER.info("----------");
-        cmTransformer.transformFromDefaultDate();
-        LOGGER.info("----------");
-        dmTransformer.transformFromDefaultDate();
-        LOGGER.info("----------");
-        fmTransformer.transformFromDefaultDate();
-        LOGGER.info("----------");
-        idxTransformer.transformFromDefaultDate();
-        LOGGER.info("----------");
-        abTransformer.transformFromDefaultDate();
+//        idxTransformer.transformAll();
 
 
-//        cmTransformer.transformFromLastDate();
 //        LOGGER.info("----------");
-//        abTransformer.transformFromLastDate();
+//        cmTransformer.transformFromDefaultDate();
 //        LOGGER.info("----------");
-//        fmTransformer.transformFromLastDate();
+//        dmTransformer.transformFromDefaultDate();
 //        LOGGER.info("----------");
-//        dmTransformer.transformFromLastDate();
+//        fmTransformer.transformFromDefaultDate();
+//        LOGGER.info("----------");
+//        idxTransformer.transformFromDefaultDate();
+//        LOGGER.info("----------");
+//        abTransformer.transformFromDefaultDate();
+
+        cmTransformer.transformFromLastDate();
+        LOGGER.info("----------");
+        abTransformer.transformFromLastDate();
+        LOGGER.info("----------");
+        fmTransformer.transformFromLastDate();
+        LOGGER.info("----------");
+        idxTransformer.transformFromLastDate();
+        LOGGER.info("----------");
+        dmTransformer.transformFromLastDate();
 
 //        cmTransformer.transformFromDate(LocalDate.of(2016,1,1));
 //        LOGGER.info("----------");

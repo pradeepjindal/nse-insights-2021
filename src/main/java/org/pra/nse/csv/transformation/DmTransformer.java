@@ -45,7 +45,7 @@ public class DmTransformer extends BaseTransformer {
     }
 
     public void transformFromLastDate() {
-        String str = praFileUtils.getLatestFileNameFor(Data_Dir, ApCo.PRA_DM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
+        String str = praFileUtils.getLatestFileNameFor(Target_Data_Dir, ApCo.PRA_DM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
         LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str);
         Map<String, String> filePairMap = prepare(dateOfLatestFile);
         looper(filePairMap);
@@ -76,7 +76,7 @@ public class DmTransformer extends BaseTransformer {
 
     private void looper(Map<String, String> filePairMap) {
         filePairMap.forEach( (nseFileName, praFileName) -> {
-            transform(nseFileName, praFileName);
+            //transform(nseFileName, praFileName);
             transformNew(nseFileName, praFileName);
         });
     }

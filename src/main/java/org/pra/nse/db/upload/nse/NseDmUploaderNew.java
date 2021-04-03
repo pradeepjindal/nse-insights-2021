@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class NseDmUploader extends BaseUploader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NseDmUploader.class);
+public class NseDmUploaderNew {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NseDmUploaderNew.class);
 
     private final NseDmRepo repository;
     private final DmDao dao;
@@ -31,12 +31,17 @@ public class NseDmUploader extends BaseUploader {
     private final PraFileUtils praFileUtils;
     private final DmCsvReader csvReader;
 
-    public NseDmUploader(NseDmRepo repository,
-                         DmDao dao,
-                         NseFileUtils nseFileUtils,
-                         PraFileUtils praFileUtils,
-                         DmCsvReader csvReader) {
-        super(praFileUtils, NseCons.DM_DIR_NAME, ApCo.PRA_DM_FILE_PREFIX, ApCo.UPLOAD_NSE_FROM_DATE);
+    private String fileDirName = ApCo.DM_DIR_NAME;
+    private String filePrefix = ApCo.PRA_DM_FILE_PREFIX;
+    private LocalDate defaultDate = ApCo.UPLOAD_NSE_FROM_DATE;
+
+    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.DM_DIR_NAME;
+
+    public NseDmUploaderNew(NseDmRepo repository,
+                            DmDao dao,
+                            NseFileUtils nseFileUtils,
+                            PraFileUtils praFileUtils,
+                            DmCsvReader csvReader) {
         this.repository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;
@@ -45,19 +50,49 @@ public class NseDmUploader extends BaseUploader {
     }
 
 
+    public void uploadFromDefaultDate() {
+        uploadFromDate(defaultDate);
+    }
+    public void uploadFromDate(LocalDate fromDate) {
+        looper(fromDate);
+    }
+
+    public void uploadFromLatestDate() {
+        //String dataDir = ApCo.ROOT_DIR + File.separator + fileDirName;
+        String str = praFileUtils.getLatestFileNameFor(Data_Dir, filePrefix, ApCo.DATA_FILE_EXT, 1);
+        LocalDate dt = str == null ? LocalDate.now() : DateUtils.getLocalDateFromPath(str);
+        looper(dt);
+    }
+
+    private void looper(LocalDate fromDate) {
+        LocalDate today = LocalDate.now();
+        LocalDate processingDate = fromDate.minusDays(1);
+        do {
+            processingDate = processingDate.plusDays(1);
+            LOGGER.info("{} | upload processing date: [{}], {}", filePrefix, processingDate, processingDate.getDayOfWeek());
+            if(DateUtils.isTradingOnHoliday(processingDate)) {
+                uploadForDate(processingDate);
+            } else if (DateUtils.isWeekend(processingDate)) {
+                continue;
+            } else {
+                uploadForDate(processingDate);
+            }
+        } while(today.compareTo(processingDate) > 0);
+    }
+
     public void uploadForDate(LocalDate forDate) {
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("DM-upload | SKIPPING - already uploaded | for date:[{}]", forDate);
+            LOGGER.info("DM-upload | already uploaded | for date:[{}]", forDate);
             return;
         } else {
 //            LOGGER.info("DM-upload | uploading - for date:[{}]", forDate);
         }
 
-        String fromFile = NseCons.DM_FILES_PATH + File.separator+ ApCo.PRA_DM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
+        String fromFile = Data_Dir + File.separator+ ApCo.PRA_DM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
         //LOGGER.info("DM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFileExist(fromFile)) {
-            LOGGER.warn("DM-upload | file does not exist: [{}]", fromFile);
+            LOGGER.warn("DM-upload | file not found: [{}]", fromFile);
             return;
         }
         Map<String, DmBean> mtLatestBeanMap = csvReader.read(fromFile);

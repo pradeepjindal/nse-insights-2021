@@ -165,7 +165,7 @@ public class DataService implements Manager, DataServiceI {
         initializeMapOf_BackTradeDates();
         initializeMapOf_NextTradeDates();
 
-        if(!isFileCD_DatesAndDbDatesAreSame()) throw new RuntimeException("file nse dates and db mv dates does not match");
+        if(!isFileCD_DatesAndDbDatesAreSame()) throw new RuntimeException("file nse dates and db mv dates does not match ("+praFileUtils.getLatestNseDateCD() + " | " + latestDbMvDate +")");
 
         dbData.forEach( row-> {
             row.setBackDate(backDateMap.get(row.getTradeDate()));

@@ -7,7 +7,7 @@ import org.pra.nse.csv.read.IdxCsvReader;
 import org.pra.nse.db.dao.IdxDao;
 import org.pra.nse.db.model.NseIndexMarketTab;
 import org.pra.nse.db.repository.NseIdxRepo;
-import org.pra.nse.db.upload.BaseUploader;
+import org.pra.nse.db.upload.UploadHelper;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -22,21 +22,27 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class NseIdxUploader extends BaseUploader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NseIdxUploader.class);
+public class NseIdxUploaderNew {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NseIdxUploaderNew.class);
 
+    private final LocalDate NSE_IDX_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2020, 1, 1);
     private final NseIdxRepo repository;
     private final IdxDao dao;
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
     private final IdxCsvReader csvReader;
 
-    public NseIdxUploader(NseIdxRepo repository,
-                          IdxDao dao,
-                          NseFileUtils nseFileUtils,
-                          PraFileUtils praFileUtils,
-                          IdxCsvReader csvReader ) {
-        super(praFileUtils, NseCons.IDX_DIR_NAME, ApCo.PRA_IDX_FILE_PREFIX, ApCo.NSE_IDX_FILE_AVAILABLE_FROM_DATE);
+    private String fileDirName = ApCo.IDX_DIR_NAME;
+    private String filePrefix = ApCo.PRA_IDX_FILE_PREFIX;
+    private LocalDate defaultDate = ApCo.UPLOAD_NSE_FROM_DATE;
+
+    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.IDX_DIR_NAME;
+
+    public NseIdxUploaderNew(NseIdxRepo repository,
+                             IdxDao dao,
+                             NseFileUtils nseFileUtils,
+                             PraFileUtils praFileUtils,
+                             IdxCsvReader csvReader ) {
         this.repository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;
@@ -44,21 +50,60 @@ public class NseIdxUploader extends BaseUploader {
         this.csvReader = csvReader;
     }
 
+    public void uploadAll() {
+        uploadFromDate(ApCo.NSE_IDX_FILE_AVAILABLE_FROM_DATE);
+    }
+
+    public void uploadFromDefaultDate() {
+        LocalDate uploadFromDate;
+        if(ApCo.UPLOAD_NSE_FROM_DATE.isBefore(NSE_IDX_FILE_AVAILABLE_FROM_DATE)) uploadFromDate = NSE_IDX_FILE_AVAILABLE_FROM_DATE;
+        else uploadFromDate = ApCo.UPLOAD_NSE_FROM_DATE;
+        uploadFromDate(uploadFromDate);
+    }
+//    public void uploadFromLatestDate() {
+//        LocalDate dt = UploadHelper.getLatestFileDate(praFileUtils, NseCons.IDX_DIR_NAME, ApCo.PRA_IDX_FILE_PREFIX);
+//        looper(dt);
+//    }
+    public void uploadFromLatestDate() {
+        //String dataDir = ApCo.ROOT_DIR + File.separator + fileDirName;
+        String str = praFileUtils.getLatestFileNameFor(Data_Dir, filePrefix, ApCo.DATA_FILE_EXT, 1);
+        LocalDate dt = str == null ? LocalDate.now() : DateUtils.getLocalDateFromPath(str);
+        looper(dt);
+    }
+    public void uploadFromDate(LocalDate fromDate) {
+        looper(fromDate);
+    }
+
+    private void looper(LocalDate fromDate) {
+        LocalDate today = LocalDate.now();
+        LocalDate processingDate = fromDate.minusDays(1);
+        do {
+            processingDate = processingDate.plusDays(1);
+            LOGGER.info("IDX-upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
+            if(DateUtils.isTradingOnHoliday(processingDate)) {
+                uploadForDate(processingDate);
+            } else if (DateUtils.isWeekend(processingDate)) {
+                continue;
+            } else {
+                uploadForDate(processingDate);
+            }
+        } while(today.compareTo(processingDate) > 0);
+    }
 
     public void uploadForDate(LocalDate forDate) {
         //TODO check that number of rows in file and number of rows in table matches for the given date
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("IDX-upload | SKIPPING - already uploaded | for date:[{}]", forDate);
+            LOGGER.info("IDX-upload | already uploaded | for date:[{}]", forDate);
             return;
         } else {
 //            LOGGER.info("IDX-upload | uploading - for date:[{}]", forDate);
         }
 
-        String fromFile = NseCons.IDX_FILES_PATH + File.separator+ ApCo.PRA_IDX_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
+        String fromFile = Data_Dir + File.separator+ ApCo.PRA_IDX_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
         //LOGGER.info("IDX-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFileExist(fromFile)) {
-            LOGGER.warn("IDX-upload | file does not exist: [{}]", fromFile);
+            LOGGER.warn("IDX-upload | file not found: [{}]", fromFile);
             return;
         }
         Map<String, IdxBean> latestBeanMap = csvReader.read(fromFile);

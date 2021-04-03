@@ -31,14 +31,14 @@ public class CmCsvReader {
     }
 
     public Map<String, CmBean> read(String fromFile) {
-        String toFile = PathHelper.fileNameWithFullPath(NseCons.CM_DIR_NAME, ApCo.PRA_CM_FILE_PREFIX, fromFile);
-        if(nseFileUtils.isFileExist(toFile)) {
-            LOGGER.info("CM file exists: [{}]", toFile);
+        //String toFile = PathHelper.fileNameWithFullPath(NseCons.CM_DIR_NAME, ApCo.PRA_CM_FILE_PREFIX, fromFile);
+        if(nseFileUtils.isFileExist(fromFile)) {
+            //LOGGER.info("CM file exists: [{}]", fromFile);
         } else {
-            LOGGER.error("CM file does not exist: [{}]", toFile);
+            LOGGER.error("CM file does not exist: [{}]", fromFile);
         }
 
-        Map<String, CmBean> beanMap = readCsv(toFile);
+        Map<String, CmBean> beanMap = readCsv(fromFile);
         LOGGER.info("Total CM Beans in Map: {}", beanMap.size());
         return beanMap;
     }

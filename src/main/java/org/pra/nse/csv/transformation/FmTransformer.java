@@ -38,7 +38,7 @@ public class FmTransformer extends BaseTransformer {
     }
 
     public void transformFromLastDate() {
-        String str = praFileUtils.getLatestFileNameFor(Data_Dir, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
+        String str = praFileUtils.getLatestFileNameFor(Target_Data_Dir, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
         LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str);
         Map<String, String> filePairMap = prepare(dateOfLatestFile);
         looper(filePairMap);
@@ -70,7 +70,7 @@ public class FmTransformer extends BaseTransformer {
     private void looper(Map<String, String> filePairMap) {
         filePairMap.forEach( (nseFileName, praFileName) -> {
             //TODO - block transforming of 28-Aug-2019 file
-            transformationHelper.transform(Data_Dir, ApCo.PRA_FM_FILE_PREFIX, nseFileName, praFileName);
+            //transformationHelper.transform(Data_Dir, ApCo.PRA_FM_FILE_PREFIX, nseFileName, praFileName);
             transformationHelper.transform(Data_Dir, Target_Data_Dir, ApCo.PRA_FM_FILE_PREFIX, nseFileName, praFileName);
         });
     }

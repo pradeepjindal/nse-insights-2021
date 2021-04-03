@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FmCsvReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(FmCsvReader.class);
 
-    public Map<FmBean, FmBean> read(Map<FmBean, FmBean> foBeanMap, String fileName) {
+    public Map<FmBean, FmBean> read(Map<FmBean, FmBean> foBeanMap, String fromFile) {
         Map<FmBean, FmBean> localFoBeanMap = new HashMap<>();
 //        LOGGER.info("FM file : [{}]", fileName);
 
@@ -30,7 +30,7 @@ public class FmCsvReader {
         AtomicInteger missingEntry = new AtomicInteger();
         List<FmBean> fmBeanList = new ArrayList<>();
 
-        fmBeanList = readCsv(new File(fileName));
+        fmBeanList = readCsv(new File(fromFile));
 
         fmBeanList.stream().forEach(bean-> {
             if( null == foBeanMap) {

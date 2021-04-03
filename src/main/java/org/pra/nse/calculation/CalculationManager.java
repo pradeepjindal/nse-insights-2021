@@ -66,7 +66,7 @@ public class CalculationManager implements Manager {
                         LOGGER.error("ERROR: {}", e);
                     }
                 });
-//
+
         LOGGER.info("----------");
         nseFileUtils.getDatesToBeComputed(()-> RSI_FILE_PREFIX, CalcCons.RSI_DIR_NAME, ApCo.DO_CALC_FROM_DATE)
                 .forEach( forDate -> {

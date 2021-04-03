@@ -7,9 +7,7 @@ import org.pra.nse.csv.read.CmCsvReader;
 import org.pra.nse.db.dao.CmDao;
 import org.pra.nse.db.model.NseCashMarketTab;
 import org.pra.nse.db.repository.NseCmRepo;
-import org.pra.nse.db.upload.BaseUploader;
 import org.pra.nse.util.DateUtils;
-
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
@@ -23,8 +21,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class NseCmUploader extends BaseUploader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NseCmUploader.class);
+public class NseCmUploaderNew {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NseCmUploaderNew.class);
 
     private final NseCmRepo repository;
     private final CmDao dao;
@@ -32,12 +30,17 @@ public class NseCmUploader extends BaseUploader {
     private final PraFileUtils praFileUtils;
     private final CmCsvReader csvReader;
 
-    public NseCmUploader(NseCmRepo repository,
-                         CmDao dao,
-                         NseFileUtils nseFileUtils,
-                         PraFileUtils praFileUtils,
-                         CmCsvReader cmCsvReader ) {
-        super(praFileUtils, NseCons.CM_DIR_NAME, ApCo.PRA_CM_FILE_PREFIX, ApCo.UPLOAD_NSE_FROM_DATE);
+    private String fileDirName = ApCo.CM_DIR_NAME;
+    private String filePrefix = ApCo.PRA_CM_FILE_PREFIX;
+    private LocalDate defaultDate = ApCo.UPLOAD_NSE_FROM_DATE;
+
+    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.CM_DIR_NAME;
+
+    public NseCmUploaderNew(NseCmRepo repository,
+                            CmDao dao,
+                            NseFileUtils nseFileUtils,
+                            PraFileUtils praFileUtils,
+                            CmCsvReader cmCsvReader ) {
         this.repository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;
@@ -46,20 +49,50 @@ public class NseCmUploader extends BaseUploader {
     }
 
 
+    public void uploadFromDefaultDate() {
+        uploadFromDate(defaultDate);
+    }
+    public void uploadFromDate(LocalDate fromDate) {
+        looper(fromDate);
+    }
+
+    public void uploadFromLatestDate() {
+        //String dataDir = ApCo.ROOT_DIR + File.separator + fileDirName;
+        String str = praFileUtils.getLatestFileNameFor(Data_Dir, filePrefix, ApCo.DATA_FILE_EXT, 1);
+        LocalDate dt = str == null ? LocalDate.now() : DateUtils.getLocalDateFromPath(str);
+        looper(dt);
+    }
+
+    private void looper(LocalDate fromDate) {
+        LocalDate today = LocalDate.now();
+        LocalDate processingDate = fromDate.minusDays(1);
+        do {
+            processingDate = processingDate.plusDays(1);
+            LOGGER.info("{} | upload processing date: [{}], {}", filePrefix, processingDate, processingDate.getDayOfWeek());
+            if(DateUtils.isTradingOnHoliday(processingDate)) {
+                uploadForDate(processingDate);
+            } else if (DateUtils.isWeekend(processingDate)) {
+                continue;
+            } else {
+                uploadForDate(processingDate);
+            }
+        } while(today.compareTo(processingDate) > 0);
+    }
+
     public void uploadForDate(LocalDate forDate) {
         //TODO check that number of rows in file and number of rows in table matches for the given date
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("CM-upload | SKIPPING - already uploaded | for date:[{}]", forDate);
+            LOGGER.info("CM-upload | already uploaded | for date:[{}]", forDate);
             return;
         } else {
 //            LOGGER.info("CM-upload | uploading - for date:[{}]", forDate);
         }
 
-        String fromFile = NseCons.CM_FILES_PATH + File.separator+ ApCo.PRA_CM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
+        String fromFile = Data_Dir + File.separator+ ApCo.PRA_CM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
         //LOGGER.info("CM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFileExist(fromFile)) {
-            LOGGER.warn("CM-upload | file does not exist: [{}]", fromFile);
+            LOGGER.warn("CM-upload | file not found: [{}]", fromFile);
             return;
         }
         Map<String, CmBean> latestBeanMap = csvReader.read(fromFile);

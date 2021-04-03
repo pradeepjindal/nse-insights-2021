@@ -19,6 +19,8 @@ public class DeliverySpikeDto {
     private BigDecimal close;
     private BigDecimal last;
     private BigDecimal ohlc;
+    private BigDecimal avwap;
+    private BigDecimal mvwap;
     private BigDecimal atp;
     private BigDecimal highLowMid; //hlm
     private BigDecimal atpMhlm;
@@ -65,6 +67,9 @@ public class DeliverySpikeDto {
     private String atpDelForUpTrend;
     private String atpDelForDnTrend;
     private String atpOiTrend;
+    private String atpOiTrendI1;
+    private String atpOiTrendI2;
+
     private BigDecimal volume;
     private BigDecimal delivery;
     private BigDecimal volumeMdelivery;
@@ -124,7 +129,24 @@ public class DeliverySpikeDto {
         }
         return dto;
     }
-
+    public DeliverySpikeDto getDtoNull(int num) {
+        DeliverySpikeDto dto = this;
+        try{
+            if(num<0) {
+                for(int i=0; num<i; i--) {
+                    dto = dto.getBackDto();
+                }
+            }
+            if(num>0) {
+                for(int i=0; i<num; i++) {
+                    dto = dto.getNextDto();
+                }
+            }
+        } catch (NullPointerException npe) {
+            dto = null;
+        }
+        return dto;
+    }
 
     public String toCsvString() {
         return  symbol + ","
@@ -199,8 +221,11 @@ public class DeliverySpikeDto {
                 + atpDelForDnTrend + ","
                 + delivery.divide(new BigDecimal(100000), 2, RoundingMode.HALF_EVEN) + ","
                 + atp + ","
+                + mvwap + ","
                 + fuOiLots + ","
-                + atpOiTrend + ","
+//                + atpOiTrend + ","
+                + atpOiTrendI1 + ","
+                + atpOiTrendI2 + ","
 
                 + highLowMid + ","
                 + atpMhlm + ","
@@ -943,5 +968,37 @@ public class DeliverySpikeDto {
 
     public void setLL(float LL) {
         this.LL = LL;
+    }
+
+    public BigDecimal getAvwap() {
+        return avwap;
+    }
+
+    public void setAvwap(BigDecimal avwap) {
+        this.avwap = avwap;
+    }
+
+    public BigDecimal getMvwap() {
+        return mvwap;
+    }
+
+    public void setMvwap(BigDecimal mvwap) {
+        this.mvwap = mvwap;
+    }
+
+    public String getAtpOiTrendI1() {
+        return atpOiTrendI1;
+    }
+
+    public void setAtpOiTrendI1(String atpOiTrendI1) {
+        this.atpOiTrendI1 = atpOiTrendI1;
+    }
+
+    public String getAtpOiTrendI2() {
+        return atpOiTrendI2;
+    }
+
+    public void setAtpOiTrendI2(String atpOiTrendI2) {
+        this.atpOiTrendI2 = atpOiTrendI2;
     }
 }

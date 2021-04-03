@@ -37,7 +37,7 @@ public class CmTransformer extends BaseTransformer {
     }
 
     public void transformFromLastDate() {
-        String str = praFileUtils.getLatestFileNameFor(Data_Dir, ApCo.PRA_CM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
+        String str = praFileUtils.getLatestFileNameFor(Target_Data_Dir, ApCo.PRA_CM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
         LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str);
         Map<String, String> filePairMap = prepare(dateOfLatestFile);
         //TODO filter the existing files
@@ -69,7 +69,7 @@ public class CmTransformer extends BaseTransformer {
 
     private void looper(Map<String, String> filePairMap) {
         filePairMap.forEach( (nseFileName, praFileName) -> {
-            transformationHelper.transform(Data_Dir, ApCo.PRA_CM_FILE_PREFIX, nseFileName, praFileName);
+            //transformationHelper.transform(Data_Dir, ApCo.PRA_CM_FILE_PREFIX, nseFileName, praFileName);
             transformationHelper.transform(Data_Dir, Target_Data_Dir, ApCo.PRA_CM_FILE_PREFIX, nseFileName, praFileName);
         });
     }

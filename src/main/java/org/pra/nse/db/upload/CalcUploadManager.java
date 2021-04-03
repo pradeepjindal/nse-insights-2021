@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class CalcUploadManager implements Manager {
     private static final Logger LOGGER = LoggerFactory.getLogger(CalcUploadManager.class);
@@ -32,23 +34,26 @@ public class CalcUploadManager implements Manager {
         LOGGER.info("----------");
         calcAvgUploader.uploadFromLatestDate();
         LOGGER.info("----------");
-        calcMfiUploader.uploadFromLatestDate();
-        LOGGER.info("----------");
         calcRsiUploader.uploadFromLatestDate();
+        LOGGER.info("----------");
+        calcMfiUploader.uploadFromLatestDate();
+
 
 //        LOGGER.info("----------");
 //        calcAvgUploader.uploadFromDefaultDate();
 //        LOGGER.info("----------");
-//        calcMfiUploader.uploadFromDefaultDate();
-//        LOGGER.info("----------");
 //        calcRsiUploader.uploadFromDefaultDate();
+//        LOGGER.info("----------");
+//        calcMfiUploader.uploadFromDefaultDate();
+
 
 //        LOGGER.info("----------");
-//        calcAvgUploader.uploadFromDate(ApCo.UPLOAD_CALC_FROM_DATE_NEW);
+//        calcAvgUploader.uploadFromDate(LocalDate.of(2020,8,21));
 //        LOGGER.info("----------");
-//        calcMfiUploader.uploadFromDate(ApCo.UPLOAD_CALC_FROM_DATE_NEW);
+//        calcRsiUploader.uploadFromDate(LocalDate.of(2020,8,21));
 //        LOGGER.info("----------");
-//        calcRsiUploader.uploadFromDate(ApCo.UPLOAD_CALC_FROM_DATE_NEW);
+//        calcMfiUploader.uploadFromDate(LocalDate.of(2020,8,21));
+
 
         LOGGER.info("======================================== CALC - Upload Manager");
     }

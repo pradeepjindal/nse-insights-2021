@@ -43,7 +43,7 @@ public class AbTransformer extends BaseTransformer {
                          EmailService emailService) {
         super(transformationHelper, nseFileUtils, praFileUtils);
         this.emailService = emailService;
-        DirUtils.ensureFolder(NseCons.AB_DIR_NAME);
+        DirUtils.verifyFolder(NseCons.AB_DIR_NAME);
     }
 
 
@@ -89,7 +89,7 @@ public class AbTransformer extends BaseTransformer {
 
     private void looper(Map<String, String> filePairMap) {
         filePairMap.forEach( (nseFileName, abFileName) -> {
-            transform(nseFileName, abFileName);
+            //transform(nseFileName, abFileName);
             transformNew(nseFileName, abFileName);
         });
     }

@@ -31,7 +31,7 @@ import static org.pra.nse.report.ReportConstants.PPF_NEW;
 public class PastPresentFutureReporter {
     private static final Logger LOGGER = LoggerFactory.getLogger(PastPresentFutureReporter.class);
 
-    private final String outputDirName = ApCo.REPORTS_DIR_NAME_PPF_NEW;
+    private final String outputDirName = ApCo.REPORTS_DIR_NAME_PPF;
 
     private final CalcRsiRepo calcRsiRepository;
     private final CalcMfiRepo calcMfiRepository;
@@ -121,6 +121,7 @@ public class PastPresentFutureReporter {
         ReportHelper.enrichAtpDelAndOiTrend(symbolMap);
         ReportHelper.enrichNarrowRange(symbolMap);
         ReportHelper.enrichHammer(symbolMap);
+        ReportHelper.enrichVwap(symbolMap);
         //atpDelTrend
 
 

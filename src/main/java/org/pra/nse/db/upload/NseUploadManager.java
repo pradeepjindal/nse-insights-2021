@@ -33,28 +33,30 @@ public class NseUploadManager implements Manager {
         LOGGER.info(".");
         LOGGER.info("____________________ NSE - Upload Manager");
 
-        nseCmUploader.uploadFromDefaultDate();
-        LOGGER.info("----------");
-        nseDmUploader.uploadFromDefaultDate();
-        LOGGER.info("----------");
-        nseFmUploader.uploadFromDefaultDate();
+//        nseCmUploader.uploadFromDefaultDate();
+//        LOGGER.info("----------");
+//        nseDmUploader.uploadFromDefaultDate();
+//        LOGGER.info("----------");
+//        nseFmUploader.uploadFromDefaultDate();
 //        LOGGER.info("----------");
 //        nseIdxUploader.uploadFromDefaultDate();
 
-//        nseCmUploader.uploadFromLatestDate();
-//        LOGGER.info("----------");
-//        nseDmUploader.uploadFromLatestDate();
-//        LOGGER.info("----------");
-//        nseFmUploader.uploadFromLatestDate();
+        nseCmUploader.uploadFromLatestDate();
+        LOGGER.info("----------");
+        nseDmUploader.uploadFromLatestDate();
+        LOGGER.info("----------");
+        nseFmUploader.uploadFromLatestDate();
         LOGGER.info("----------");
         nseIdxUploader.uploadFromLatestDate();
 
-
-//        cashMarketUploader.uploadFromDate(LocalDate.of(2017,1,1));
 //        LOGGER.info("----------");
-//        deliveryMarketUploader.uploadFromDate(LocalDate.of(2017,1,1));
+//        nseDmUploader.uploadFromDate(LocalDate.of(2017,1,1));
 //        LOGGER.info("----------");
 //        nseIdxUploader.uploadFromDate(LocalDate.of(2020,1,1));
+
+
+        //        LOGGER.info("----------");
+//        nseCmUploader.uploadForDate(LocalDate.of(2020,8,28));
 
         LOGGER.info("======================================== NSE - Upload Manager");
     }

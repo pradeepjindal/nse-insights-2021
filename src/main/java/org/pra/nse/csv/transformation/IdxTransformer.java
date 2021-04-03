@@ -2,13 +2,12 @@ package org.pra.nse.csv.transformation;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.NseCons;
-import org.pra.nse.util.DateUtils;
-import org.pra.nse.util.NseFileUtils;
-import org.pra.nse.util.PraFileUtils;
+import org.pra.nse.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,9 +15,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -32,9 +29,13 @@ public class IdxTransformer extends BaseTransformer {
 
     public IdxTransformer(TransformationHelper transformationHelper, NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
         super(transformationHelper, nseFileUtils, praFileUtils);
+        //DirUtils.ensureFolder("pra-nx");
     }
 
 
+    public void transformAll() {
+        transformFromDate(ApCo.NSE_IDX_FILE_AVAILABLE_FROM_DATE);
+    }
     public void transformFromDefaultDate() {
         transformFromDate(ApCo.TRANSFORM_NSE_FROM_DATE);
     }
@@ -42,9 +43,8 @@ public class IdxTransformer extends BaseTransformer {
         Map<String, String> filePairMap = prepare(fromDate);
         looper(filePairMap);
     }
-
     public void transformFromLastDate() {
-        String str = praFileUtils.getLatestFileNameFor(Data_Dir, ApCo.PRA_IDX_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
+        String str = praFileUtils.getLatestFileNameFor(Target_Data_Dir, ApCo.PRA_IDX_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
         LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str);
         Map<String, String> filePairMap = prepare(dateOfLatestFile);
         looper(filePairMap);
@@ -75,36 +75,25 @@ public class IdxTransformer extends BaseTransformer {
 
     private void looper(Map<String, String> filePairMap) {
         filePairMap.forEach( (nseFileName, praFileName) -> {
+//            transform(nseFileName, praFileName);
             transform(nseFileName, praFileName);
-            transformNew(nseFileName, praFileName);
         });
     }
 
     private void transform(String nseFileName, String praFileName) {
-        String source = Data_Dir + File.separator + nseFileName;
-        String target = Data_Dir + File.separator + praFileName;
-        if(nseFileUtils.isFileExist(target)) {
-            LOGGER.info("IDX | already transformed - {}", target);
-        } else if (nseFileUtils.isFileExist(source)) {
-            try {
-                int outputRowsCount = transformToIdxCsv(source, Data_Dir);
-                LOGGER.info("IDX | source transformed - {}, output rows {}", target, outputRowsCount);
-            } catch (Exception e) {
-                LOGGER.warn("IDX | Error while transforming file: {} {}", source, e);
-            }
-        } else {
-            LOGGER.info("IDX | source not found - {}", source);
-        }
-    }
-    private void transformNew(String nseFileName, String praFileName) {
         String source = Data_Dir + File.separator + nseFileName;
         String target = Target_Data_Dir + File.separator + praFileName;
         if(nseFileUtils.isFileExist(target)) {
             LOGGER.info("IDX | already transformed - {}", target);
         } else if (nseFileUtils.isFileExist(source)) {
             try {
-                int outputRowsCount = transformToIdxCsv(source, Target_Data_Dir);
-                LOGGER.info("IDX | transformed - {}, output rows {}", target, outputRowsCount);
+                Map.Entry<Integer, Integer> incoming_And_Outgoing_Rows = transformToIdxCsv(source, Target_Data_Dir);
+                if(incoming_And_Outgoing_Rows.getKey() == incoming_And_Outgoing_Rows.getValue())
+                    LOGGER.info("IDX | transformed - {}, input rows: {}, output rows {}",
+                            target, incoming_And_Outgoing_Rows.getKey(), incoming_And_Outgoing_Rows.getValue());
+                else
+                    LOGGER.error("IDX | transformed - {}, input rows: {}, output rows {}",
+                            target, incoming_And_Outgoing_Rows.getKey(), incoming_And_Outgoing_Rows.getValue());
             } catch (Exception e) {
                 LOGGER.warn("IDX | Error while transforming file: {} {}", source, e);
             }
@@ -113,7 +102,7 @@ public class IdxTransformer extends BaseTransformer {
         }
     }
 
-    private int transformToIdxCsv(String downloadedDirAndFileName, String tgtDataDir) {
+    private Map.Entry<Integer, Integer> transformToIdxCsv(String downloadedDirAndFileName, String tgtDataDir) {
         int firstIndex = downloadedDirAndFileName.lastIndexOf("_");
         String tradeDate = DateUtils.transformDate(downloadedDirAndFileName.substring(firstIndex+1, firstIndex+9));
         String csvFileName =
@@ -122,28 +111,67 @@ public class IdxTransformer extends BaseTransformer {
                         + ApCo.DEFAULT_FILE_EXT;
         //String toFile = ApCo.ROOT_DIR + File.separator + NseCons.IDX_DIR_NAME + File.separator + csvFileName;
         String toFile = tgtDataDir + File.separator + csvFileName;
-        AtomicInteger atomicInteger = new AtomicInteger();
+        AtomicInteger inComingRows = new AtomicInteger();
         AtomicInteger outGoingRows = new AtomicInteger();
         File csvOutputFile = new File(toFile);
         try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
             try (Stream<String> stream = Files.lines(Paths.get(downloadedDirAndFileName))) {
-                stream.filter(line-> atomicInteger.incrementAndGet() > 0 && line.indexOf(",-,") == -1)
+                //stream.filter(line-> atomicInteger.incrementAndGet() > 0 && line.indexOf(",-,") == -1)
+                stream.filter(line-> inComingRows.incrementAndGet() > 0)
                         .map(row -> {
-                            if(atomicInteger.get() == 1) {
+                            if(inComingRows.get() == 1) {
                                 outGoingRows.incrementAndGet();
                                 return "IdxName,TradeDate,open,high,low,close,PointsChgAbs,PointsChgPct,volume,turnOverInCrore,pe,pb,divYield";
                             } else {
                                 outGoingRows.incrementAndGet();
-                                return row;
+                                //LOGGER.info("{}", row);
+                                String newRow = row.replaceAll(",-", ",0");
+                                //LOGGER.info("{}", newRow);
+                                return newRow;
                             }
                         }).forEach(pw::println);
             } catch (IOException e) {
-                LOGGER.warn("Error in MAT entry: {}", e);
+                LOGGER.warn("Error in IDX entry: {}", e);
             }
         } catch (FileNotFoundException e) {
             LOGGER.warn("Error: {}", e);
         }
-        return outGoingRows.intValue();
+        Map.Entry<Integer, Integer> incomingAndOutgoingRows = new AbstractMap.SimpleEntry<>(inComingRows.get(), outGoingRows.get());;
+        return incomingAndOutgoingRows;
     }
 
+    private boolean qualified(String csvLine) {
+        if(csvLine.contains("Nifty50 Dividend Points")) return false;
+        if(csvLine.contains("Shariah")) return false;
+        if(csvLine.contains("Nifty Low Volatility 50")) return false;
+        if(csvLine.contains("Nifty High Beta 50")) return false;
+        if(csvLine.contains("NIFTY Quality Low-Volatility 30")) return false;
+        if(csvLine.contains("NIFTY Alpha Quality Low-Volatility 30")) return false;
+        if(csvLine.contains("NIFTY Alpha Quality Value Low-Volatility 30")) return false;
+
+
+        if(csvLine.contains("NIFTY Midcap150 Quality 50")) return false;
+        if(csvLine.contains("NIFTY LargeMidcap 250")) return false;
+        if(csvLine.contains("NIFTY SME EMERGE")) return false;
+        if(csvLine.contains("Nifty Oil & Gas")) return false;
+        if(csvLine.contains("Nifty Healthcare Index")) return false;
+        if(csvLine.contains("Nifty500 Multicap 50:25:25")) return false;
+        if(csvLine.contains("NIFTY100 ESG")) return false;
+        if(csvLine.contains("NIFTY100 Enhanced ESG")) return false;
+        if(csvLine.contains("NIFTY500 Value 50")) return false;
+        if(csvLine.contains("Tata")) return false;
+        if(csvLine.contains("Tata")) return false;
+        if(csvLine.contains("Tata")) return false;
+
+
+
+        if(csvLine.contains("Mahindra")) return false;
+
+        if(csvLine.contains("Tata")) return false;
+        if(csvLine.contains("Nifty Consumer Durables")) return false;
+        if(csvLine.contains("Aditya Birla")) return false;
+        if(csvLine.contains("Rate Index")) return false;
+
+        return true;
+    }
 }

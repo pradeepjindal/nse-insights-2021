@@ -23,6 +23,20 @@ public class DirUtils {
         ensureDirPath(dataDir);
     }
 
+    public static void verifyFolder(String folderName) {
+        String path = ApCo.ROOT_DIR + File.separator + folderName;
+        ensureDirPath(path);
+    }
+
+    public static void verifyDirPath(String folderNameWithPath) {
+        File folder = new File(folderNameWithPath);
+        if(null == folder.listFiles()) {
+            throw new RuntimeException("folder error: " + folderNameWithPath);
+        } else {
+            LOGGER.info("dir | exists ({})", folderNameWithPath);
+        }
+    }
+
     public static void ensureFolder(String folderName) {
         String path = ApCo.ROOT_DIR + File.separator + folderName;
         ensureDirPath(path);

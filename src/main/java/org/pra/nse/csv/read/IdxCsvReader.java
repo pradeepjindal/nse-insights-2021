@@ -13,6 +13,7 @@ import org.supercsv.cellprocessor.constraint.DMinMax;
 import org.supercsv.cellprocessor.constraint.LMinMax;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.exception.SuperCsvCellProcessorException;
 import org.supercsv.io.CsvBeanReader;
 import org.supercsv.io.ICsvBeanReader;
 import org.supercsv.prefs.CsvPreference;
@@ -34,14 +35,13 @@ public class IdxCsvReader {
     }
 
     public Map<String, IdxBean> read(String fromFile) {
-        String toFile = PathHelper.fileNameWithFullPath(NseCons.IDX_DIR_NAME, ApCo.PRA_IDX_FILE_PREFIX, fromFile);
-        if(nseFileUtils.isFileExist(toFile)) {
-//            LOGGER.info("IDX file exists: [{}]", toFile);
+        if(nseFileUtils.isFileExist(fromFile)) {
+//            LOGGER.info("IDX file exists: [{}]", fromFile);
         } else {
-            LOGGER.error("IDX file does not exist: [{}]", toFile);
+            LOGGER.error("IDX file does not exist: [{}]", fromFile);
         }
 
-        Map<String, IdxBean> beanMap = readCsv(toFile);
+        Map<String, IdxBean> beanMap = readCsv(fromFile);
         LOGGER.info("IDX Total Beans in Map: {}", beanMap.size());
         return beanMap;
     }
@@ -61,7 +61,7 @@ public class IdxCsvReader {
         try {
             header = beanReader.getHeader(true);
             while( (bean = beanReader.read(IdxBean.class, header, processors)) != null ) {
-//                LOGGER.info(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(), beanReader.getRowNumber()-1, bean));
+                //LOGGER.info(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(), beanReader.getRowNumber()-1, bean));
                 bean.setSymbol(bean.getIdxName());
                 if(beanMap.containsKey(bean.getSymbol())) {
                     LOGGER.warn("Symbol already present in map: old value = [{}], new value = [{}]",
@@ -91,8 +91,10 @@ public class IdxCsvReader {
 
                 //new DMinMax(0L, DMinMax.MAX_DOUBLE), // pe
                 new Optional(new DMinMax(0L, DMinMax.MAX_DOUBLE)),
-                new DMinMax(0L, DMinMax.MAX_DOUBLE), // pb
-                new DMinMax(0L, DMinMax.MAX_DOUBLE) // divYield
+                //new DMinMax(0L, DMinMax.MAX_DOUBLE), // pb
+                new Optional(new DMinMax(0L, DMinMax.MAX_DOUBLE)),
+                //new DMinMax(0L, DMinMax.MAX_DOUBLE) // divYield
+                new Optional(new DMinMax(0L, DMinMax.MAX_DOUBLE))
         };
     }
 

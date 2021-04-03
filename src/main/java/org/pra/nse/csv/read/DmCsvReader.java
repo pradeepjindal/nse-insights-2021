@@ -30,15 +30,14 @@ public class DmCsvReader {
     }
 
     public Map<String, DmBean> read(String fromFile) {
-
-        String toFile = PathHelper.fileNameWithFullPath(NseCons.DM_DIR_NAME, ApCo.PRA_DM_FILE_PREFIX, fromFile);
-        if(nseFileUtils.isFileExist(toFile)) {
-            LOGGER.info("Mat file exist [{}]", toFile);
+        //String toFile = PathHelper.fileNameWithFullPath(NseCons.DM_DIR_NAME, ApCo.PRA_DM_FILE_PREFIX, fromFile);
+        if(nseFileUtils.isFileExist(fromFile)) {
+            //LOGGER.info("Mat file exist [{}]", fromFile);
         } else {
-            LOGGER.error("Mat file does not exist [{}]", toFile);
+            LOGGER.error("Mat file does not exist [{}]", fromFile);
         }
         //
-        Map<String, DmBean> beanMap = readCsv(toFile);
+        Map<String, DmBean> beanMap = readCsv(fromFile);
         LOGGER.info("Total MT Beans in Map: {}", beanMap.size());
         return beanMap;
     }
