@@ -18,7 +18,6 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +89,7 @@ public class AbTransformer extends BaseTransformer {
     private void looper(Map<String, String> filePairMap) {
         filePairMap.forEach( (nseFileName, abFileName) -> {
             //transform(nseFileName, abFileName);
-            transformNew(nseFileName, abFileName);
+            transform2(nseFileName, abFileName);
         });
     }
 
@@ -111,7 +110,7 @@ public class AbTransformer extends BaseTransformer {
             LOGGER.info("AB | source not found - {}", source);
         }
     }
-    private void transformNew(String nseFileName, String abFileName) {
+    private void transform2(String nseFileName, String abFileName) {
         String source = ApCo.ROOT_DIR + File.separator + NseCons.CM_DIR_NAME + File.separator + nseFileName;
         String target = Target_Data_Dir + File.separator + abFileName;
         if(nseFileUtils.isFileExist(target)) {

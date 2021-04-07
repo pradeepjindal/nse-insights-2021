@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +47,7 @@ public class TransformationHelper {
         } else if (nseFileUtils.isFileExist(source)) {
             try {
                 //TODO pass on the target file name
-                nseFileUtils.unzipNew(source, filePrefix);
+                nseFileUtils.unzip2(source, filePrefix);
                 LOGGER.info("{} transformed - {}", filePrefix, target);
             } catch (FileNotFoundException fnfe) {
                 LOGGER.info("{} file not found - {}", filePrefix, source);
@@ -68,7 +67,7 @@ public class TransformationHelper {
         } else if (nseFileUtils.isFileExist(source)) {
             try {
                 //TODO pass on the target file name
-                nseFileUtils.unzipNew(source, tgtDataDir, filePrefix);
+                nseFileUtils.unzip2(source, tgtDataDir, filePrefix);
                 LOGGER.info("{} transformed - {}", filePrefix, target);
             } catch (FileNotFoundException fnfe) {
                 LOGGER.info("{} file not found - {}", filePrefix, source);

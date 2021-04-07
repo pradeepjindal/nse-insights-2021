@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import org.pra.nse.ApCo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,7 @@ public class RefData {
                 //String filePath = ApCo.ROOT_DIR +File.separator+ "ref-data" +File.separator+ "fm-lots.csv";
                 //File csvFile = new File(filePath);
                 File refFile = readFile("data/fm-lots.csv");
-                readCsvNew(refFile);
+                readCsv2(refFile);
             } catch (Exception e) {
                 LOGGER.error("Error occurred while loading fm-lots.csv", e);
             }
@@ -41,7 +40,7 @@ public class RefData {
                 //String filePath = ApCo.ROOT_DIR +File.separator+ "ref-data" +File.separator+ "fm-lots.csv";
                 //File csvFile = new File(filePath);
                 File refFile = readFile("data/fm-lots.csv");
-                readCsvNew(refFile);
+                readCsv2(refFile);
             } catch (Exception e) {
                 LOGGER.error("Error occurred while loading fm-lots.csv", e);
             }
@@ -53,7 +52,7 @@ public class RefData {
         return new File(RefData.class.getClassLoader().getResource(fileName).getFile());
     }
 
-    private static void readCsvNew(File refFile) {
+    private static void readCsv2(File refFile) {
         lotSizeBeans = new ArrayList<>();
         lotSizeMap = new HashMap<>();
         try {

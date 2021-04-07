@@ -6,21 +6,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-
 @Component
 public class NseUploadManager implements Manager {
     private static final Logger LOGGER = LoggerFactory.getLogger(NseUploadManager.class);
 
-    private final NseCmUploaderNew nseCmUploader;
-    private final NseFmUploaderNew nseFmUploader;
-    private final NseDmUploaderNew nseDmUploader;
-    private final NseIdxUploaderNew nseIdxUploader;
+    private final NseCmUploader nseCmUploader;
+    private final NseFmUploader nseFmUploader;
+    private final NseDmUploader nseDmUploader;
+    private final NseIdxUploader nseIdxUploader;
 
-    public NseUploadManager(NseCmUploaderNew nseCmUploader,
-                            NseFmUploaderNew nseFmUploader,
-                            NseDmUploaderNew nseDmUploader,
-                            NseIdxUploaderNew nseIdxUploader) {
+    public NseUploadManager(NseCmUploader nseCmUploader,
+                            NseFmUploader nseFmUploader,
+                            NseDmUploader nseDmUploader,
+                            NseIdxUploader nseIdxUploader) {
         this.nseCmUploader = nseCmUploader;
         this.nseFmUploader = nseFmUploader;
         this.nseDmUploader = nseDmUploader;

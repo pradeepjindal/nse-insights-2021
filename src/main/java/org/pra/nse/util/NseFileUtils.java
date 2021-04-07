@@ -46,7 +46,7 @@ public class NseFileUtils {
         zis.closeEntry();
         zis.close();
     }
-    public void unzipNew(String sourceDirAndFileName, String filePrefix) throws IOException {
+    public void unzip2(String sourceDirAndFileName, String filePrefix) throws IOException {
         //TODO remove the target file logic name, and get it via parameter
         int lastIndex = sourceDirAndFileName.lastIndexOf(File.separator);
         File destDir = new File(sourceDirAndFileName.substring(0, lastIndex));
@@ -69,7 +69,7 @@ public class NseFileUtils {
         zis.closeEntry();
         zis.close();
     }
-    public void unzipNew(String sourceDirAndFileName, String tgtDir, String filePrefix) throws IOException {
+    public void unzip2(String sourceDirAndFileName, String tgtDir, String filePrefix) throws IOException {
         //TODO remove the target file logic name, and get it via parameter
         int lastIndex = sourceDirAndFileName.lastIndexOf(File.separator);
         File destDir = new File(sourceDirAndFileName.substring(0, lastIndex));

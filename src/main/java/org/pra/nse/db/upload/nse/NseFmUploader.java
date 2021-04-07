@@ -1,7 +1,6 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.NseCons;
 import org.pra.nse.csv.bean.in.FmBean;
 import org.pra.nse.csv.read.FmCsvReader;
 import org.pra.nse.db.dao.FmDao;
@@ -9,7 +8,6 @@ import org.pra.nse.db.model.NseFutureMarketTab;
 import org.pra.nse.db.model.NseOptionMarketTab;
 import org.pra.nse.db.repository.NseFmRepo;
 import org.pra.nse.db.repository.NseOmRepo;
-import org.pra.nse.db.upload.BaseUploader;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -24,8 +22,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class NseFmUploaderNew {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NseFmUploaderNew.class);
+public class NseFmUploader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NseFmUploader.class);
 
     private final NseFmRepo futureMarketRepository;
     private final FmDao dao;
@@ -39,12 +37,12 @@ public class NseFmUploaderNew {
 
     private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.FM_DIR_NAME;
 
-    public NseFmUploaderNew(NseFmRepo repository,
-                            NseOmRepo nseOmRepo,
-                            FmDao dao,
-                            NseFileUtils nseFileUtils,
-                            PraFileUtils praFileUtils,
-                            FmCsvReader fmCsvReader) {
+    public NseFmUploader(NseFmRepo repository,
+                         NseOmRepo nseOmRepo,
+                         FmDao dao,
+                         NseFileUtils nseFileUtils,
+                         PraFileUtils praFileUtils,
+                         FmCsvReader fmCsvReader) {
         this.futureMarketRepository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;

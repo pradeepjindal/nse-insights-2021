@@ -26,7 +26,7 @@ public class ApCo {
     public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2021,4,1);
 
     public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2021,4,1);
-    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2020,8,25);
+    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2020,4,1);
 
     public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2021,4,1);
     public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2021,4,1);

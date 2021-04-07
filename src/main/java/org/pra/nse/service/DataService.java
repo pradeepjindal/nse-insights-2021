@@ -352,6 +352,14 @@ public class DataService implements Manager, DataServiceI {
                     BigDecimal fuOiLots = NumberUtils.divide(dto.getFuOi(), lotSiz);
                     dto.setFuOiLots(fuOiLots);
                 }
+                if (dto.getFuOi() != null && dto.getBackDto() != null && dto.getBackDto().getFuOi() != null) {
+                    double tdyOi = dto.getFuOi().longValue();
+                    double yesOi = dto.getBackDto().getFuOi().longValue();
+                    double chg = (tdyOi - yesOi) / (yesOi / 100);
+                    double rounded = NumberUtils.round(chg, 2);
+                    dto.setFuOiChgPrcnt(new BigDecimal(rounded));
+                    String result = String.format("%.2f", rounded);
+                }
             }
         }
         LOGGER.info("FuCalc - completed");

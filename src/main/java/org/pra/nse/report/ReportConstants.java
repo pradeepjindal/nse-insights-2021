@@ -9,7 +9,7 @@ public class ReportConstants {
     public static final String PPF_10 = "PPF_10_Report";
     public static final String PPF_20 = "PPF_20_Report";
     public static final String PPF_FULL = "PPF_days_Full_Report";
-    public static final String PPF_NEW = "PPF_days_New_Report";
+    public static final String PPF = "PPF_days_Report";
 
     static final String DSRF_CSV_HEADER =
             "symbol,trade_date," +
@@ -41,11 +41,11 @@ public class ReportConstants {
             "VolAtpMfi,DelAtpMfi,DelAtpMfiChg," +
             "AtpRsi,AtpRsiChg,CloseRsi,LastRsi,lotSize";
 
-    static final String PPF_CSV_HEADER_NEW =
+    static final String PPF_CSV_HEADER_2 =
             "symbol,trade_date,day," +
 //            "open,high,low,hlp,close,last,closingBell,closeToLastPct,atp,hlm,ohlc," +
                     "open,high,low,close,last,ohlc,ocMid,oTOc," +
-                    "AtpDelUpTrend,AtpDelDnTrend,delLakh,atp,mvwap,fuOiLots,AtpOiTrendI1,AtpOiTrendI2," +
+                    "AtpDelUpTrend,AtpDelDnTrend,delLakh,atp,mvwap,fuOiLots,fuOiChgPct,AtpOiTrendI1,AtpOiTrendI2," +
                     "hlMid,atpMhlm,hld,hlp,cToL_Pct," +
 
 //            "calcAtpFixGrowth,calcAtpDynGrowth,atpChgPct," +

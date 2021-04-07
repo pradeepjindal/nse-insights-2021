@@ -80,6 +80,7 @@ public class DeliverySpikeDto {
     private BigDecimal fuAtpMinusCmAtp;
     private BigDecimal fuVol;
     private BigDecimal fuOiLots;
+    private BigDecimal fuOiChgPrcnt;
 
     private BigDecimal volAtpMfi;
     private BigDecimal delAtpMfi;
@@ -224,6 +225,7 @@ public class DeliverySpikeDto {
                 + mvwap + ","
                 + fuOiLots + ","
 //                + atpOiTrend + ","
+                + fuOiChgPrcnt + ","
                 + atpOiTrendI1 + ","
                 + atpOiTrendI2 + ","
 
@@ -1000,5 +1002,13 @@ public class DeliverySpikeDto {
 
     public void setAtpOiTrendI2(String atpOiTrendI2) {
         this.atpOiTrendI2 = atpOiTrendI2;
+    }
+
+    public BigDecimal getFuOiChgPrcnt() {
+        return fuOiChgPrcnt;
+    }
+
+    public void setFuOiChgPrcnt(BigDecimal fuOiChgPrcnt) {
+        this.fuOiChgPrcnt = fuOiChgPrcnt;
     }
 }

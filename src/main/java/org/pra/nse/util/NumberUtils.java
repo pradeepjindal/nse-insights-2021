@@ -17,4 +17,13 @@ public class NumberUtils {
     public static BigDecimal divide(BigDecimal to, BigDecimal by) {
         return by.compareTo(BigDecimal.ZERO) == 0 ? to : to.divide(by, 2, RoundingMode.HALF_UP);
     }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
 }

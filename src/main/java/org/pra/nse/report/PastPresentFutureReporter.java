@@ -24,8 +24,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.pra.nse.report.ReportConstants.PPF_CSV_HEADER_NEW;
-import static org.pra.nse.report.ReportConstants.PPF_NEW;
+import static org.pra.nse.report.ReportConstants.PPF_CSV_HEADER_2;
+import static org.pra.nse.report.ReportConstants.PPF;
 
 @Component
 public class PastPresentFutureReporter {
@@ -84,10 +84,10 @@ public class PastPresentFutureReporter {
 
         String fixed_width_days_str = "_".concat(forMinusDays.toString());
         fixed_width_days_str = fixed_width_days_str.substring(fixed_width_days_str.length()-2, fixed_width_days_str.length());
-        String report_name = PPF_NEW.replace("days", fixed_width_days_str);
+        String report_name = PPF.replace("days", fixed_width_days_str);
 
         //String fileName = report_name + "-" + forDate.toString() + ApCo.REPORTS_FILE_EXT;
-        String fileName = report_name + "-" + forDate.toString() + "" + ApCo.REPORTS_FILE_EXT;
+        String fileName = report_name + "-" + forDate.toString() + "b" + ApCo.REPORTS_FILE_EXT;
         String filePath = ApCo.ROOT_DIR + File.separator + outputDirName + File.separator + fileName;
 
         LOGGER.info("{} | for:{}", report_name, forDate.toString());
@@ -99,7 +99,7 @@ public class PastPresentFutureReporter {
         Map<String, List<DeliverySpikeDto>> symbolMap;
         symbolMap = prepareReportData(forDate, forMinusDays, filePath);
         writeReport(filePath, symbolMap);
-        String str = "PPF-New-" +forDate+ "-(" +forMinusDays+ ").csv";
+        String str = "PPF-" +forDate+ "-(" +forMinusDays+ ").csv";
         emailReport(null, str, str, filePath);
     }
 
@@ -257,13 +257,13 @@ public class PastPresentFutureReporter {
         // print csv lines
         File csvOutputFile = new File(toPath);
         try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
-            pw.println(PPF_CSV_HEADER_NEW);
+            pw.println(PPF_CSV_HEADER_2);
             csvLines.stream()
                     //.map(this::convertToCSV)
                     .forEach(pw::println);
         } catch (FileNotFoundException e) {
             LOGGER.error("Error: {}", e);
-            throw new RuntimeException(PPF_NEW + ": Could not create file");
+            throw new RuntimeException(PPF + ": Could not create file");
         }
     }
 

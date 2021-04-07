@@ -46,7 +46,7 @@ public class ReportManager implements Manager {
     @Override
     public void execute() {
         LOGGER.info(".");
-        LOGGER.info("____________________ Report Manager New");
+        LOGGER.info("____________________ Report Manager");
 
         //pastPresentFutureReporterNew.reportFromLast(2);
 //        pastPresentFutureReporterNew.reportFromLast(3);
@@ -56,9 +56,9 @@ public class ReportManager implements Manager {
 //        pastPresentFutureReporter.reportFromLast(15);
         pastPresentFutureReporter.reportFromLast(20);
 
-        pastPresentFutureReporter.reportForDate(LocalDate.of(2021,3,30),20);
+//        pastPresentFutureReporter.reportForDate(LocalDate.of(2021,3,30),20);
 
-        LOGGER.info("======================================== Report Manager New");
+        LOGGER.info("======================================== Report Manager");
     }
 
 }

@@ -1,13 +1,11 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.NseCons;
-import org.pra.nse.csv.bean.in.DmBean;
-import org.pra.nse.csv.read.DmCsvReader;
-import org.pra.nse.db.dao.DmDao;
-import org.pra.nse.db.model.NseDeliveryMarketTab;
-import org.pra.nse.db.repository.NseDmRepo;
-import org.pra.nse.db.upload.BaseUploader;
+import org.pra.nse.csv.bean.in.CmBean;
+import org.pra.nse.csv.read.CmCsvReader;
+import org.pra.nse.db.dao.CmDao;
+import org.pra.nse.db.model.NseCashMarketTab;
+import org.pra.nse.db.repository.NseCmRepo;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -22,31 +20,31 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class NseDmUploaderNew {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NseDmUploaderNew.class);
+public class NseCmUploader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NseCmUploader.class);
 
-    private final NseDmRepo repository;
-    private final DmDao dao;
+    private final NseCmRepo repository;
+    private final CmDao dao;
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
-    private final DmCsvReader csvReader;
+    private final CmCsvReader csvReader;
 
-    private String fileDirName = ApCo.DM_DIR_NAME;
-    private String filePrefix = ApCo.PRA_DM_FILE_PREFIX;
+    private String fileDirName = ApCo.CM_DIR_NAME;
+    private String filePrefix = ApCo.PRA_CM_FILE_PREFIX;
     private LocalDate defaultDate = ApCo.UPLOAD_NSE_FROM_DATE;
 
-    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.DM_DIR_NAME;
+    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.CM_DIR_NAME;
 
-    public NseDmUploaderNew(NseDmRepo repository,
-                            DmDao dao,
-                            NseFileUtils nseFileUtils,
-                            PraFileUtils praFileUtils,
-                            DmCsvReader csvReader) {
+    public NseCmUploader(NseCmRepo repository,
+                         CmDao dao,
+                         NseFileUtils nseFileUtils,
+                         PraFileUtils praFileUtils,
+                         CmCsvReader cmCsvReader ) {
         this.repository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;
         this.praFileUtils = praFileUtils;
-        this.csvReader = csvReader;
+        this.csvReader = cmCsvReader;
     }
 
 
@@ -81,42 +79,52 @@ public class NseDmUploaderNew {
     }
 
     public void uploadForDate(LocalDate forDate) {
+        //TODO check that number of rows in file and number of rows in table matches for the given date
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("DM-upload | already uploaded | for date:[{}]", forDate);
+            LOGGER.info("CM-upload | already uploaded | for date:[{}]", forDate);
             return;
         } else {
-//            LOGGER.info("DM-upload | uploading - for date:[{}]", forDate);
+//            LOGGER.info("CM-upload | uploading - for date:[{}]", forDate);
         }
 
-        String fromFile = Data_Dir + File.separator+ ApCo.PRA_DM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
-        //LOGGER.info("DM-upload | looking for file Name along with path:[{}]",fromFile);
+        String fromFile = Data_Dir + File.separator+ ApCo.PRA_CM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
+        //LOGGER.info("CM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFileExist(fromFile)) {
-            LOGGER.warn("DM-upload | file not found: [{}]", fromFile);
+            LOGGER.warn("CM-upload | file not found: [{}]", fromFile);
             return;
         }
-        Map<String, DmBean> mtLatestBeanMap = csvReader.read(fromFile);
+        Map<String, CmBean> latestBeanMap = csvReader.read(fromFile);
 
-        NseDeliveryMarketTab target = new NseDeliveryMarketTab();
+        NseCashMarketTab target = new NseCashMarketTab();
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();
-        mtLatestBeanMap.values().forEach( source-> {
+        latestBeanMap.values().forEach( source -> {
             target.reset();
             target.setSymbol(source.getSymbol());
-            target.setSecurityType(source.getSecurityType());
-            target.setTradedQty(source.getTradedQty());
-            target.setDeliverableQty(source.getDeliverableQty());
-            target.setDeliveryToTradeRatio(source.getDeliveryToTradeRatio());
-            target.setTradeDate(DateUtils.toLocalDate(source.getTradeDate()));
+            target.setSeries(source.getSeries());
+            target.setOpen(source.getOpen());
+            target.setHigh(source.getHigh());
+            target.setLow(source.getLow());
+            target.setClose(source.getClose());
+            target.setLast(source.getLast());
+            target.setPrevClose(source.getPrevClose());
+            target.setTotTrdQty(source.getTotTrdQty());
+            target.setTotTrdVal(source.getTotTrdVal());
+            target.setTradeDate(DateUtils.toLocalDate(source.getTimestamp()));
+            target.setTotalTrades(source.getTotalTrades());
+            target.setIsin(source.getIsin());
             try {
+                //TODO batch insert for efficiency
                 repository.save(target);
                 recordSucceed.incrementAndGet();
             } catch(DataIntegrityViolationException dive) {
                 recordFailed.incrementAndGet();
             }
         });
-        LOGGER.info("DM-upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
-        if (recordFailed.get() > 0) throw new RuntimeException("DM-upload | some record could not be persisted");
+        LOGGER.info("CM-upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
+        if (recordFailed.get() > 0) throw new RuntimeException("CM-upload | some record could not be persisted");
     }
 
 }
+

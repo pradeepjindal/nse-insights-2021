@@ -1,13 +1,11 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.NseCons;
 import org.pra.nse.csv.bean.in.IdxBean;
 import org.pra.nse.csv.read.IdxCsvReader;
 import org.pra.nse.db.dao.IdxDao;
 import org.pra.nse.db.model.NseIndexMarketTab;
 import org.pra.nse.db.repository.NseIdxRepo;
-import org.pra.nse.db.upload.UploadHelper;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -22,8 +20,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class NseIdxUploaderNew {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NseIdxUploaderNew.class);
+public class NseIdxUploader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NseIdxUploader.class);
 
     private final LocalDate NSE_IDX_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2020, 1, 1);
     private final NseIdxRepo repository;
@@ -38,11 +36,11 @@ public class NseIdxUploaderNew {
 
     private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.IDX_DIR_NAME;
 
-    public NseIdxUploaderNew(NseIdxRepo repository,
-                             IdxDao dao,
-                             NseFileUtils nseFileUtils,
-                             PraFileUtils praFileUtils,
-                             IdxCsvReader csvReader ) {
+    public NseIdxUploader(NseIdxRepo repository,
+                          IdxDao dao,
+                          NseFileUtils nseFileUtils,
+                          PraFileUtils praFileUtils,
+                          IdxCsvReader csvReader ) {
         this.repository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;

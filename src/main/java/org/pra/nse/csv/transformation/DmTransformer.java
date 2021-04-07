@@ -16,7 +16,6 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +76,7 @@ public class DmTransformer extends BaseTransformer {
     private void looper(Map<String, String> filePairMap) {
         filePairMap.forEach( (nseFileName, praFileName) -> {
             //transform(nseFileName, praFileName);
-            transformNew(nseFileName, praFileName);
+            transform2(nseFileName, praFileName);
         });
     }
 
@@ -97,7 +96,7 @@ public class DmTransformer extends BaseTransformer {
             LOGGER.info("DM | source not found - {}", source);
         }
     }
-    private void transformNew(String nseFileName, String praFileName) {
+    private void transform2(String nseFileName, String praFileName) {
         String source = Data_Dir + File.separator + nseFileName;
         String target = Target_Data_Dir + File.separator + praFileName;
         if(nseFileUtils.isFileExist(target)) {

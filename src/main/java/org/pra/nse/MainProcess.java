@@ -58,13 +58,13 @@ public class MainProcess implements ApplicationRunner {
         try {
             DirUtils.createRootFolder();
 //            downloadManager.execute();
-//            transformationManager.execute();
-//            nseUploadManager.execute();
+            transformationManager.execute();
+            nseUploadManager.execute();
 
             if(praFileUtils.validateDownloadCD() != null) {
-//                calculationManager.execute();
+                calculationManager.execute();
                 calcUploadManager.execute();
-//                reportManager.execute();
+                reportManager.execute();
             }
 
 //            if(praFileUtils.validateDownloadCDF() != null) {
