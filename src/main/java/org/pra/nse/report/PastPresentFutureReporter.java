@@ -87,7 +87,7 @@ public class PastPresentFutureReporter {
         String report_name = PPF.replace("days", fixed_width_days_str);
 
         //String fileName = report_name + "-" + forDate.toString() + ApCo.REPORTS_FILE_EXT;
-        String fileName = report_name + "-" + forDate.toString() + "b" + ApCo.REPORTS_FILE_EXT;
+        String fileName = report_name + "-" + forDate.toString() + "" + ApCo.REPORTS_FILE_EXT;
         String filePath = ApCo.ROOT_DIR + File.separator + outputDirName + File.separator + fileName;
 
         LOGGER.info("{} | for:{}", report_name, forDate.toString());

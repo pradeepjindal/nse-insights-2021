@@ -68,7 +68,7 @@ public class ReportHelper {
                     previousDate.setValue(dto.getTradeDate());
                     dto.setDelAccumulation(NumberUtils.divide(sumDelivery.getValue(), onePercentOfExpectedDelivery));
                     if("ALKEM".equals(dto.getSymbol())) {
-                        System.out.println("");
+                        //System.out.println("");
                     }
                     if(dto.getBackDto() != null && dto.getBackDto().getDelAccumulation() != null) {
                         dto.setDelDiff(dto.getDelAccumulation().subtract(dto.getBackDto().getDelAccumulation()));
