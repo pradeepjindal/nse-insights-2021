@@ -43,7 +43,7 @@ public class DmTransformer extends BaseTransformer {
         looper(filePairMap);
     }
 
-    public void transformFromLastDate() {
+    public void transformFromLatestDate() {
         String str = praFileUtils.getLatestFileNameFor(Target_Data_Dir, ApCo.PRA_DM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
         LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str);
         Map<String, String> filePairMap = prepare(dateOfLatestFile);

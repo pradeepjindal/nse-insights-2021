@@ -54,10 +54,15 @@ public class AbTransformer extends BaseTransformer {
         looper(filePairMap);
     }
 
-    public void transformFromLastDate() {
-        String str = praFileUtils.getLatestFileNameFor(Data_Dir, ApCo.AB_FILE_PREFIX, NseCons.AB_FILE_EXT,  1,
+    public void transformFromLatestDate() {
+        String str = praFileUtils.getLatestFileNameFor(Target_Data_Dir, ApCo.AB_FILE_PREFIX, NseCons.AB_FILE_EXT,  1,
                 LocalDate.now(), ApCo.DOWNLOAD_NSE_FROM_DATE, NseCons.AB_FILE_NAME_DTF);
-        LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str, NseCons.AB_FILE_NAME_DATE_REGEX, NseCons.AB_FILE_NAME_DATE_FORMAT);
+        LocalDate dateOfLatestFile;
+        if(str==null)
+            dateOfLatestFile = ApCo.DOWNLOAD_NSE_FROM_DATE;
+        else
+            dateOfLatestFile = DateUtils.getLocalDateFromPath(str, NseCons.AB_FILE_NAME_DATE_REGEX, NseCons.AB_FILE_NAME_DATE_FORMAT);
+
         Map<String, String> filePairMap = prepare(dateOfLatestFile);
         looper(filePairMap);
     }
@@ -93,25 +98,26 @@ public class AbTransformer extends BaseTransformer {
         });
     }
 
-    private void transform(String nseFileName, String abFileName) {
-        String source = ApCo.ROOT_DIR + File.separator + NseCons.CM_DIR_NAME + File.separator + nseFileName;
-        String target = Data_Dir + File.separator + abFileName;
-        if(nseFileUtils.isFileExist(target)) {
-            LOGGER.info("AB | already transformed - {}", target);
-        } else if (nseFileUtils.isFileExist(source)) {
-            try {
-                transformToAbCsv(source, target);
-                LOGGER.info("AB | transformed - {}", target);
-                email(target);
-            } catch (Exception e) {
-                LOGGER.warn("AB | Error while transforming file: {} {}", source, e);
-            }
-        } else {
-            LOGGER.info("AB | source not found - {}", source);
-        }
-    }
+//    private void transform(String nseFileName, String abFileName) {
+//        String source = ApCo.ROOT_DIR + File.separator + NseCons.CM_DIR_NAME + File.separator + nseFileName;
+//        String target = Data_Dir + File.separator + abFileName;
+//        if(nseFileUtils.isFileExist(target)) {
+//            LOGGER.info("AB | already transformed - {}", target);
+//        } else if (nseFileUtils.isFileExist(source)) {
+//            try {
+//                transformToAbCsv(source, target);
+//                LOGGER.info("AB | transformed - {}", target);
+//                email(target);
+//            } catch (Exception e) {
+//                LOGGER.warn("AB | Error while transforming file: {} {}", source, e);
+//            }
+//        } else {
+//            LOGGER.info("AB | source not found - {}", source);
+//        }
+//    }
     private void transform2(String nseFileName, String abFileName) {
-        String source = ApCo.ROOT_DIR + File.separator + NseCons.CM_DIR_NAME + File.separator + nseFileName;
+        //String source = ApCo.ROOT_DIR + File.separator + NseCons.CM_DIR_NAME + File.separator + nseFileName;
+        String source = ApCo.ROOT_DIR + File.separator + "pra-cm" + File.separator + nseFileName;
         String target = Target_Data_Dir + File.separator + abFileName;
         if(nseFileUtils.isFileExist(target)) {
             LOGGER.info("AB | already transformed - {}", target);
@@ -121,10 +127,10 @@ public class AbTransformer extends BaseTransformer {
                 LOGGER.info("AB | transformed - {}", target);
                 email(target);
             } catch (Exception e) {
-                LOGGER.warn("AB | Error while transforming file: {} {}", source, e);
+                LOGGER.warn("AB | Error while transforming file: {} {}", target, e);
             }
         } else {
-            LOGGER.info("AB | source not found - {}", source);
+            LOGGER.info("AB | source not found - {}", target);
         }
     }
 

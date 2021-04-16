@@ -32,20 +32,18 @@ public class CalcUploadManager implements Manager {
         LOGGER.info("____________________ CALC - Upload Manager");
 
         LOGGER.info("----------");
-        calcAvgUploader.uploadFromLatestDate();
+        calcAvgUploader.uploadFromDefaultDate();
         LOGGER.info("----------");
-        calcRsiUploader.uploadFromLatestDate();
+        calcRsiUploader.uploadFromDefaultDate();
         LOGGER.info("----------");
-        calcMfiUploader.uploadFromLatestDate();
-
+        calcMfiUploader.uploadFromDefaultDate();
 
 //        LOGGER.info("----------");
-//        calcAvgUploader.uploadFromDefaultDate();
+//        calcAvgUploader.uploadFromLatestDate();
 //        LOGGER.info("----------");
-//        calcRsiUploader.uploadFromDefaultDate();
+//        calcRsiUploader.uploadFromLatestDate();
 //        LOGGER.info("----------");
-//        calcMfiUploader.uploadFromDefaultDate();
-
+//        calcMfiUploader.uploadFromLatestDate();
 
 //        LOGGER.info("----------");
 //        calcAvgUploader.uploadFromDate(LocalDate.of(2020,8,21));

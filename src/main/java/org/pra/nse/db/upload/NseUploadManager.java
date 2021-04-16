@@ -31,21 +31,21 @@ public class NseUploadManager implements Manager {
         LOGGER.info(".");
         LOGGER.info("____________________ NSE - Upload Manager");
 
-//        nseCmUploader.uploadFromDefaultDate();
-//        LOGGER.info("----------");
-//        nseDmUploader.uploadFromDefaultDate();
-//        LOGGER.info("----------");
-//        nseFmUploader.uploadFromDefaultDate();
-//        LOGGER.info("----------");
-//        nseIdxUploader.uploadFromDefaultDate();
+        nseCmUploader.uploadFromDefaultDate();
+        LOGGER.info("----------");
+        nseDmUploader.uploadFromDefaultDate();
+        LOGGER.info("----------");
+        nseFmUploader.uploadFromDefaultDate();
+        LOGGER.info("----------");
+        nseIdxUploader.uploadFromDefaultDate();
 
-        nseCmUploader.uploadFromLatestDate();
-        LOGGER.info("----------");
-        nseDmUploader.uploadFromLatestDate();
-        LOGGER.info("----------");
-        nseFmUploader.uploadFromLatestDate();
-        LOGGER.info("----------");
-        nseIdxUploader.uploadFromLatestDate();
+//        nseCmUploader.uploadFromLatestDate();
+//        LOGGER.info("----------");
+//        nseDmUploader.uploadFromLatestDate();
+//        LOGGER.info("----------");
+//        nseFmUploader.uploadFromLatestDate();
+//        LOGGER.info("----------");
+//        nseIdxUploader.uploadFromLatestDate();
 
 //        LOGGER.info("----------");
 //        nseDmUploader.uploadFromDate(LocalDate.of(2017,1,1));

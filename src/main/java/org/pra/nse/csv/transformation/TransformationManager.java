@@ -38,26 +38,26 @@ public class TransformationManager implements Manager {
 //        idxTransformer.transformAll();
 
 
-//        LOGGER.info("----------");
-//        cmTransformer.transformFromDefaultDate();
-//        LOGGER.info("----------");
-//        dmTransformer.transformFromDefaultDate();
-//        LOGGER.info("----------");
-//        fmTransformer.transformFromDefaultDate();
-//        LOGGER.info("----------");
-//        idxTransformer.transformFromDefaultDate();
-//        LOGGER.info("----------");
-//        abTransformer.transformFromDefaultDate();
+        LOGGER.info("----------");
+        cmTransformer.transformFromDefaultDate();
+        LOGGER.info("----------");
+        dmTransformer.transformFromDefaultDate();
+        LOGGER.info("----------");
+        fmTransformer.transformFromDefaultDate();
+        LOGGER.info("----------");
+        idxTransformer.transformFromDefaultDate();
+        LOGGER.info("----------");
+        abTransformer.transformFromDefaultDate();
 
-        cmTransformer.transformFromLastDate();
-        LOGGER.info("----------");
-        abTransformer.transformFromLastDate();
-        LOGGER.info("----------");
-        fmTransformer.transformFromLastDate();
-        LOGGER.info("----------");
-        idxTransformer.transformFromLastDate();
-        LOGGER.info("----------");
-        dmTransformer.transformFromLastDate();
+//        cmTransformer.transformFromLatestDate();
+//        LOGGER.info("----------");
+//        abTransformer.transformFromLatestDate();
+//        LOGGER.info("----------");
+//        fmTransformer.transformFromLatestDate();
+//        LOGGER.info("----------");
+//        idxTransformer.transformFromLatestDate();
+//        LOGGER.info("----------");
+//        dmTransformer.transformFromLatestDate();
 
 //        cmTransformer.transformFromDate(LocalDate.of(2016,1,1));
 //        LOGGER.info("----------");
