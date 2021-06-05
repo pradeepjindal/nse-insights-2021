@@ -1,7 +1,7 @@
 package org.pra.nse.report;
 
 public class IndicatorUtils {
-    public static String calculateHammer(float open, float high, float low, float close) {
+    public static String calculateHammerManishVersion(float open, float high, float low, float close) {
         double highLow = high - low;
         double openClose = open - close;
         double openLow = open - low;
@@ -17,4 +17,33 @@ public class IndicatorUtils {
             return "";
         }
     }
+
+    public static String calculateHammerPradeepVersion(float open, float high, float low, float close) {
+        String hammer = "";
+        double body = 0.1, higherSideWick = 0.1, lowerSideWick = 0.1;
+
+        if(open == close) {
+            body = 0.1;
+            higherSideWick = high - open;
+            lowerSideWick = open - low;
+        }
+
+        if(open > close) {
+            body = open - close;
+            higherSideWick = high - open;
+            lowerSideWick = close - low;
+        }
+
+        if(close > open) {
+            body = close - open;
+            higherSideWick = high - close;
+            lowerSideWick = open - low;
+        }
+
+        if(higherSideWick / body > 3) hammer = "dnHmr";
+        if(lowerSideWick / body > 3) hammer = "upHmr";
+
+        return hammer;
+    }
+
 }

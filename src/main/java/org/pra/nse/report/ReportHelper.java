@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.AbstractMap;
@@ -175,7 +174,7 @@ public class ReportHelper {
         for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
             //LOGGER.info("symbol: {}, dt: {}", dto.getSymbol(), dto.getTradeDate());
             try {
-                hammer = IndicatorUtils.calculateHammer(
+                hammer = IndicatorUtils.calculateHammerManishVersion(
                         dto.getOpen().floatValue(),
                         dto.getHigh().floatValue(),
                         dto.getLow().floatValue(),
