@@ -3,6 +3,7 @@ package org.pra.nse.csv.read;
 import org.pra.nse.ApCo;
 import org.pra.nse.NseCons;
 import org.pra.nse.csv.bean.in.CmBean;
+import org.pra.nse.exception.NseCmFileColumnMismatchRTE;
 import org.pra.nse.util.NseFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,11 +13,13 @@ import org.supercsv.cellprocessor.constraint.DMinMax;
 import org.supercsv.cellprocessor.constraint.LMinMax;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.exception.SuperCsvException;
 import org.supercsv.io.CsvBeanReader;
 import org.supercsv.io.ICsvBeanReader;
 import org.supercsv.prefs.CsvPreference;
 
 import java.io.*;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,19 +41,26 @@ public class CmCsvReader {
             LOGGER.error("CM file does not exist: [{}]", fromFile);
         }
 
-        Map<String, CmBean> beanMap = readCsv(fromFile);
-        LOGGER.info("Total CM Beans in Map: {}", beanMap.size());
+        Map<String, CmBean> beanMap = Collections.emptyMap();
+        try {
+            beanMap = readCsv14(fromFile);
+            LOGGER.info("Total CM Beans in Map: {}", beanMap.size());
+        } catch(NseCmFileColumnMismatchRTE ncme) {
+            beanMap = readCsv13(fromFile);
+            LOGGER.info("Total CM Beans in Map: {}", beanMap.size());
+        }
+
         return beanMap;
     }
 
-    private Map<String, CmBean> readCsv(String fileName) {
+    private Map<String, CmBean> readCsv13(String fileName) {
         ICsvBeanReader beanReader = null;
         try {
             beanReader = new CsvBeanReader(new FileReader(fileName), CsvPreference.STANDARD_PREFERENCE);
         } catch (FileNotFoundException e) {
             LOGGER.error("cm csv file not found: {}", e);
         }
-        final CellProcessor[] processors = getProcessors();
+        final CellProcessor[] processors = getProcessors_for13Column();
 
         CmBean bean;
         String[] header;
@@ -58,7 +68,7 @@ public class CmCsvReader {
         try {
             header = beanReader.getHeader(true);
             while( (bean = beanReader.read(CmBean.class, header, processors)) != null ) {
-                //LOGGER.info(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(), beanReader.getRowNumber(), matBean));
+                //LOGGER.info(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(), beanReader.getRowNumber(), bean));
                 if("EQ".equals(bean.getSeries())) {
                     if(cmBeanMap.containsKey(bean.getSymbol())) {
                         LOGGER.warn("Symbol already present in map: old value = [{}], new value = [{}]",
@@ -67,13 +77,72 @@ public class CmCsvReader {
                     cmBeanMap.put(bean.getSymbol(), bean);
                 }
             }
+        } catch (SuperCsvException cse) {
+            LOGGER.warn("some error: {}", cse);
+            String errorMessage = "The number of columns to be processed (13) must match the number of CellProcessors (14): check that the number of CellProcessors you have defined matches the expected number of columns being read/written";
+            if(cse.getMessage().equals(errorMessage))
+                throw new NseCmFileColumnMismatchRTE();
         } catch (IOException e) {
             LOGGER.warn("some error: {}", e);
         }
         return cmBeanMap;
     }
 
-    private static CellProcessor[] getProcessors() {
+    private Map<String, CmBean> readCsv14(String fileName) {
+        ICsvBeanReader beanReader = null;
+        try {
+            beanReader = new CsvBeanReader(new FileReader(fileName), CsvPreference.STANDARD_PREFERENCE);
+        } catch (FileNotFoundException e) {
+            LOGGER.error("cm csv file not found: {}", e);
+        }
+        final CellProcessor[] processors = getProcessors_for14Column();
+
+        CmBean bean;
+        String[] header;
+        Map<String, CmBean> cmBeanMap = new HashMap<>();
+        try {
+            header = beanReader.getHeader(true);
+            while( (bean = beanReader.read(CmBean.class, header, processors)) != null ) {
+                //LOGGER.info(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(), beanReader.getRowNumber(), bean));
+                if("EQ".equals(bean.getSeries())) {
+                    if(cmBeanMap.containsKey(bean.getSymbol())) {
+                        LOGGER.warn("Symbol already present in map: old value = [{}], new value = [{}]",
+                                cmBeanMap.get(bean.getSymbol()), bean);
+                    }
+                    cmBeanMap.put(bean.getSymbol(), bean);
+                }
+            }
+        } catch (SuperCsvException cse) {
+//            LOGGER.warn("some error: {}", cse);
+            String errorMessage = "The number of columns to be processed (13) must match the number of CellProcessors (14): check that the number of CellProcessors you have defined matches the expected number of columns being read/written";
+            if(cse.getMessage().equals(errorMessage))
+                throw new NseCmFileColumnMismatchRTE();
+        } catch (IOException e) {
+            LOGGER.warn("some error: {}", e);
+        }
+        return cmBeanMap;
+    }
+
+    private static CellProcessor[] getProcessors_for13Column() {
+        return new CellProcessor[] {
+                new NotNull(), //symbol
+                new NotNull(), //series
+                new DMinMax(0L, DMinMax.MAX_DOUBLE), // open
+                new DMinMax(0L, DMinMax.MAX_DOUBLE), // high
+                new DMinMax(0L, DMinMax.MAX_DOUBLE), // low
+                new DMinMax(0L, DMinMax.MAX_DOUBLE), // close
+                new DMinMax(0L, DMinMax.MAX_DOUBLE), // last
+                new DMinMax(0L, DMinMax.MAX_DOUBLE), // prevClose
+
+                new LMinMax(0L, LMinMax.MAX_LONG), // tot trd qty
+                new DMinMax(0L, DMinMax.MAX_DOUBLE), // tot trd val
+                new ParseDate(ApCo.PRA_CM_DATA_DATE_FORMAT), // timestamp
+                new LMinMax(0L, LMinMax.MAX_LONG), // totalTrades
+                new NotNull() // isin
+                //, null
+        };
+    }
+    private static CellProcessor[] getProcessors_for14Column() {
         return new CellProcessor[] {
                 new NotNull(), //symbol
                 new NotNull(), //series

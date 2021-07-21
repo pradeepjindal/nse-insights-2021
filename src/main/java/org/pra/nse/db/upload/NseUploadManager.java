@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class NseUploadManager implements Manager {
     private static final Logger LOGGER = LoggerFactory.getLogger(NseUploadManager.class);
@@ -54,7 +56,7 @@ public class NseUploadManager implements Manager {
 
 
         //        LOGGER.info("----------");
-//        nseCmUploader.uploadForDate(LocalDate.of(2020,8,28));
+//        nseCmUploader.uploadForDate(LocalDate.of(2017,7,10));
 
         LOGGER.info("======================================== NSE - Upload Manager");
     }

@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 public class ApCo {
 
-    //do not edit/change
+    //do not edit/change (FM=FutureMarket, OM=OptionMarket)
     public static final LocalDate NSE_FM_IDX_FROM_DATE = LocalDate.of(2000, 6, 12);
     public static final LocalDate NSE_OM_IDX_FROM_DATE = LocalDate.of(2001, 6, 4);
     public static final LocalDate NSE_OM_STK_FROM_DATE = LocalDate.of(2001, 7, 2);
@@ -21,17 +21,18 @@ public class ApCo {
     public static final LocalTime DAILY_DOWNLOAD_TIME = LocalTime.of(18,0,0,0);
 
     //public static final LocalDate DOWNLOAD_FROM_DATE    = LocalDate.of(2021,4,18);
-    public static final LocalDate DOWNLOAD_NSE_FROM_DATE = LocalDate.of(2021,7,9);
-    public static final LocalDate TRANSFORM_NSE_FROM_DATE  = LocalDate.of(2021,7,9);
-    public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2021,7,9);
-    public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2021,7,9);
-    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,7,9);
+    public static final LocalDate DOWNLOAD_NSE_FROM_DATE = LocalDate.of(2021,7,20);
+    public static final LocalDate TRANSFORM_NSE_FROM_DATE  = LocalDate.of(2021,7,20);
+    public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2021,7,20);
     //
-    public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2021,7,9);
-    public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2021,7,9);
+    public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2021,7,21);
+    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,7,21);
+    //
+    public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2021,7,21);
+    public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2021,7,21);
 
     public static final boolean RE_UPLOAD_CALC = false;
-    public static final LocalDate RE_UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,7,9);
+    public static final LocalDate RE_UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,7,21);
 
     public static final boolean EMAIL_ENABLED = false;
     public static final boolean EMAIL_ENABLED_FOR_MANISH = true;
