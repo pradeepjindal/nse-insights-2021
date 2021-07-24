@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import static org.pra.nse.calculation.CalcCons.AVG_FILE_PREFIX;
 import static org.pra.nse.calculation.CalcCons.MFI_FILE_PREFIX;
 import static org.pra.nse.calculation.CalcCons.RSI_FILE_PREFIX;
@@ -37,11 +40,9 @@ public class CalculationManager implements Manager {
         LOGGER.info(".");
         LOGGER.info("____________________ Calculation Manager");
 
-        //rsiCalculator.calculateAndReturn(LocalDate.of(2020,02,10));
-        //rsiCalculator.calculateAndReturn(LocalDate.of(2020,02,10), "BAJAJ-AUTO");
-
-        //mfiCalculatorNew.calculateAndReturn(LocalDate.of(2020,02,14));
-        //mfiCalculatorNew.calculateAndSave(LocalDate.of(2020,2,14));
+//        rsiCalculator.calculateAndReturn(LocalDate.of(2021, 7, 23), 20, "ABFRL");
+//        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+//        return;
 
         LOGGER.info("----------");
         nseFileUtils.getDatesToBeComputed(()-> AVG_FILE_PREFIX, CalcCons.AVG_DIR_NAME, ApCo.DO_CALC_FROM_DATE)

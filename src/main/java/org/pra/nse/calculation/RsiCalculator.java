@@ -42,7 +42,13 @@ public class RsiCalculator {
 
     public List<RsiBean> calculateAndReturn(LocalDate forDate) {
         int[] forDaysArray = {20, 15, 10, 5, 3};
-        List<RsiBean> beans = prepareData(forDate, forDaysArray);
+        return calculateAndReturn(forDate, forDaysArray, null);
+    }
+    public List<RsiBean> calculateAndReturn(LocalDate forDate, int forDays, String forSymbol) {
+        return calculateAndReturn(forDate, new int[] {forDays}, forSymbol);
+    }
+    public List<RsiBean> calculateAndReturn(LocalDate forDate, int[] forDaysArray, String forSymbol) {
+        List<RsiBean> beans = calculate_All_TimePeriods(forDate, forDaysArray, forSymbol);
         List<CalcBean> calcBeanList = new ArrayList<>();
         beans.forEach( bean -> {
             calcBeanList.add(bean);
@@ -62,7 +68,7 @@ public class RsiCalculator {
             return;
         }
 
-        List<RsiBean> beans = prepareData(forDate);
+        List<RsiBean> beans = calculate_All_TimePeriods(forDate);
         List<CalcBean> calcBeanList = new ArrayList<>();
         beans.forEach( bean -> {
             calcBeanList.add(bean);
@@ -73,11 +79,18 @@ public class RsiCalculator {
         }
     }
 
-    private List<RsiBean> prepareData(LocalDate forDate) {
-        int[] forDaysArray = {20, 10, 5, 3};
-        return prepareData(forDate, forDaysArray);
+    private List<RsiBean> calculate_All_TimePeriods(LocalDate forDate) {
+        int[] forDaysArray = {20, 15, 10, 5, 3};
+        return calculate_All_TimePeriods(forDate, forDaysArray, null);
     }
-    private List<RsiBean> prepareData(LocalDate forDate, int[] forDaysArray) {
+    private List<RsiBean> calculate_All_TimePeriods(LocalDate forDate, String forSymbol) {
+        int[] forDaysArray = {20, 15, 10, 5, 3};
+        return calculate_All_TimePeriods(forDate, forDaysArray, forSymbol);
+    }
+    private List<RsiBean> calculate_All_TimePeriods(LocalDate forDate, int[] forDaysArray) {
+        return calculate_All_TimePeriods(forDate, forDaysArray, null);
+    }
+    private List<RsiBean> calculate_All_TimePeriods(LocalDate forDate, int[] forDaysArray, String forSymbol) {
         LocalDate latestNseDate = praFileUtils.getLatestNseDateCD();
         if(forDate.isAfter(latestNseDate)) return Collections.emptyList();
 
@@ -88,60 +101,108 @@ public class RsiCalculator {
         for(int i=0; i<forDaysArray.length; i++) {
             int forDays = forDaysArray[i];
             LOGGER.info("{} calculating for {} days", calc_name, forDays);
-            symbolMap = dataService.getRawDataBySymbol(forDate, forDays);
-            List<RsiBean> list = loopIt(forDate, forDays, symbolMap);
+            if(forSymbol == null)
+                symbolMap = dataService.getRawDataBySymbol(forDate, forDays);
+            else
+                symbolMap = dataService.getRawDataBySymbol(forDate, forDays, forSymbol);
+            List<RsiBean> list = calculate_Single_TimePeriod(forDate, forDays, symbolMap);
             beans.addAll(list);
         }
         //
         return beans;
     }
 
-    private List<RsiBean> loopIt(LocalDate forDate, int forDays, Map<String, List<DeliverySpikeDto>> symbolDtoMap) {
+    private List<RsiBean> calculate_Single_TimePeriod(LocalDate forDate, int forDays, Map<String, List<DeliverySpikeDto>> symbolDtoMap) {
         List<RsiBean> beans = new ArrayList<>();
-        symbolDtoMap.forEach( (mapSymbol, mapDtoList_OfGivenSymbol) -> {
+        RsiBean bean = null;
+        String mapKeySymbol = null;
+        List<DeliverySpikeDto> mapDtoList_OfGivenSymbol = null;
+        for(Map.Entry<String, List<DeliverySpikeDto>> eachEntry :symbolDtoMap.entrySet()) {
+            mapKeySymbol = eachEntry.getKey();
+            mapDtoList_OfGivenSymbol = eachEntry.getValue();
             String listSymbol = mapDtoList_OfGivenSymbol.get(0).getSymbol();
-            if(!mapSymbol.equals(listSymbol)) {
+            if(mapKeySymbol.equals(listSymbol))
+                LOGGER.debug("{}: symbol matches [key({}) = val({})] (symbol-check-passed)", mapKeySymbol, mapKeySymbol, listSymbol);
+            else {
+                LOGGER.error("{}: symbol mis-match [key:({}) vs val:({})] (symbol-check-failed)", mapKeySymbol, mapKeySymbol, listSymbol);
                 throw new RuntimeException("symbol mismatch");
             }
 
-            RsiBean bean = new RsiBean();
-            bean.setSymbol(mapSymbol);
-            bean.setTradeDate(forDate);
-            bean.setForDays(forDays);
+            LocalDate firstDataDate = mapDtoList_OfGivenSymbol.get(0).getTradeDate();
+            int dataSize = mapDtoList_OfGivenSymbol.size();
+            if(forDays == mapDtoList_OfGivenSymbol.size())
+                LOGGER.debug("{}: [forDays({}) == spikeDtoList size ({})] (data-check-passed)", mapKeySymbol, forDays,dataSize);
+            else {
+                LOGGER.warn("{}: insufficient data [forDays({}) <> data size ({})], earliestDate={} (data-check-failed)",
+                        mapKeySymbol, forDays, dataSize, firstDataDate);
+                continue;
+            }
 
-            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
-                    dto -> {
-                        LOGGER.debug("calc+:{}", dto.getTdyatpMinusYesatp());
-                        return dto.getTdyatpMinusYesatp();
-                    },
-                    (dto, calculatedValue) -> bean.setAtpRsiSma(calculatedValue)
-            );
-            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
-                    dto -> {
-                        return dto.getTdycloseMinusYesclose();
-                    },
-                    (dto, calculatedValue) -> bean.setCloseRsiSma(calculatedValue)
-            );
-            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
-                    dto -> {
-                        return dto.getTdylastMinusYeslast();
-                    },
-                    (dto, calculatedValue) -> bean.setLastRsiSma(calculatedValue)
-            );
-            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
-                    dto -> {
-                        return dto.getTdydelMinusYesdel();
-                    },
-                    (dto, calculatedValue) -> bean.setDelRsiSma(calculatedValue)
-            );
-            //
+            if(mapDtoList_OfGivenSymbol.get(0).getBackDto() == null) {
+                LOGGER.warn("{}: insufficient data - backDto not found for first date {} (skipping-it)", mapKeySymbol, firstDataDate);
+                continue;
+            }
+
+            bean = calculationBatch(forDate, forDays, mapKeySymbol, mapDtoList_OfGivenSymbol);
             if(bean.getAtpRsiSma() != null) beans.add(bean);
-        });
-        //
+        }
         return beans;
     }
 
-    public void calculate(LocalDate forDate, String symbol,
+    private RsiBean calculationBatch(LocalDate forDate, int forDays, String mapKeySymbol, List<DeliverySpikeDto> mapDtoList_OfGivenSymbol) {
+        RsiBean bean = new RsiBean();
+        bean.setSymbol(mapKeySymbol);
+        bean.setTradeDate(forDate);
+        bean.setForDays(forDays);
+
+        LOGGER.debug("calc-AtpRsi");
+        calculateRsi(forDate, forDays, mapKeySymbol, mapDtoList_OfGivenSymbol,
+                dto -> {
+                    LOGGER.debug("calc-AtpRsi, TdyAtp-YesAtp: {}, (tradeDate: {})", dto.getTdyatpMinusYesatp(), dto.getTradeDate());
+                    LOGGER.debug("calc-AtpRsi, TdyAtp - YesAtp : {} - {} = {}",
+                            dto.getAtp(), dto.getBackDto().getAtp(), dto.getAtp().subtract(dto.getBackDto().getAtp()));
+                    return dto.getTdyatpMinusYesatp();
+                },
+                (dto, calculatedValue) -> bean.setAtpRsiSma(calculatedValue)
+        );
+
+        LOGGER.debug("calc-CloseRSi");
+        calculateRsi(forDate, forDays, mapKeySymbol, mapDtoList_OfGivenSymbol,
+                dto -> {
+                    LOGGER.debug("calc-CloseRSi, Tdyclose-Yesclose: {}, (tradeDate: {})", dto.getTdycloseMinusYesclose(), dto.getTradeDate());
+                    LOGGER.debug("calc-CloseRSi, Tdyclose - Yesclose : {} - {} = {}",
+                            dto.getClose(), dto.getBackDto().getClose(), dto.getClose().subtract(dto.getBackDto().getClose()));
+                    return dto.getTdycloseMinusYesclose();
+                },
+                (dto, calculatedValue) -> bean.setCloseRsiSma(calculatedValue)
+        );
+
+        LOGGER.debug("calc-LastRsi");
+        calculateRsi(forDate, forDays, mapKeySymbol, mapDtoList_OfGivenSymbol,
+                dto -> {
+                    LOGGER.debug("calc-LastRsi, Tdylast-Yeslast: {}, (tradeDate: {})", dto.getTdylastMinusYeslast(), dto.getTradeDate());
+                    LOGGER.debug("calc-LastRsi, Tdylast - Yeslast : {} - {} = {}",
+                            dto.getLast(), dto.getBackDto().getLast(), dto.getLast().subtract(dto.getBackDto().getLast()));
+                    return dto.getTdylastMinusYeslast();
+                },
+                (dto, calculatedValue) -> bean.setLastRsiSma(calculatedValue)
+        );
+
+        LOGGER.debug("calc-DelRsi");
+        calculateRsi(forDate, forDays, mapKeySymbol, mapDtoList_OfGivenSymbol,
+                dto -> {
+                    LOGGER.debug("calc-DelRsi, Tdydel-Yesdel:{ {}, (tradeDate: {})", dto.getTdydelMinusYesdel(), dto.getTradeDate());
+                    LOGGER.debug("calc-DelRsi, TdyDelivery - YesDelivery : {} - {} = {}",
+                            dto.getDelivery(), dto.getBackDto().getDelivery(), dto.getDelivery().subtract(dto.getBackDto().getDelivery()));
+                    return dto.getTdydelMinusYesdel();
+                },
+                (dto, calculatedValue) -> bean.setDelRsiSma(calculatedValue)
+        );
+
+        return bean;
+    }
+
+    private void calculateRsi(LocalDate forDate, int forDays, String symbol,
                             List<DeliverySpikeDto> spikeDtoList,
                             Function<DeliverySpikeDto, BigDecimal> functionSupplier,
                             BiConsumer<DeliverySpikeDto,BigDecimal> biConsumer) {
@@ -150,12 +211,11 @@ public class RsiCalculator {
 //        }
 
         //LOGGER.info("for symbol = {}", symbol);
-        BigDecimal up = BigDecimal.ZERO;
+        BigDecimal upSum = BigDecimal.ZERO;
         short upCtr = 0;
-        BigDecimal dn = BigDecimal.ZERO;
+        BigDecimal dnSum = BigDecimal.ZERO;
         short dnCtr = 0;
 
-        LOGGER.debug("spikeDtoList size {}", spikeDtoList.size());
         DeliverySpikeDto latestDto = null;
         for(DeliverySpikeDto dsDto:spikeDtoList) {
             //LOGGER.info("loopDto = {}", dsDto.toFullCsvString());
@@ -169,17 +229,17 @@ public class RsiCalculator {
                 rawPriceStrength = BigDecimal.ZERO;
             } else if(rawPriceStrength.compareTo(BigDecimal.ZERO) == 1)  {
                 upCtr++;
-                up = up.add(rawPriceStrength);
-                LOGGER.debug("up, rawPriceStrength {}, up {}, upCtr {}", rawPriceStrength, up, upCtr);
+                upSum = upSum.add(rawPriceStrength);
+                LOGGER.debug("up, rawPriceStrength {}, upSum {}, upCtr {}", rawPriceStrength, upSum, upCtr);
             } else if(rawPriceStrength.compareTo(BigDecimal.ZERO) == -1) {
                 dnCtr++;
-                dn = dn.add(rawPriceStrength);
-                LOGGER.debug("dn, rawPriceStrength {}, dn {}, dnCtr {}", rawPriceStrength, dn, dnCtr);
+                dnSum = dnSum.add(rawPriceStrength);
+                LOGGER.debug("dn, rawPriceStrength {}, dnSum {}, dnCtr {}", rawPriceStrength, dnSum, dnCtr);
             } else {
                 LOGGER.error("rsi | {}, UNKNOWN CONDITION", Du.symbol(symbol));
             }
         }
-        LOGGER.debug("rsi | {}, forDate = {}, upCtr = {}, dnCtr = {}", Du.symbol(symbol), forDate, upCtr, dnCtr);
+        LOGGER.debug("rsi | {}, forDate={}, upCtr={}, upSum={}, dnCtr={}, dnSum={}", Du.symbol(symbol), forDate, upCtr, upSum, dnCtr, dnSum);
 //        if(upCtr == 0 || dnCtr == 0) {
 //            LOGGER.warn("rsi | forSymbol = {}, forDate = {}, upCtr = {}, dnCtr = {}", symbol, forDate, upCtr, dnCtr);
 //        }
@@ -190,43 +250,39 @@ public class RsiCalculator {
 //            LOGGER.info("rsi- | forSymbol = {}, forDate = {}, upCtr = {}, dnCtr = {}", symbol, forDate, upCtr, dnCtr);
 //        }
 
-        //LOGGER.info("latestDto = {}", latestDto.toFullCsvString());
-        //up = up.divide(upCtr == 0 ? BigDecimal.ONE : new BigDecimal(upCtr), 2, RoundingMode.HALF_UP);
-        BigDecimal upAvg = NumberUtils.divide(up, new BigDecimal(upCtr));
-        //dn = dn.divide(dnCtr == 0 ? BigDecimal.ONE : new BigDecimal(dnCtr), 2, RoundingMode.HALF_UP);
-        BigDecimal dnAvg = NumberUtils.divide(dn, new BigDecimal(dnCtr));
+        BigDecimal upAvg = NumberUtils.divide(upSum, new BigDecimal(forDays));
+        BigDecimal dnAvg = NumberUtils.divide(dnSum, new BigDecimal(forDays));
+        LOGGER.debug("rsi | {}, [avg/{}] upAvg = {}, dnAvg = {}", Du.symbol(symbol), forDays, upAvg, dnAvg);
 
+        BigDecimal dnSumAbsolute = dnSum.abs();
         BigDecimal rs = BigDecimal.ZERO;
-        if(up.compareTo(BigDecimal.ZERO) == 0 && dn.abs().compareTo(BigDecimal.ZERO) == 0) {
-            LOGGER.warn("rsi | {}, Up and Dn both are Zero", Du.symbol(symbol));
+        if(upSum.compareTo(BigDecimal.ZERO) == 0 && dnSum.abs().compareTo(BigDecimal.ZERO) == 0) {
+            LOGGER.warn("rsi | {}, UpAvg and DnAvg both are Zero", Du.symbol(symbol));
             rs = BigDecimal.ZERO;
-        } else if (up.compareTo(BigDecimal.ZERO) == 1 && dn.abs().compareTo(BigDecimal.ZERO) == 0) {
-            LOGGER.debug("rsi | {}, all closing are Up ({})", Du.symbol(symbol), upAvg);
-            //rs = up.divide(BigDecimal.ONE, 2, RoundingMode.HALF_UP);
+        } else if (upSum.compareTo(BigDecimal.ZERO) == 1 && dnSum.abs().compareTo(BigDecimal.ZERO) == 0) {
+            LOGGER.debug("rsi | {}, all closing are Up, Avg = ({})", Du.symbol(symbol), upAvg);
             rs = upAvg;
-        } else if (up.compareTo(BigDecimal.ZERO) == 0 && dn.abs().compareTo(BigDecimal.ZERO) == 1) {
-            LOGGER.debug("rsi | {}, all closing are Dn ({})", Du.symbol(symbol), dnAvg);
-            //rs = up.divide(dn.abs(), 2, RoundingMode.HALF_UP);
+        } else if (upSum.compareTo(BigDecimal.ZERO) == 0 && dnSum.abs().compareTo(BigDecimal.ZERO) == 1) {
+            LOGGER.debug("rsi | {}, all closing are Dn, Avg = ({})", Du.symbol(symbol), dnAvg);
             rs = BigDecimal.ZERO;
         } else {
-            LOGGER.debug("rsi | {}, Up and Dn both are non-Zero  ({})  ({})", Du.symbol(symbol), upAvg, dnAvg);
-            //rs = up.divide(dn.abs(), 2, RoundingMode.HALF_UP);
+            LOGGER.debug("rsi | {}, UpAvg and DnAvg both are non-Zero  ({})  ({})", Du.symbol(symbol), upAvg, dnAvg);
             rs = NumberUtils.divide(upAvg, dnAvg.abs());
         }
-        LOGGER.debug("rsi | {}, (rs) ={}, upAvg = {}, dnAvg = {}", Du.symbol(symbol), rs, upAvg, dnAvg);
+        LOGGER.debug("rsi | {}, [rs = upAvg/dnAvg.abs] = {}, upAvg = {}, dnAvg = {}", Du.symbol(symbol), rs, upAvg, dnAvg);
 
         //rsi = 100 - (100 / (1 + rs));
         //------------------------------------------
         //(1 + rs)
         BigDecimal rsi = rs.add(BigDecimal.ONE);
-        LOGGER.debug("rsi | {}, (1 + rs) = {}", Du.symbol(symbol), rsi);
+        LOGGER.debug("rsi | {}, [rsi = 1+rs] = {}", Du.symbol(symbol), rsi);
         //(100 / (1 + rs)
         rsi = NumberUtils.divide(NumberUtils.HUNDRED, rsi);
-        LOGGER.debug("rsi | {}, (100 / (1 + rs) = {}", Du.symbol(symbol), rsi);
+        LOGGER.debug("rsi | {}, [rsi = 100 / (1+ rs)] = {}", Du.symbol(symbol), rsi);
         //100 - (100 / (1 + rs))
         rsi = NumberUtils.HUNDRED.subtract(rsi);
-        LOGGER.debug("rsi | {}, 100 - (100 / (1 + rs)) = {}", Du.symbol(symbol), rsi);
-        //===========================================
+        LOGGER.debug("rsi | {}, [rsi = 100 - (100 / (1+rs))] = {}", Du.symbol(symbol), rsi);
+        //==============================================
 
         if(latestDto != null) biConsumer.accept(latestDto, rsi);
         else LOGGER.warn("skipping rsi, latestDto is null for {}, may be phasing out from FnO", Du.symbol(symbol));
