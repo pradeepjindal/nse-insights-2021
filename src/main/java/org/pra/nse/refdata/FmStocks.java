@@ -14,21 +14,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RefData {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RefData.class);
-
+public class FmStocks {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FmStocks.class);
+    private static final String fileName = "fm-lots.csv";
     private static List<LotSizeBean> lotSizeBeans;
     private static Map<String, Long> lotSizeMap;
 
     public static long getLotSizeValue(String symbol) {
         if(lotSizeBeans == null) {
             try {
-                //String filePath = ApCo.ROOT_DIR +File.separator+ "ref-data" +File.separator+ "fm-lots.csv";
+                //String filePath = ApCo.ROOT_DIR +File.separator+ "ref-data" +File.separator+ fileName;
                 //File csvFile = new File(filePath);
-                File refFile = readFile("data/fm-lots.csv");
+                File refFile = readFile("data/" + fileName);
                 readCsv2(refFile);
             } catch (Exception e) {
-                LOGGER.error("Error occurred while loading fm-lots.csv", e);
+                LOGGER.error("Error occurred while loading " + fileName, e);
             }
         }
         return lotSizeMap.getOrDefault(symbol, 0L);
@@ -37,19 +37,19 @@ public class RefData {
     public static BigDecimal getLotSizeObject(String symbol) {
         if(lotSizeBeans == null) {
             try {
-                //String filePath = ApCo.ROOT_DIR +File.separator+ "ref-data" +File.separator+ "fm-lots.csv";
+                //String filePath = ApCo.ROOT_DIR +File.separator+ "ref-data" +File.separator+ fileName;
                 //File csvFile = new File(filePath);
-                File refFile = readFile("data/fm-lots.csv");
+                File refFile = readFile("data/" + fileName);
                 readCsv2(refFile);
             } catch (Exception e) {
-                LOGGER.error("Error occurred while loading fm-lots.csv", e);
+                LOGGER.error("Error occurred while loading " + fileName, e);
             }
         }
         return new BigDecimal(lotSizeMap.getOrDefault(symbol, 0L));
     }
 
     private static File readFile(String fileName) {
-        return new File(RefData.class.getClassLoader().getResource(fileName).getFile());
+        return new File(FmStocks.class.getClassLoader().getResource(fileName).getFile());
     }
 
     private static void readCsv2(File refFile) {
@@ -71,7 +71,7 @@ public class RefData {
             }
             LOGGER.info("LotSize, Total Rows Count: [{}]", lotSizeBeans.size());
         } catch (Exception e) {
-            LOGGER.error("Error occurred while transforming fm-lots.csv", e);
+            LOGGER.error("Error occurred while transforming " + fileName, e);
             //return Collections.emptyList();
         }
         //lotSizeBeans.forEach( row -> LOGGER.info("{}", row));

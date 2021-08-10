@@ -1,7 +1,7 @@
 package org.pra.nse.statistics;
 
 import org.pra.nse.db.dto.DeliverySpikeDto;
-import org.pra.nse.refdata.RefData;
+import org.pra.nse.refdata.FmStocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class StatisticsOpenHalf {
         for(List<DeliverySpikeDto> dtos:symbolMap.values()) {
 
             symbol = dtos.get(0).getSymbol();
-            lotSize = RefData.getLotSizeValue(symbol);
+            lotSize = FmStocks.getLotSizeValue(symbol);
             if("INDUSINDBK".equals(symbol)) {
                 LOGGER.info("");
             }
@@ -89,7 +89,7 @@ public class StatisticsOpenHalf {
         for(List<DeliverySpikeDto> dtos:symbolMap.values()) {
 
             symbol = dtos.get(0).getSymbol();
-            lotSize = RefData.getLotSizeValue(symbol);
+            lotSize = FmStocks.getLotSizeValue(symbol);
             if("INDUSINDBK".equals(symbol)) {
                 LOGGER.info("");
             }

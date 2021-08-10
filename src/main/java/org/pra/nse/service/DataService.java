@@ -3,7 +3,6 @@ package org.pra.nse.service;
 import org.pra.nse.Manager;
 import org.pra.nse.db.dao.NseReportsDao;
 import org.pra.nse.db.dto.DeliverySpikeDto;
-import org.pra.nse.refdata.RefData;
 import org.pra.nse.util.Du;
 import org.pra.nse.util.NumberUtils;
 import org.pra.nse.util.PraFileUtils;

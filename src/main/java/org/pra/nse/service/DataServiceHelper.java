@@ -1,8 +1,8 @@
 package org.pra.nse.service;
 
 import org.pra.nse.db.dto.DeliverySpikeDto;
-import org.pra.nse.refdata.RefData;
-import org.pra.nse.util.NumberUtils;
+import org.pra.nse.refdata.FmCategoryEnum;
+import org.pra.nse.refdata.PraStocksNew;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -114,7 +114,7 @@ public class DataServiceHelper {
 
     void enrichWithFutureLotData(List<DeliverySpikeDto> dbData) {
         dbData.forEach( dto -> {
-            BigDecimal lotSize = RefData.getLotSizeObject(dto.getSymbol());
+            BigDecimal lotSize = PraStocksNew.getLotSizeObject(FmCategoryEnum.FM_ALL, dto.getSymbol());
             dto.setLotSize(lotSize);
         });
     }
