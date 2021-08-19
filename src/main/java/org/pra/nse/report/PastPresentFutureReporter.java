@@ -9,6 +9,8 @@ import org.pra.nse.db.repository.CalcAvgRepo;
 import org.pra.nse.db.repository.CalcMfiRepo;
 import org.pra.nse.db.repository.CalcRsiRepo;
 import org.pra.nse.email.EmailService;
+import org.pra.nse.refdata.FmCategoryEnum;
+import org.pra.nse.refdata.PraStocksNew;
 import org.pra.nse.service.DataServiceI;
 import org.pra.nse.service.DateService;
 import org.pra.nse.util.*;
@@ -87,7 +89,7 @@ public class PastPresentFutureReporter {
         String report_name = PPF.replace("days", fixed_width_days_str);
 
         //String fileName = report_name + "-" + forDate.toString() + ApCo.REPORTS_FILE_EXT;
-        String fileName = report_name + "-" + forDate.toString() + "" + ApCo.REPORTS_FILE_EXT;
+        String fileName = report_name + "-" + forDate.toString() + "b" + ApCo.REPORTS_FILE_EXT;
         String filePath = ApCo.ROOT_DIR + File.separator + outputDirName + File.separator + fileName;
 
         LOGGER.info("{} | for:{}", report_name, forDate.toString());
@@ -112,11 +114,12 @@ public class PastPresentFutureReporter {
         loadMfi(forDate, forMinusDays);
 
         // load avg
-        List<CalcAvgTab> oldAvgListAll = calcAvgRepository.findAll();
+//        List<CalcAvgTab> oldAvgListAll = calcAvgRepository.findAll();
         List<CalcAvgTab> oldAvgList = calcAvgRepository.findByTradeDateAndForDays(minDate, forMinusDays);
         Map<String, CalcAvgTab> calcAvgMap = oldAvgList.stream().collect(Collectors.toMap(row->row.getSymbol(), row-> row));
 
-        Map<String, List<DeliverySpikeDto>> symbolMap = dataService.getRichDataBySymbol(forDate, forMinusDays);
+        Set<String> symbolSet = PraStocksNew.getSymbolSet(FmCategoryEnum.FM_TOP_90);
+        Map<String, List<DeliverySpikeDto>> symbolMap = dataService.getRichDataBySymbolForSymbolSet(forDate, forMinusDays, symbolSet);
         ReportHelper.enrichGrowth(calcAvgMap, symbolMap);
         ReportHelper.enrichAtpDelAndOiTrend(symbolMap);
         ReportHelper.enrichNarrowRange(symbolMap);

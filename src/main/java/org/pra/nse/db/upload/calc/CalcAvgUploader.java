@@ -93,7 +93,7 @@ public class CalcAvgUploader extends BaseUploader {
             tab.setForDays(bean.getForDays());
 
             tab.setAtpSma(bean.getAtpSma());
-            tab.setVolSma(bean.getVolSma());
+            tab.setTrdSma(bean.getTrdSma());
             tab.setDelSma(bean.getDelSma());
             tab.setFoiSma(bean.getFoiSma());
 

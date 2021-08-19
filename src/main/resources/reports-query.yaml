@@ -137,6 +137,7 @@ sqlDeliverySpikeThreeFor30DayzOrderBySymbolAndTradeDate: >
     tdy.delivered_qty - yes.delivered_qty AS tdydel_minus_yesdel,
 
     tdy.traded_qty volume,
+    (tdy.traded_qty - tdy.delivered_qty) AS traded,
     tdy.delivered_qty delivery,
     tdy.fucontracts,
     tdy.fu_tot_trd_val,

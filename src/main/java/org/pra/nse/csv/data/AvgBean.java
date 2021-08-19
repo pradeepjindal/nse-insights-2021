@@ -19,7 +19,7 @@ public class AvgBean implements CalcBean {
     private Integer forDays;
 
     private BigDecimal atpSma;
-    private BigDecimal volSma;
+    private BigDecimal trdSma;
     private BigDecimal delSma;
     private BigDecimal foiSma;
 
@@ -29,7 +29,7 @@ public class AvgBean implements CalcBean {
                 "," + forDays +
 
                 "," + atpSma +
-                "," + volSma +
+                "," + trdSma +
                 "," + delSma +
                 "," + foiSma;
     }
@@ -66,12 +66,12 @@ public class AvgBean implements CalcBean {
         this.atpSma = atpSma;
     }
 
-    public BigDecimal getVolSma() {
-        return volSma;
+    public BigDecimal getTrdSma() {
+        return trdSma;
     }
 
-    public void setVolSma(BigDecimal volSma) {
-        this.volSma = volSma;
+    public void setTrdSma(BigDecimal trdSma) {
+        this.trdSma = trdSma;
     }
 
     public BigDecimal getDelSma() {

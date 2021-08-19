@@ -53,7 +53,7 @@ public class CalcCons {
 
     public static final String AVG_CSV_HEADER_NEW
             = "symbol,tradeDate,forDays," +
-            "atpAvgSma,volAvgSma,delAvgSma,foiAvgSma";
+            "atpAvgSma,trdAvgSma,delAvgSma,foiAvgSma";
     public static final String MFI_CSV_HEADER_NEW
             = "symbol,tradeDate,forDays," +
             "volAtp_MfiSma,delAtp_MfiSma";

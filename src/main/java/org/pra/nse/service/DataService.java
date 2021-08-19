@@ -74,11 +74,16 @@ public class DataService implements Manager, DataServiceI {
         return predicate == null ? Collections.EMPTY_MAP : dataServiceHelper.prepareDataBySymbol(dbData, predicate);
     }
 
+    //
     public Map<String, List<DeliverySpikeDto>> getRichDataBySymbol(LocalDate forDate, int forMinusDays) {
-        return getRichDataBySymbol(forDate, forMinusDays, null);
+        return getRichDataBySymbolForSymbol(forDate, forMinusDays, null);
     }
-    public Map<String, List<DeliverySpikeDto>> getRichDataBySymbol(LocalDate forDate, int forMinusDays, String forSymbol) {
-        Predicate<DeliverySpikeDto> predicate =  initializeData(forDate, forMinusDays, forSymbol);
+    public Map<String, List<DeliverySpikeDto>> getRichDataBySymbolForSymbol(LocalDate forDate, int forMinusDays, String forSymbol) {
+        Predicate<DeliverySpikeDto> predicate =  initializeData(forDate, forMinusDays, forSymbol, null);
+        return predicate == null ? Collections.EMPTY_MAP : dataServiceHelper.prepareDataBySymbol(dbData, predicate);
+    }
+    public Map<String, List<DeliverySpikeDto>> getRichDataBySymbolForSymbolSet(LocalDate forDate, int forMinusDays, Set<String> forSymbolSet) {
+        Predicate<DeliverySpikeDto> predicate =  initializeData(forDate, forMinusDays, null, forSymbolSet);
         return predicate == null ? Collections.EMPTY_MAP : dataServiceHelper.prepareDataBySymbol(dbData, predicate);
     }
 
@@ -86,7 +91,7 @@ public class DataService implements Manager, DataServiceI {
         return getRichDataByTradeDateAndSymbol(forDate, forMinusDays, null);
     }
     public Map<LocalDate, Map<String, DeliverySpikeDto>> getRichDataByTradeDateAndSymbol(LocalDate forDate, int forMinusDays, String forSymbol) {
-        Predicate<DeliverySpikeDto> predicate =  initializeData(forDate, forMinusDays, forSymbol);
+        Predicate<DeliverySpikeDto> predicate =  initializeData(forDate, forMinusDays, forSymbol, null);
         return predicate == null ? Collections.EMPTY_MAP : dataServiceHelper.prepareDataByTradeDateAndSymbol(dbData, predicate);
     }
 
@@ -100,7 +105,7 @@ public class DataService implements Manager, DataServiceI {
         if(forDate.isAfter(latestDbMvDate))
             return null;
         else
-            return predicateByDays(forDate, forMinusDays, forSymbol);
+            return predicateByDays(forDate, forMinusDays, forSymbol, null);
     }
     private Predicate<DeliverySpikeDto> initializeRawData(LocalDate forDate, LocalDate minDate, String forSymbol) {
         if(!dateService.validateTradeDate(forDate)) return null;
@@ -111,10 +116,10 @@ public class DataService implements Manager, DataServiceI {
         if(forDate.isAfter(latestDbMvDate))
             return null;
         else
-            return predicateByDate(forDate, minDate, forSymbol);
+            return predicateByDate(forDate, minDate, forSymbol, null);
     }
 
-    private Predicate<DeliverySpikeDto> initializeData(LocalDate forDate, int forMinusDays, String forSymbol) {
+    private Predicate<DeliverySpikeDto> initializeData(LocalDate forDate, int forMinusDays, String forSymbol, Set<String> forSymbolSet) {
         if(!dateService.validateTradeDate(forDate)) return null;
         LocalDate latestNseDate = praFileUtils.getLatestNseDateCDF();
         if(dbData == null || latestNseDate.isAfter(latestDbMvDate)) {
@@ -131,21 +136,26 @@ public class DataService implements Manager, DataServiceI {
         if(forDate.isAfter(latestDbMvDate))
             return null;
         else
-            return predicateByDays(forDate, forMinusDays, forSymbol);
+            return predicateByDays(forDate, forMinusDays, forSymbol, forSymbolSet);
     }
 
-    private Predicate<DeliverySpikeDto> predicateByDays(LocalDate forDate, int forMinusDays, String forSymbol) {
+    private Predicate<DeliverySpikeDto> predicateByDays(LocalDate forDate, int forMinusDays, String forSymbol, Set<String> forSymbolSet) {
         //TODO what if minDate is null
         LocalDate minDate = minDate(forDate, forMinusDays);
-        return predicateByDate(forDate, minDate, forSymbol);
+        return predicateByDate(forDate, minDate, forSymbol, forSymbolSet);
     }
-    private Predicate<DeliverySpikeDto> predicateByDate(LocalDate forDate, LocalDate minDate, String forSymbol) {
+    private Predicate<DeliverySpikeDto> predicateByDate(LocalDate forDate, LocalDate minDate, String forSymbol, Set<String> forSymbolSet) {
         //TODO what if minDate is null
         Predicate<DeliverySpikeDto> predicate = null;
-        if (forSymbol == null) {
+        if (forSymbol == null && forSymbolSet == null) {
             predicate = dto -> filterDate(dto, minDate, forDate);
-        } else {
+        } else if (forSymbol != null && forSymbolSet == null) {
             predicate = dto -> filterDateAndSymbol(dto, minDate, forDate, forSymbol);
+        } else if (forSymbol == null && forSymbolSet != null) {
+            predicate = dto -> filterDateAndSymbolSet(dto, minDate, forDate, forSymbolSet);
+        } else {
+            LOGGER.error("undefined condition");
+            throw new RuntimeException();
         }
         return predicate;
     }
@@ -259,6 +269,10 @@ public class DataService implements Manager, DataServiceI {
         return minDate;
     }
 
+    private boolean filterDateAndSymbolSet(DeliverySpikeDto dto, LocalDate minDate, LocalDate maxDate, Set<String> symbolSet) {
+        //return filterDate(dto, minDate, maxDate) && symbol.toUpperCase().equals(dto.getSymbol());
+        return filterDate(dto, minDate, maxDate) && filterSymbolSet(dto, symbolSet);
+    }
     private boolean filterDateAndSymbol(DeliverySpikeDto dto, LocalDate minDate, LocalDate maxDate, String symbol) {
         //return filterDate(dto, minDate, maxDate) && symbol.toUpperCase().equals(dto.getSymbol());
         return filterDate(dto, minDate, maxDate) && filterSymbol(dto, symbol);
@@ -268,6 +282,12 @@ public class DataService implements Manager, DataServiceI {
     }
     private boolean filterSymbol(DeliverySpikeDto dto, String symbol) {
         return symbol.toUpperCase().equals(dto.getSymbol());
+    }
+    private boolean filterSymbolSet(DeliverySpikeDto dto, Set<String> symbolSet) {
+        for(String symbol : symbolSet) {
+            if(symbol.toUpperCase().equals(dto.getSymbol())) return true;
+        }
+        return false;
     }
 
     private void fillCmCalcFields() {

@@ -37,7 +37,7 @@ public class ReportHelper {
                 continue;
             }
             BigDecimal atpFixOnePercent = NumberUtils.onePercent(calcAvgTabRow.getAtpSma());
-            BigDecimal volFixOnePercent = NumberUtils.onePercent(calcAvgTabRow.getVolSma());
+            BigDecimal trdFixOnePercent = NumberUtils.onePercent(calcAvgTabRow.getTrdSma());
             BigDecimal delFixOnePercent = NumberUtils.onePercent(calcAvgTabRow.getDelSma());
             BigDecimal foiFixOnePercent = NumberUtils.onePercent(calcAvgTabRow.getFoiSma());
             //
@@ -55,7 +55,7 @@ public class ReportHelper {
                 }
                 //CalcAvgTab tab = calcAvgMap.get(dto.getSymbol();
                 BigDecimal atpDynOnePercent = NumberUtils.onePercent(calcAvgTabRow.getAtpSma());
-                BigDecimal volDynOnePercent = NumberUtils.onePercent(calcAvgTabRow.getVolSma());
+                BigDecimal trdDynOnePercent = NumberUtils.onePercent(calcAvgTabRow.getTrdSma());
                 BigDecimal delDynOnePercent = NumberUtils.onePercent(calcAvgTabRow.getDelSma());
                 BigDecimal foiDynOnePercent = NumberUtils.onePercent(calcAvgTabRow.getFoiSma());
                 //
@@ -66,17 +66,14 @@ public class ReportHelper {
                     // sum
                     previousDate.setValue(dto.getTradeDate());
                     dto.setDelAccumulation(NumberUtils.divide(sumDelivery.getValue(), onePercentOfExpectedDelivery));
-                    if("ALKEM".equals(dto.getSymbol())) {
-                        //System.out.println("");
-                    }
                     if(dto.getBackDto() != null && dto.getBackDto().getDelAccumulation() != null) {
                         dto.setDelDiff(dto.getDelAccumulation().subtract(dto.getBackDto().getDelAccumulation()));
                     }
                     // fix
                     BigDecimal atpFixGrowth = NumberUtils.divide(dto.getAtp(), atpFixOnePercent);
                     dto.setAtpFixGrowth(atpFixGrowth);
-                    BigDecimal volFixGrowth = NumberUtils.divide(dto.getVolume(), volFixOnePercent);
-                    dto.setVolFixGrowth(volFixGrowth);
+                    BigDecimal trdFixGrowth = NumberUtils.divide(dto.getTraded(), trdFixOnePercent);
+                    dto.setTrdFixGrowth(trdFixGrowth);
                     BigDecimal delFixGrowth = NumberUtils.divide(dto.getDelivery(), delFixOnePercent);
                     dto.setDelFixGrowth(delFixGrowth);
 //                    BigDecimal foiFixGrowth = NumberUtils.divide(dto.getOi(), foiFixOnePercent);
@@ -84,8 +81,8 @@ public class ReportHelper {
                     // dyn
                     BigDecimal atpDynGrowth = NumberUtils.divide(dto.getAtp(), atpDynOnePercent);
                     dto.setAtpDynGrowth(atpDynGrowth);
-                    BigDecimal volDynGrowth = NumberUtils.divide(dto.getVolume(), volDynOnePercent);
-                    dto.setVolDynGrowth(volDynGrowth);
+                    BigDecimal trdDynGrowth = NumberUtils.divide(dto.getVolume(), trdDynOnePercent);
+                    dto.setTrdDynGrowth(trdDynGrowth);
                     BigDecimal delDynGrowth = NumberUtils.divide(dto.getDelivery(), delDynOnePercent);
                     dto.setDelDynGrowth(delDynGrowth);
 //                    BigDecimal foiDynGrowth = NumberUtils.divide(dto.getOi(), foiDynOnePercent);
@@ -104,7 +101,7 @@ public class ReportHelper {
         LOGGER.info("enrichTrend - total symbols: {}", symbolMap.size());
         for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
             LOGGER.info("enrichTrend - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
-            enrichTrendForEachSymbol(entry.getValue());
+            enrichTrendForEachSymbol(entry.getKey(), entry.getValue());
         }
         LOGGER.info("enrichTrend - completed");
     }
@@ -219,7 +216,7 @@ public class ReportHelper {
         }
     }
 
-    private static void enrichTrendForEachSymbol(List<DeliverySpikeDto> DeliverySpikeDtoList) {
+    private static void enrichTrendForEachSymbol(String symbol, List<DeliverySpikeDto> DeliverySpikeDtoList) {
         int i = 0;
         for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
             try {
@@ -277,13 +274,14 @@ public class ReportHelper {
                 else if (atpNeutralAbs  && delPositiveAbs) dto.setAtpDelForUpTrend("Peek- balance-bearish (seler incresing)");
                 else if (atpNeutralAbs  && delNegativeAbs) dto.setAtpDelForUpTrend("Peek- balance-bearish (buyer holding)");
                 else dto.setAtpDelForUpTrend("");
+
                 //
-                     if (atpPositivePrcnt && delPositivePrcnt) dto.setAtpDelForDnTrend("Long- buyer-charging-up (high-demand)");
-                else if (atpNegativePrcnt && delPositivePrcnt) dto.setAtpDelForDnTrend("Shrt- saler-pressing-dn (high-supply)");
-                else if (atpPositivePrcnt && delNegativePrcnt) dto.setAtpDelForDnTrend("- fever-buyer  (low-demand)");
-                else if (atpNegativePrcnt && delNegativePrcnt) dto.setAtpDelForDnTrend("- fever-saler  (low-supply)");
-                else if (atpNeutralPrcnt  && delPositivePrcnt) dto.setAtpDelForDnTrend("Botm- balance-bullish (buyer incresing)");
-                else if (atpNeutralPrcnt  && delNegativePrcnt) dto.setAtpDelForDnTrend("Botm- balance-bullish (seler holding)");
+                     if (atpPositivePrcnt && delPositivePrcnt) dto.setAtpDelForDnTrend("Long- more-buyer (high-demand)");
+                else if (atpNegativePrcnt && delPositivePrcnt) dto.setAtpDelForDnTrend("Shrt- more-saler (high-supply)");
+                else if (atpPositivePrcnt && delNegativePrcnt) dto.setAtpDelForDnTrend("bear- less-buyer  (low-demand)");
+                else if (atpNegativePrcnt && delNegativePrcnt) dto.setAtpDelForDnTrend("bull- less-saler  (low-supply)");
+                else if (atpNeutralPrcnt  && delPositivePrcnt) dto.setAtpDelForDnTrend("bear- flat-price-balance (supply-surplus)");
+                else if (atpNeutralPrcnt  && delNegativePrcnt) dto.setAtpDelForDnTrend("bull- flat-stock-balance (supply-drying)");
                 else dto.setAtpDelForDnTrend("");
                 //
                 float oiDiff = dto.getFuOiLots().subtract(dto.getBackDto().getFuOiLots()).floatValue();

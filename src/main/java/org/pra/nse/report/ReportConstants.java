@@ -45,24 +45,25 @@ public class ReportConstants {
             "symbol,trade_date,day," +
 //            "open,high,low,hlp,close,last,closingBell,closeToLastPct,atp,hlm,ohlc," +
                     "open,high,low,close,last,ohlc,ocMid,oTOc," +
-                    "AtpDelUpTrend,AtpDelDnTrend,delLakh,atp,mvwap,fuOiLots,fuOiChgPct,AtpOiTrendI1,AtpOiTrendI2," +
+                    "AtpDelUpTrend,AtpDelDnTrend,trdLakh,delLakh,atp,atpChgPct,mvwap,fuOiLots,fuOiChgPct,AtpOiTrendI1,AtpOiTrendI2," +
                     "hlMid,atpMhlm,hld,hlp,cToL_Pct," +
 
 //            "calcAtpFixGrowth,calcAtpDynGrowth,atpChgPct," +
 //            "calcVolFixGrowth,calcVolDynGrowth,volChgPct," +
 //            "delTally,calcDelFixGrowth,calcDelDynGrowth,delChgPct," +
 //            "calcFoiFixGrowth,calcFoiDynGrowth,foiChgPct," +
-                    "calcAtpFixGrowth,atpChgPct," +
-                    "calcVolFixGrowth,volChgPct," +
-                    "vdr,sumDel,sumDelDiff," +
-                    "calcDelFixGrowth,delChgPct," +
+                    "calcAtpFixGrowth," +
+                    "calcTrdFixSpike,trdChgPct," +
+                    "trdDelRatio," +
+                    "sumDelGrowth,sumDelDiff," +
+                    "calcDelFixSpike,delChgPct," +
 //                    "calcFoiFixGrowth,foiChgPct," +
 
 //                    "premium," +
-                    "nxtCloseToOpenPct,nxtOptoHighPct,nxtOptoLowPct,nxtOptoAtpPct," +
-                    "VolAtpMfi,DelAtpMfi,DelAtpMfiChg," +
-                    "DelRsi,DelRsiChg," +
-                    "AtpRsi,AtpRsiChg,lotSize" +
+                    "nxtCloseToOpenPct,nxtOptoHighPct,nxtOptoLowPct,nxtOptoAtpPct" +
+//                    ",VolAtpMfi,DelAtpMfi,DelAtpMfiChg" +
+//                    ",DelRsi,DelRsiChg,AtpRsi,AtpRsiChg" +
+                    ",lotSize" +
                     ",vol_InLakh,trd_InLakh,del_InLakh,vdr" +
                     ",fuAtp,fuAtpMcmAtp" +
                     ",Hammer,NR4,NR7";

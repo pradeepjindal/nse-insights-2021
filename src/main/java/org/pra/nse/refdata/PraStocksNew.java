@@ -31,7 +31,7 @@ public class PraStocksNew {
         enumMap.put(FmCategoryEnum.FM_TOP_40, "pra-top-40-lots.csv");
     }
 
-    public static long getLotSizeValue(FmCategoryEnum category, String symbol) {
+    public static long getLotSizeAsLong(FmCategoryEnum category, String symbol) {
         String fileName = enumMap.get(category);
         if(fileNameKey_lotSizeBeanMap.get(fileName) == null) {
             File refFile = readFile("data/" + fileName);
@@ -42,7 +42,7 @@ public class PraStocksNew {
         return extractLostSize(lotSizeBeanMap, symbol);
     }
 
-    public static BigDecimal getLotSizeObject(FmCategoryEnum category, String symbol) {
+    public static BigDecimal getLotSizeAsBigDecimal(FmCategoryEnum category, String symbol) {
         String fileName = enumMap.get(category);
         if(fileNameKey_lotSizeBeanMap.get(fileName) == null) {
             File refFile = readFile("data/" + fileName);
@@ -51,6 +51,17 @@ public class PraStocksNew {
 
         Map<String, Long> lotSizeBeanMap = fileNameKey_lotSizeBeanMap.get(fileName);
         return new BigDecimal(extractLostSize(lotSizeBeanMap, symbol));
+    }
+
+    public static Set<String> getSymbolSet(FmCategoryEnum category) {
+        String fileName = enumMap.get(category);
+        if(fileNameKey_lotSizeBeanMap.get(fileName) == null) {
+            File refFile = readFile("data/" + fileName);
+            readCsv2(fileName, refFile);
+        }
+
+        Map<String, Long> lotSizeBeanMap = fileNameKey_lotSizeBeanMap.get(fileName);
+        return lotSizeBeanMap.keySet();
     }
 
     private static long extractLostSize(Map<String, Long> lotSizeBeanMap, String symbol) {

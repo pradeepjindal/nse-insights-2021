@@ -123,9 +123,9 @@ public class AvgCalculator {
             );
             calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {
-                        return dto.getVolume();
+                        return dto.getTraded();
                     },
-                    (dto, calculatedValue) -> bean.setVolSma(calculatedValue)
+                    (dto, calculatedValue) -> bean.setTrdSma(calculatedValue)
             );
             calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {

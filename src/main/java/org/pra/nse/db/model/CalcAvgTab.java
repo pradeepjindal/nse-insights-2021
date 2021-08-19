@@ -23,8 +23,8 @@ public class CalcAvgTab implements Serializable {
     @Column(name = "atp_Sma")
     private BigDecimal atpSma;
 
-    @Column(name = "vol_Sma")
-    private BigDecimal volSma;
+    @Column(name = "trd_Sma")
+    private BigDecimal trdSma;
 
     @Column(name = "del_Sma")
     private BigDecimal delSma;
@@ -40,7 +40,7 @@ public class CalcAvgTab implements Serializable {
         forDays = null;
 
         atpSma = null;
-        volSma = null;
+        trdSma = null;
         delSma = null;
         foiSma = null;
     }
@@ -99,12 +99,12 @@ public class CalcAvgTab implements Serializable {
         this.atpSma = atpSma;
     }
 
-    public BigDecimal getVolSma() {
-        return volSma;
+    public BigDecimal getTrdSma() {
+        return trdSma;
     }
 
-    public void setVolSma(BigDecimal volSma) {
-        this.volSma = volSma;
+    public void setTrdSma(BigDecimal trdSma) {
+        this.trdSma = trdSma;
     }
 
     public BigDecimal getDelSma() {

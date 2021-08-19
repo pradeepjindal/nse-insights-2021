@@ -114,7 +114,7 @@ public class DataServiceHelper {
 
     void enrichWithFutureLotData(List<DeliverySpikeDto> dbData) {
         dbData.forEach( dto -> {
-            BigDecimal lotSize = PraStocksNew.getLotSizeObject(FmCategoryEnum.FM_ALL, dto.getSymbol());
+            BigDecimal lotSize = PraStocksNew.getLotSizeAsBigDecimal(FmCategoryEnum.FM_ALL, dto.getSymbol());
             dto.setLotSize(lotSize);
         });
     }

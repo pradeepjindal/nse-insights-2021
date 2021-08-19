@@ -22,6 +22,7 @@ public class DeliverySpikeDto {
     private BigDecimal avwap;
     private BigDecimal mvwap;
     private BigDecimal atp;
+
     private BigDecimal highLowMid; //hlm
     private BigDecimal atpMhlm;
     private BigDecimal highLowDiff;
@@ -39,8 +40,8 @@ public class DeliverySpikeDto {
 
     private BigDecimal atpFixGrowth;
     private BigDecimal atpDynGrowth;
-    private BigDecimal volFixGrowth;
-    private BigDecimal volDynGrowth;
+    private BigDecimal trdFixGrowth;
+    private BigDecimal trdDynGrowth;
     private BigDecimal volumeChgPrcnt;
     private BigDecimal delFixGrowth;
     private BigDecimal delDynGrowth;
@@ -71,6 +72,7 @@ public class DeliverySpikeDto {
     private String atpOiTrendI2;
 
     private BigDecimal volume;
+    private BigDecimal traded;
     private BigDecimal delivery;
     private BigDecimal volumeMdelivery;
     private BigDecimal fuOi;
@@ -220,8 +222,10 @@ public class DeliverySpikeDto {
                 + close.subtract(open) + ","
                 + atpDelForUpTrend + ","
                 + atpDelForDnTrend + ","
+                + volume.subtract(delivery).divide(new BigDecimal(100000), 2, RoundingMode.HALF_EVEN) + ","
                 + delivery.divide(new BigDecimal(100000), 2, RoundingMode.HALF_EVEN) + ","
                 + atp + ","
+                + atpChgPrcnt + ","
                 + mvwap + ","
                 + fuOiLots + ","
 //                + atpOiTrend + ","
@@ -237,8 +241,7 @@ public class DeliverySpikeDto {
 
                 + atpFixGrowth + ","
 //                + atpDynGrowth + ","
-                + atpChgPrcnt + ","
-                + volFixGrowth + ","
+                + trdFixGrowth + ","
 //                + volDynGrowth + ","
                 + volumeChgPrcnt + ","
 
@@ -260,15 +263,13 @@ public class DeliverySpikeDto {
                 + nxtOptoLowPrcnt + ","
                 + nxtOptoAtpPrcnt + ","
 
-                + volAtpMfi + ","
-                + delAtpMfi + ","
-                + delAtpMfiChg + ","
-
-                + delRsi + ","
-                + delRsiChg + ","
-
-                + atpRsi + ","
-                + atpRsiChg + ","
+//                + volAtpMfi + ","
+//                + delAtpMfi + ","
+//                + delAtpMfiChg + ","
+//                + delRsi + ","
+//                + delRsiChg + ","
+//                + atpRsi + ","
+//                + atpRsiChg + ","
 //                + closeRsi + ","
 //                + lastRsi + ","
                 + lotSize + ","
@@ -444,12 +445,12 @@ public class DeliverySpikeDto {
         this.atpFixGrowth = atpFixGrowth;
     }
 
-    public BigDecimal getVolFixGrowth() {
-        return volFixGrowth;
+    public BigDecimal getTrdFixGrowth() {
+        return trdFixGrowth;
     }
 
-    public void setVolFixGrowth(BigDecimal volFixGrowth) {
-        this.volFixGrowth = volFixGrowth;
+    public void setTrdFixGrowth(BigDecimal trdFixGrowth) {
+        this.trdFixGrowth = trdFixGrowth;
     }
 
     public BigDecimal getVolumeChgPrcnt() {
@@ -596,6 +597,14 @@ public class DeliverySpikeDto {
         this.volume = volume;
     }
 
+    public BigDecimal getTraded() {
+        return traded;
+    }
+
+    public void setTraded(BigDecimal traded) {
+        this.traded = traded;
+    }
+
     public BigDecimal getDelivery() {
         return delivery;
     }
@@ -708,12 +717,12 @@ public class DeliverySpikeDto {
         this.atpDynGrowth = atpDynGrowth;
     }
 
-    public BigDecimal getVolDynGrowth() {
-        return volDynGrowth;
+    public BigDecimal getTrdDynGrowth() {
+        return trdDynGrowth;
     }
 
-    public void setVolDynGrowth(BigDecimal volDynGrowth) {
-        this.volDynGrowth = volDynGrowth;
+    public void setTrdDynGrowth(BigDecimal trdDynGrowth) {
+        this.trdDynGrowth = trdDynGrowth;
     }
 
     public BigDecimal getDelDynGrowth() {
@@ -1011,4 +1020,5 @@ public class DeliverySpikeDto {
     public void setFuOiChgPrcnt(BigDecimal fuOiChgPrcnt) {
         this.fuOiChgPrcnt = fuOiChgPrcnt;
     }
+
 }
