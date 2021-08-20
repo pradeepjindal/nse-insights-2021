@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -68,10 +71,41 @@ public class CmTransformer extends BaseTransformer {
     }
 
     private void looper(Map<String, String> filePairMap) {
-        filePairMap.forEach( (nseFileName, praFileName) -> {
-            //transformationHelper.transform(Data_Dir, ApCo.PRA_CM_FILE_PREFIX, nseFileName, praFileName);
+        filePairMap.forEach(this::validateAndTransform);
+    }
+
+    private void validateAndTransform(String nseFileName, String praFileName) {
+        String source = Data_Dir + File.separator + nseFileName;
+        String target = Target_Data_Dir + File.separator + praFileName;
+
+        if(nseFileUtils.isFilePresent(target)) {
+            LOGGER.info("CM | already transformed - {}", target);
+            return;
+        }
+
+        if (nseFileUtils.isFileAbsent(source)) {
+            LOGGER.info("CM | source not found - {}", source);
+            return;
+        }
+
+        long fileSize = 0;
+        try {
+            fileSize = Files.size(Paths.get(source));
+        } catch (IOException e) {
+            LOGGER.error("CM - error reading file - {}", source);
+        }
+
+        if (fileSize == 0) {
+            LOGGER.warn("CM file size is ZERO (may be holiday file) - {}", source);
+            return;
+        }
+
+        try {
             transformationHelper.transform(Data_Dir, Target_Data_Dir, ApCo.PRA_CM_FILE_PREFIX, nseFileName, praFileName);
-        });
+            LOGGER.info("CM | transformed");
+        } catch (Exception e) {
+            LOGGER.warn("CM | Error while transforming file: {} {}", source, e);
+        }
     }
 
 }

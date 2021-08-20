@@ -32,7 +32,7 @@ public class DownloadUtils {
 
         } catch (IOException e) {
             LOGGER.warn("Error while downloading file: {}", e.getMessage());
-            //LOGGER.warn("Error while downloading file: {}", e);
+            //LOGGER.warn("Error while downloading file:", e);
         }
 
     }
@@ -52,7 +52,7 @@ public class DownloadUtils {
             outputFileConsumer.accept(outputDirAndFileName);
         } catch (IOException e) {
             LOGGER.warn("Error while downloading file: {}", e.getMessage());
-            //LOGGER.warn("Error while downloading file: {}", e);
+            //LOGGER.warn("Error while downloading file:", e);
         }
     }
 }

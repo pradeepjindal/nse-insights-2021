@@ -35,7 +35,7 @@ public class CmCsvReader {
 
     public Map<String, CmBean> read(String fromFile) {
         //String toFile = PathHelper.fileNameWithFullPath(NseCons.CM_DIR_NAME, ApCo.PRA_CM_FILE_PREFIX, fromFile);
-        if(nseFileUtils.isFileExist(fromFile)) {
+        if(nseFileUtils.isFilePresent(fromFile)) {
             //LOGGER.info("CM file exists: [{}]", fromFile);
         } else {
             LOGGER.error("CM file does not exist: [{}]", fromFile);
@@ -58,34 +58,34 @@ public class CmCsvReader {
         try {
             beanReader = new CsvBeanReader(new FileReader(fileName), CsvPreference.STANDARD_PREFERENCE);
         } catch (FileNotFoundException e) {
-            LOGGER.error("cm csv file not found: {}", e);
+            LOGGER.error("cm csv file not found:", e);
         }
         final CellProcessor[] processors = getProcessors_for13Column();
 
         CmBean bean;
         String[] header;
-        Map<String, CmBean> cmBeanMap = new HashMap<>();
+        Map<String, CmBean> beanMap = new HashMap<>();
         try {
             header = beanReader.getHeader(true);
             while( (bean = beanReader.read(CmBean.class, header, processors)) != null ) {
                 //LOGGER.info(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(), beanReader.getRowNumber(), bean));
                 if("EQ".equals(bean.getSeries())) {
-                    if(cmBeanMap.containsKey(bean.getSymbol())) {
+                    if(beanMap.containsKey(bean.getSymbol())) {
                         LOGGER.warn("Symbol already present in map: old value = [{}], new value = [{}]",
-                                cmBeanMap.get(bean.getSymbol()), bean);
+                                beanMap.get(bean.getSymbol()), bean);
                     }
-                    cmBeanMap.put(bean.getSymbol(), bean);
+                    beanMap.put(bean.getSymbol(), bean);
                 }
             }
         } catch (SuperCsvException cse) {
-            LOGGER.warn("some error: {}", cse);
+            LOGGER.warn("some error:", cse);
             String errorMessage = "The number of columns to be processed (13) must match the number of CellProcessors (14): check that the number of CellProcessors you have defined matches the expected number of columns being read/written";
             if(cse.getMessage().equals(errorMessage))
                 throw new NseCmFileColumnMismatchRTE();
         } catch (IOException e) {
-            LOGGER.warn("some error: {}", e);
+            LOGGER.warn("some error:", e);
         }
-        return cmBeanMap;
+        return beanMap;
     }
 
     private Map<String, CmBean> readCsv14(String fileName) {
@@ -93,23 +93,23 @@ public class CmCsvReader {
         try {
             beanReader = new CsvBeanReader(new FileReader(fileName), CsvPreference.STANDARD_PREFERENCE);
         } catch (FileNotFoundException e) {
-            LOGGER.error("cm csv file not found: {}", e);
+            LOGGER.error("cm csv file not found:", e);
         }
         final CellProcessor[] processors = getProcessors_for14Column();
 
         CmBean bean;
         String[] header;
-        Map<String, CmBean> cmBeanMap = new HashMap<>();
+        Map<String, CmBean> beanMap = new HashMap<>();
         try {
             header = beanReader.getHeader(true);
             while( (bean = beanReader.read(CmBean.class, header, processors)) != null ) {
                 //LOGGER.info(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(), beanReader.getRowNumber(), bean));
                 if("EQ".equals(bean.getSeries())) {
-                    if(cmBeanMap.containsKey(bean.getSymbol())) {
+                    if(beanMap.containsKey(bean.getSymbol())) {
                         LOGGER.warn("Symbol already present in map: old value = [{}], new value = [{}]",
-                                cmBeanMap.get(bean.getSymbol()), bean);
+                                beanMap.get(bean.getSymbol()), bean);
                     }
-                    cmBeanMap.put(bean.getSymbol(), bean);
+                    beanMap.put(bean.getSymbol(), bean);
                 }
             }
         } catch (SuperCsvException cse) {
@@ -118,9 +118,9 @@ public class CmCsvReader {
             if(cse.getMessage().equals(errorMessage))
                 throw new NseCmFileColumnMismatchRTE();
         } catch (IOException e) {
-            LOGGER.warn("some error: {}", e);
+            LOGGER.warn("some error:", e);
         }
-        return cmBeanMap;
+        return beanMap;
     }
 
     private static CellProcessor[] getProcessors_for13Column() {

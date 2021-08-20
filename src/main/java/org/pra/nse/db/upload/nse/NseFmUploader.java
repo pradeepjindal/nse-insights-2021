@@ -92,7 +92,7 @@ public class NseFmUploader {
         String fromFile = Data_Dir + File.separator+ ApCo.PRA_FM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
         //LOGGER.info("FM-upload | looking for file Name along with path:[{}]",fromFile);
 
-        if(!nseFileUtils.isFileExist(fromFile)) {
+        if(!nseFileUtils.isFilePresent(fromFile)) {
             LOGGER.warn("FM-upload | file not found: [{}]", fromFile);
             return;
         }

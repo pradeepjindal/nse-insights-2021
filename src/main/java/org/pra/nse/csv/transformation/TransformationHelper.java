@@ -39,32 +39,12 @@ public class TransformationHelper {
         return filePairMap;
     }
 
-    void transform(String dataDir, String filePrefix, String nseFileName, String praFileName) {
-        String source = dataDir + File.separator + nseFileName;
-        String target = dataDir + File.separator + praFileName;
-        if(nseFileUtils.isFileExist(target)) {
-            LOGGER.info("{} already transformed - {}", filePrefix, target);
-        } else if (nseFileUtils.isFileExist(source)) {
-            try {
-                //TODO pass on the target file name
-                nseFileUtils.unzip2(source, filePrefix);
-                LOGGER.info("{} transformed - {}", filePrefix, target);
-            } catch (FileNotFoundException fnfe) {
-                LOGGER.info("{} file not found - {}", filePrefix, source);
-            } catch (IOException e) {
-                LOGGER.warn("Error while unzipping file: {}", e);
-            }
-        } else {
-            LOGGER.error("source not found ({})", source);
-        }
-    }
-
     void transform(String srcDataDir, String tgtDataDir, String filePrefix, String nseFileName, String praFileName) {
         String source = srcDataDir + File.separator + nseFileName;
         String target = tgtDataDir + File.separator + praFileName;
-        if(nseFileUtils.isFileExist(target)) {
+        if(nseFileUtils.isFilePresent(target)) {
             LOGGER.info("{} already transformed - {}", filePrefix, target);
-        } else if (nseFileUtils.isFileExist(source)) {
+        } else if (nseFileUtils.isFilePresent(source)) {
             try {
                 //TODO pass on the target file name
                 nseFileUtils.unzip2(source, tgtDataDir, filePrefix);
@@ -72,7 +52,7 @@ public class TransformationHelper {
             } catch (FileNotFoundException fnfe) {
                 LOGGER.info("{} file not found - {}", filePrefix, source);
             } catch (IOException e) {
-                LOGGER.warn("Error while unzipping file: {}", e);
+                LOGGER.warn("Error while unzipping file:", e);
             }
         } else {
             LOGGER.error("source not found ({})", source);

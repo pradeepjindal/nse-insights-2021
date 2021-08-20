@@ -75,7 +75,7 @@ public class MainProcess implements ApplicationRunner {
             //statisticsManager.execute();
 
         } catch(Exception e) {
-            LOGGER.error("ERROR: {}", e);
+            LOGGER.error("ERROR:", e);
         }
         LOGGER.info("");
         LOGGER.info("Main Process | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ | finishing");

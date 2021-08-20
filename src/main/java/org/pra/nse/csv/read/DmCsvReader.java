@@ -31,7 +31,7 @@ public class DmCsvReader {
 
     public Map<String, DmBean> read(String fromFile) {
         //String toFile = PathHelper.fileNameWithFullPath(NseCons.DM_DIR_NAME, ApCo.PRA_DM_FILE_PREFIX, fromFile);
-        if(nseFileUtils.isFileExist(fromFile)) {
+        if(nseFileUtils.isFilePresent(fromFile)) {
             //LOGGER.info("Mat file exist [{}]", fromFile);
         } else {
             LOGGER.error("Mat file does not exist [{}]", fromFile);
@@ -47,29 +47,33 @@ public class DmCsvReader {
         try {
             beanReader = new CsvBeanReader(new FileReader(fileName), CsvPreference.STANDARD_PREFERENCE);
         } catch (FileNotFoundException e) {
-            LOGGER.error("Error: {}", e);
+            LOGGER.error("DM csv file not found:");
         }
         final CellProcessor[] processors = getProcessors();
 
         DmBean bean;
         String[] header;
-        Map<String, DmBean> mtBeanMap = new HashMap<>();
+        Map<String, DmBean> beanMap = new HashMap<>();
         try {
             header = beanReader.getHeader(true);
+            if (header == null) {
+                LOGGER.warn("Mat file has ZERO size");
+                return beanMap;
+            }
             while( (bean = beanReader.read(DmBean.class, header, processors)) != null ) {
                 //LOGGER.info(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(), beanReader.getRowNumber(), matBean));
                 if("EQ".equals(bean.getSecurityType())) {
-                    if(mtBeanMap.containsKey(bean.getSymbol())) {
+                    if(beanMap.containsKey(bean.getSymbol())) {
                         LOGGER.warn("Symbol already present in map: old value = [{}], new value = [{}]",
-                                mtBeanMap.get(bean.getSymbol()), bean);
+                                beanMap.get(bean.getSymbol()), bean);
                     }
-                    mtBeanMap.put(bean.getSymbol(), bean);
+                    beanMap.put(bean.getSymbol(), bean);
                 }
             }
         } catch (IOException e) {
-            LOGGER.warn("some error: {}", e);
+            LOGGER.warn("some error:", e);
         }
-        return mtBeanMap;
+        return beanMap;
     }
 
     private static CellProcessor[] getProcessors() {

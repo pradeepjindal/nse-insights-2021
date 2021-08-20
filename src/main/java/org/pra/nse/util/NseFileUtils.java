@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -20,7 +22,11 @@ import java.util.zip.ZipInputStream;
 public class NseFileUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(NseFileUtils.class);
 
-    public boolean isFileExist(String filePathAndName) {
+    public boolean isFileAbsent(String filePathAndName) {
+        return !isFilePresent(filePathAndName);
+    }
+
+    public boolean isFilePresent(String filePathAndName) {
         return new File(filePathAndName).exists();
     }
 

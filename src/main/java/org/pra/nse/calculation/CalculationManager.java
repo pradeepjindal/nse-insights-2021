@@ -52,7 +52,7 @@ public class CalculationManager implements Manager {
                     try {
                         avgCalculator.calculateAndSave(forDate);
                     } catch (Exception e) {
-                        LOGGER.error("ERROR: {}", e);
+                        LOGGER.error("ERROR:", e);
                     }
                 });
 
@@ -64,7 +64,7 @@ public class CalculationManager implements Manager {
                     try {
                         mfiCalculator.calculateAndSave(forDate);
                     } catch (Exception e) {
-                        LOGGER.error("ERROR: {}", e);
+                        LOGGER.error("ERROR:", e);
                     }
                 });
 
@@ -76,7 +76,7 @@ public class CalculationManager implements Manager {
                     try {
                         rsiCalculator.calculateAndSave(forDate);
                     } catch (Exception e) {
-                        LOGGER.error("ERROR: {}", e);
+                        LOGGER.error("ERROR:", e);
                     }
                 });
 

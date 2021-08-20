@@ -54,7 +54,7 @@ public class ManishProcessor {
         String foLatestFileName = praFileUtils.getLatestFileNameFor(NseCons.FM_FILES_PATH, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1, processForDate);
         String outputPathAndFileNameForDynamicFile = ProCo.outputPathAndFileNameForDynamicFile(ApCo.MANISH_FILE_NAME, foLatestFileName);
 
-        if(nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile)) {
+        if(nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile)) {
             LOGGER.warn("report already present (regeneration and email would be skipped): {}", outputPathAndFileNameForDynamicFile);
             return;
         }
@@ -71,7 +71,7 @@ public class ManishProcessor {
         csvWriter.write(praBeans, outputPathAndFileNameForDynamicFile, foMonthlyExpiryDates);
         //-------------------------------------------------------
 
-        if (nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile)) {
+        if (nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile)) {
             LOGGER.info("---------------------------------------------------------------------------------------------------------------");
             LOGGER.info("SUCCESS! manishData.csv File has been placed at: " + outputPathAndFileNameForDynamicFile);
             LOGGER.info("---------------------------------------------------------------------------------------------------------------");
@@ -80,7 +80,7 @@ public class ManishProcessor {
         }
 
         //email
-        if ( nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile)  ) {
+        if ( nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile)  ) {
             String fileName = ApCo.MANISH_FILE_NAME +"-"+ ProCo.extractDate(foLatestFileName) + ApCo.REPORTS_FILE_EXT;
             emailService.sendAttachmentMessage("ca.manish.thakkar@gmail.com", fileName, fileName, outputPathAndFileNameForDynamicFile, ApCo.MANISH_FILE_NAME_B);
         }
@@ -92,7 +92,7 @@ public class ManishProcessor {
 		try {
             process(LocalDate.now());
 		} catch(Exception e) {
-            LOGGER.error("{}", e);
+            LOGGER.error("error:", e);
 		}
         LOGGER.info("Manish Processor | ============================== | Finished");
     }

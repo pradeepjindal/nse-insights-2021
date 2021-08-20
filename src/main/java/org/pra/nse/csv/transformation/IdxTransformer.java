@@ -74,18 +74,15 @@ public class IdxTransformer extends BaseTransformer {
     }
 
     private void looper(Map<String, String> filePairMap) {
-        filePairMap.forEach( (nseFileName, praFileName) -> {
-//            transform(nseFileName, praFileName);
-            transform(nseFileName, praFileName);
-        });
+        filePairMap.forEach(this::validateAndTransform);
     }
 
     private void transform(String nseFileName, String praFileName) {
         String source = Data_Dir + File.separator + nseFileName;
         String target = Target_Data_Dir + File.separator + praFileName;
-        if(nseFileUtils.isFileExist(target)) {
+        if(nseFileUtils.isFilePresent(target)) {
             LOGGER.info("IDX | already transformed - {}", target);
-        } else if (nseFileUtils.isFileExist(source)) {
+        } else if (nseFileUtils.isFilePresent(source)) {
             try {
                 Map.Entry<Integer, Integer> incoming_And_Outgoing_Rows = transformToIdxCsv(source, Target_Data_Dir);
                 if(incoming_And_Outgoing_Rows.getKey() == incoming_And_Outgoing_Rows.getValue())
@@ -102,6 +99,47 @@ public class IdxTransformer extends BaseTransformer {
         }
     }
 
+    private void validateAndTransform(String nseFileName, String praFileName) {
+        String source = Data_Dir + File.separator + nseFileName;
+        String target = Target_Data_Dir + File.separator + praFileName;
+
+        if(nseFileUtils.isFilePresent(target)) {
+            LOGGER.info("IDX | already transformed - {}", target);
+            return;
+        }
+
+        if (nseFileUtils.isFileAbsent(source)) {
+            LOGGER.info("IDX | source not found - {}", source);
+            return;
+        }
+
+        long fileSize = 0;
+        try {
+            fileSize = Files.size(Paths.get(source));
+        } catch (IOException e) {
+            LOGGER.error("IDX - error reading file - {}", source);
+        }
+
+        if (fileSize == 0) {
+            LOGGER.warn("IDX file size is ZERO (may be holiday file) - {}", source);
+            return;
+        }
+
+        try {
+            Map.Entry<Integer, Integer> incoming_And_Outgoing_Rows = transformToIdxCsv(source, Target_Data_Dir);
+            if(incoming_And_Outgoing_Rows.getKey() == incoming_And_Outgoing_Rows.getValue())
+                LOGGER.info("IDX | transformed - {}, input rows: {}, output rows {}",
+                        target, incoming_And_Outgoing_Rows.getKey(), incoming_And_Outgoing_Rows.getValue());
+            else
+                LOGGER.error("IDX | transformed - {}, input rows: {}, output rows {}",
+                        target, incoming_And_Outgoing_Rows.getKey(), incoming_And_Outgoing_Rows.getValue());
+
+        } catch (Exception e) {
+            LOGGER.warn("IDX | Error while transforming file: {} {}", source, e);
+        }
+
+    }
+
     private Map.Entry<Integer, Integer> transformToIdxCsv(String downloadedDirAndFileName, String tgtDataDir) {
         int firstIndex = downloadedDirAndFileName.lastIndexOf("_");
         String tradeDate = DateUtils.transformDate(downloadedDirAndFileName.substring(firstIndex+1, firstIndex+9));
@@ -113,6 +151,8 @@ public class IdxTransformer extends BaseTransformer {
         String toFile = tgtDataDir + File.separator + csvFileName;
         AtomicInteger inComingRows = new AtomicInteger();
         AtomicInteger outGoingRows = new AtomicInteger();
+        Map.Entry<Integer, Integer> incomingAndOutgoingRows = new AbstractMap.SimpleEntry<>(inComingRows.get(), outGoingRows.get());
+
         File csvOutputFile = new File(toFile);
         try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
             try (Stream<String> stream = Files.lines(Paths.get(downloadedDirAndFileName))) {
@@ -131,12 +171,12 @@ public class IdxTransformer extends BaseTransformer {
                             }
                         }).forEach(pw::println);
             } catch (IOException e) {
-                LOGGER.warn("Error in IDX entry: {}", e);
+                LOGGER.warn("Error in IDX entry:", e);
             }
         } catch (FileNotFoundException e) {
-            LOGGER.warn("Error: {}", e);
+            LOGGER.warn("Error:", e);
         }
-        Map.Entry<Integer, Integer> incomingAndOutgoingRows = new AbstractMap.SimpleEntry<>(inComingRows.get(), outGoingRows.get());;
+        incomingAndOutgoingRows = new AbstractMap.SimpleEntry<>(inComingRows.get(), outGoingRows.get());
         return incomingAndOutgoingRows;
     }
 

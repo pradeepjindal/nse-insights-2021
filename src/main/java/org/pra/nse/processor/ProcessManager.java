@@ -45,7 +45,7 @@ public class ProcessManager implements Manager {
                         pradeepProcessor.process(forDate);
                         //pradeepProcessorB.process(forDate);
                     } catch (Exception e) {
-                        LOGGER.error("ERROR: {}", e);
+                        LOGGER.error("ERROR:}", e);
                     }
                 });
 
@@ -57,7 +57,7 @@ public class ProcessManager implements Manager {
 //                    try {
 //                        manishProcessor.process(forDate);
 //                    } catch (Exception e) {
-//                        LOGGER.error("ERROR: {}", e);
+//                        LOGGER.error("ERROR:", e);
 //                    }
 //                });
 
@@ -70,7 +70,7 @@ public class ProcessManager implements Manager {
                     try {
                         manishProcessorB.process(ApCo.MANISH_FILE_NAME_B, forDate);
                     } catch (Exception e) {
-                        LOGGER.error("ERROR: {}", e);
+                        LOGGER.error("ERROR:", e);
                     }
                 });
 

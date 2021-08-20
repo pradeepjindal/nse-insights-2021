@@ -93,7 +93,7 @@ public class PastPresentFutureReporter {
         String filePath = ApCo.ROOT_DIR + File.separator + outputDirName + File.separator + fileName;
 
         LOGGER.info("{} | for:{}", report_name, forDate.toString());
-        if(nseFileUtils.isFileExist(filePath)) {
+        if(nseFileUtils.isFilePresent(filePath)) {
             LOGGER.warn("{} already present (regeneration and email would be skipped): {}", report_name, filePath);
             return;
         }
@@ -193,7 +193,6 @@ public class PastPresentFutureReporter {
                 //LOGGER.warn("old rsi | tradeDate {} not found for symbol {}", oldRsi.getTradeDate(), oldRsi.getSymbol());
             }
         }
-        return;
     }
 
     private void loadMfi(LocalDate forDate, int forMinusDays) {
@@ -233,7 +232,6 @@ public class PastPresentFutureReporter {
                 //LOGGER.warn("old rsi | tradeDate {} not found for symbol {}", oldRsi.getTradeDate(), oldRsi.getSymbol());
             }
         }
-        return;
     }
 
     private boolean filterDate(CalcAvgTab pojo, LocalDate minDate, LocalDate maxDate) {
@@ -265,13 +263,13 @@ public class PastPresentFutureReporter {
                     //.map(this::convertToCSV)
                     .forEach(pw::println);
         } catch (FileNotFoundException e) {
-            LOGGER.error("Error: {}", e);
+            LOGGER.error("Error:", e);
             throw new RuntimeException(PPF + ": Could not create file");
         }
     }
 
     private void emailReport(String toEmail, String subject, String text, String pathToAttachment) {
-        if(nseFileUtils.isFileExist(pathToAttachment)) {
+        if(nseFileUtils.isFilePresent(pathToAttachment)) {
             emailService.sendAttachmentMessage("pradeepjindal.mca@gmail.com", subject, text, pathToAttachment, null);
         } else {
             LOGGER.error("skipping email: DeliverySpikeReport not found at disk");

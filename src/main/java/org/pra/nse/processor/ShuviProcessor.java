@@ -55,7 +55,7 @@ public class ShuviProcessor {
         String foLatestFileName = praFileUtils.getLatestFileNameFor(NseCons.FM_FILES_PATH, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1, processForDate);
         String outputPathAndFileNameForDynamicFile = ProCo.outputPathAndFileNameForDynamicFile(File_Name, foLatestFileName);
 
-        if(nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile)) {
+        if(nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile)) {
             LOGGER.warn("report already present (regeneration and email would be skipped): {}", outputPathAndFileNameForDynamicFile);
             return;
         }
@@ -72,7 +72,7 @@ public class ShuviProcessor {
         csvWriter.write(praBeans, outputPathAndFileNameForDynamicFile, foMonthlyExpiryDates);
         //-------------------------------------------------------
 
-        if(nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile)) {
+        if(nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile)) {
             LOGGER.info("---------------------------------------------------------------------------------------------------------------");
             LOGGER.info("SUCCESS! {} has been placed at: {}", File_Name, outputPathAndFileNameForDynamicFile);
             LOGGER.info("---------------------------------------------------------------------------------------------------------------");
@@ -82,7 +82,7 @@ public class ShuviProcessor {
 
         //email
         LocalDate fileDate = DateUtils.toLocalDate(ProCo.extractDate(foLatestFileName));
-        if(nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile) && fileDate.compareTo(ApCo.EMAIL_FROM_DATE) > -1) {
+        if(nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile) && fileDate.compareTo(ApCo.EMAIL_FROM_DATE) > -1) {
             String fileName = File_Name +"-"+ ProCo.extractDate(foLatestFileName) + ApCo.REPORTS_FILE_EXT;
             emailService.sendAttachmentMessage("ca.manish.thakkar@gmail.com", fileName, fileName, outputPathAndFileNameForDynamicFile, File_Name);
         }
@@ -94,7 +94,7 @@ public class ShuviProcessor {
 		try {
             process(LocalDate.now());
 		} catch(Exception e) {
-            LOGGER.error("{}", e);
+            LOGGER.error("error:", e);
 		}
         LOGGER.info("Manish Processor | ============================== | Finished");
     }

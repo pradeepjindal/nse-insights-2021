@@ -92,46 +92,44 @@ public class AbTransformer extends BaseTransformer {
     }
 
     private void looper(Map<String, String> filePairMap) {
-        filePairMap.forEach( (nseFileName, abFileName) -> {
-            //transform(nseFileName, abFileName);
-            transform2(nseFileName, abFileName);
-        });
+        filePairMap.forEach(this::validateAndTransform);
     }
 
-//    private void transform(String nseFileName, String abFileName) {
-//        String source = ApCo.ROOT_DIR + File.separator + NseCons.CM_DIR_NAME + File.separator + nseFileName;
-//        String target = Data_Dir + File.separator + abFileName;
-//        if(nseFileUtils.isFileExist(target)) {
-//            LOGGER.info("AB | already transformed - {}", target);
-//        } else if (nseFileUtils.isFileExist(source)) {
-//            try {
-//                transformToAbCsv(source, target);
-//                LOGGER.info("AB | transformed - {}", target);
-//                email(target);
-//            } catch (Exception e) {
-//                LOGGER.warn("AB | Error while transforming file: {} {}", source, e);
-//            }
-//        } else {
-//            LOGGER.info("AB | source not found - {}", source);
-//        }
-//    }
-    private void transform2(String nseFileName, String abFileName) {
+    private void validateAndTransform(String nseFileName, String abFileName) {
         //String source = ApCo.ROOT_DIR + File.separator + NseCons.CM_DIR_NAME + File.separator + nseFileName;
         String source = ApCo.ROOT_DIR + File.separator + "pra-cm" + File.separator + nseFileName;
         String target = Target_Data_Dir + File.separator + abFileName;
-        if(nseFileUtils.isFileExist(target)) {
+
+        if(nseFileUtils.isFilePresent(target)) {
             LOGGER.info("AB | already transformed - {}", target);
-        } else if (nseFileUtils.isFileExist(source)) {
-            try {
-                transformToAbCsv(source, target);
-                LOGGER.info("AB | transformed - {}", target);
-                email(target);
-            } catch (Exception e) {
-                LOGGER.warn("AB | Error while transforming file: {} {}", target, e);
-            }
-        } else {
-            LOGGER.info("AB | source not found - {}", target);
+            return;
         }
+
+        if (nseFileUtils.isFileAbsent(source)) {
+            LOGGER.info("AB | source not found - {}", source);
+            return;
+        }
+
+        long fileSize = 0;
+        try {
+            fileSize = Files.size(Paths.get(source));
+        } catch (IOException e) {
+            LOGGER.error("AB - error reading file - {}", source);
+        }
+
+        if (fileSize == 0) {
+            LOGGER.warn("AB file size is ZERO (may be holiday file) - {}", source);
+            return;
+        }
+
+        try {
+            transformToAbCsv(source, target);
+            LOGGER.info("AB | transformed - {}", target);
+            email(target);
+        } catch (Exception e) {
+            LOGGER.warn("AB | Error while transforming file: {} {}", source, e);
+        }
+
     }
 
     private void transformToAbCsv(String source, String target) {
@@ -162,16 +160,16 @@ public class AbTransformer extends BaseTransformer {
                         .forEach(pw::println);
                 LOGGER.info("AB | total {} rows printed", atomicInteger.get());
             } catch (IOException e) {
-                LOGGER.warn("Error in CM entry: {}", e);
+                LOGGER.warn("Error in CM entry:", e);
             }
         } catch (FileNotFoundException e) {
-            LOGGER.warn("Error: {}", e);
+            LOGGER.warn("Error:", e);
         }
     }
 
     private void email(String pathToAttachment) {
         String fileName = pathToAttachment.substring(pathToAttachment.indexOf("EQ_"));
-        if(nseFileUtils.isFileExist(pathToAttachment)) {
+        if(nseFileUtils.isFilePresent(pathToAttachment)) {
             emailService.sendAttachmentMessage("ca.manish.thakkar@gmail.com", fileName, fileName, pathToAttachment, null);
             emailService.sendAttachmentMessage("pradeepjindal.mca@gmail.com", fileName, fileName, pathToAttachment, null);
         } else {

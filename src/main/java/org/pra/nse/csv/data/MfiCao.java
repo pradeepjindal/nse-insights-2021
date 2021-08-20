@@ -33,7 +33,7 @@ public class MfiCao {
                     //.map(this::convertToCSV)
                     .forEach(pw::println);
         } catch (FileNotFoundException e) {
-            LOGGER.error("Error: {}", e);
+            LOGGER.error("Error:", e);
             throw new RuntimeException("mfi | could not create file: " + toPath);
         }
     }
@@ -60,7 +60,7 @@ public class MfiCao {
                     //.map(this::convertToCSV)
                     .forEach(pw::println);
         } catch (IOException e) {
-            LOGGER.error("Error: {}", e);
+            LOGGER.error("Error:", e);
             throw new RuntimeException("mfi: Could not create file");
         }
     }

@@ -126,10 +126,10 @@ public class BpDownloader {
                     }
                 }).forEach(pw::println);
             } catch (IOException e) {
-                LOGGER.warn("some error in fao entry: {}", e);
+                LOGGER.warn("some error in fao entry:", e);
             }
         } catch (FileNotFoundException e) {
-            LOGGER.warn("some error: {}", e);
+            LOGGER.warn("some error:}", e);
         }
     }
 

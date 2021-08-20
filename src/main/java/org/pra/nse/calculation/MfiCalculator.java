@@ -62,7 +62,7 @@ public class MfiCalculator {
     public void calculateAndSave(LocalDate forDate) {
         String computeFilePath = getComputeOutputPath(forDate);
         LOGGER.info("{} | for:{}", calc_name, forDate.toString());
-        if(nseFileUtils.isFileExist(computeFilePath)) {
+        if(nseFileUtils.isFilePresent(computeFilePath)) {
             LOGGER.warn("{} already present (skipping calc and saving): {}", calc_name, computeFilePath);
             return;
         }

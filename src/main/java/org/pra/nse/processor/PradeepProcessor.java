@@ -53,7 +53,7 @@ public class PradeepProcessor {
         String foLatestFileName = praFileUtils.getLatestFileNameFor(NseCons.FM_FILES_PATH, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1, forDate);
         String outputPathAndFileNameForDynamicFile = ProCo.outputPathAndFileNameForDynamicFile(ApCo.PRADEEP_FILE_NAME, foLatestFileName);
 
-        if(nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile)) {
+        if(nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile)) {
             LOGGER.warn("report already present (regeneration and email would be skipped): {}", outputPathAndFileNameForDynamicFile);
             return;
         }
@@ -70,7 +70,7 @@ public class PradeepProcessor {
         csvWriter.write(praBeans, outputPathAndFileNameForDynamicFile, foMonthlyExpiryDates);
 
         //-------------------------------------------------------
-        if(nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile)) {
+        if(nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile)) {
             LOGGER.info("---------------------------------------------------------------------------------------------------------------");
             LOGGER.info("SUCCESS! praData.csv File has been placed at: " + outputPathAndFileNameForDynamicFile);
             LOGGER.info("---------------------------------------------------------------------------------------------------------------");
@@ -85,7 +85,7 @@ public class PradeepProcessor {
 		try {
             process (LocalDate.now());
 		} catch(Exception e) {
-            LOGGER.error("{}", e);
+            LOGGER.error("error:", e);
 		}
         LOGGER.info("Pradeep Processor | ============================== | Finished");
     }

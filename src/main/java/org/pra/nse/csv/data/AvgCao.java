@@ -34,7 +34,7 @@ public class AvgCao {
                     //.map(this::convertToCSV)
                     .forEach(pw::println);
         } catch (FileNotFoundException e) {
-            LOGGER.error("Error: {}", e);
+            LOGGER.error("Error:", e);
             throw new RuntimeException("avg | could not create file: " + toPath);
         }
     }

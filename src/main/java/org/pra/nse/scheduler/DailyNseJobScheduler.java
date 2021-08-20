@@ -96,7 +96,7 @@ public class DailyNseJobScheduler implements SchedulingConfigurer {
                                 //reportManager.execute();
                             }
                         } catch(Exception e) {
-                            LOGGER.error("ERROR: {}", e);
+                            LOGGER.error("ERROR:", e);
                         }
                     }
                 }, new Trigger() {

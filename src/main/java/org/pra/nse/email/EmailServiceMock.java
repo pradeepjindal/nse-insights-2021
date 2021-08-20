@@ -67,7 +67,7 @@ public class EmailServiceMock implements EmailService {
             //emailSender.send(message);
             LOGGER.info("Mailed  | Successfully - {}", outputFileName);
         } catch (MessagingException e) {
-            LOGGER.error("Mailing | Error {}", e);
+            LOGGER.error("Mailing | Error:", e);
         }
 
     }

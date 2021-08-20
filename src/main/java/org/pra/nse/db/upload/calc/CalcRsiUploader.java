@@ -49,7 +49,7 @@ public class CalcRsiUploader extends BaseUploader {
         String fromFile = CalcCons.RSI_FILES_PATH +File.separator+ fileName;
 //        LOGGER.info("{} upload | looking for file Name along with path:[{}]",calc_name, fromFile);
 
-        if(!nseFileUtils.isFileExist(fromFile)) {
+        if(!nseFileUtils.isFilePresent(fromFile)) {
             LOGGER.warn("{} upload | file does not exist: [{}]", calc_name, fromFile);
             return;
         }

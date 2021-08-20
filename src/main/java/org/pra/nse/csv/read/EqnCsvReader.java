@@ -73,7 +73,7 @@ public class EqnCsvReader {
             }
             LOGGER.info("CSV, Total Rows Count: [{}]", beans.size());
         } catch (Exception e) {
-            LOGGER.error("Error occurred while loading object list from file: {}", e);
+            LOGGER.error("Error occurred while loading object list from file:", e);
             //return Collections.emptyList();
         }
         //System.out.println("TOTAL beans read=" + beans.size());

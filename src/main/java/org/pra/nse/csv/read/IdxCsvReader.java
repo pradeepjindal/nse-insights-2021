@@ -1,7 +1,6 @@
 package org.pra.nse.csv.read;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.NseCons;
 import org.pra.nse.csv.bean.in.IdxBean;
 import org.pra.nse.util.NseFileUtils;
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import org.supercsv.cellprocessor.constraint.DMinMax;
 import org.supercsv.cellprocessor.constraint.LMinMax;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.exception.SuperCsvCellProcessorException;
 import org.supercsv.io.CsvBeanReader;
 import org.supercsv.io.ICsvBeanReader;
 import org.supercsv.prefs.CsvPreference;
@@ -29,13 +27,12 @@ public class IdxCsvReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(IdxCsvReader.class);
     private final NseFileUtils nseFileUtils;
 
-
     IdxCsvReader(NseFileUtils nseFileUtils) {
         this.nseFileUtils = nseFileUtils;
     }
 
     public Map<String, IdxBean> read(String fromFile) {
-        if(nseFileUtils.isFileExist(fromFile)) {
+        if(nseFileUtils.isFilePresent(fromFile)) {
 //            LOGGER.info("IDX file exists: [{}]", fromFile);
         } else {
             LOGGER.error("IDX file does not exist: [{}]", fromFile);
@@ -51,7 +48,7 @@ public class IdxCsvReader {
         try {
             beanReader = new CsvBeanReader(new FileReader(fileName), CsvPreference.STANDARD_PREFERENCE);
         } catch (FileNotFoundException e) {
-            LOGGER.error("IDX csv file not found: {}", e);
+            LOGGER.error("IDX csv file not found:");
         }
         final CellProcessor[] processors = getProcessors();
 
@@ -60,6 +57,10 @@ public class IdxCsvReader {
         Map<String, IdxBean> beanMap = new LinkedHashMap<>();
         try {
             header = beanReader.getHeader(true);
+            if (header == null) {
+                LOGGER.warn("IDX file has ZERO size");
+                return beanMap;
+            }
             while( (bean = beanReader.read(IdxBean.class, header, processors)) != null ) {
                 //LOGGER.info(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(), beanReader.getRowNumber()-1, bean));
                 bean.setSymbol(bean.getIdxName());
@@ -70,7 +71,7 @@ public class IdxCsvReader {
                 beanMap.put(bean.getSymbol(), bean);
             }
         } catch (IOException e) {
-            LOGGER.warn("some error: {}", e);
+            LOGGER.warn("some error:", e);
         }
         return beanMap;
     }

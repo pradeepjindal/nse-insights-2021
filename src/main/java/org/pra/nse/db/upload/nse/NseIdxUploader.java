@@ -100,7 +100,7 @@ public class NseIdxUploader {
         String fromFile = Data_Dir + File.separator+ ApCo.PRA_IDX_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
         //LOGGER.info("IDX-upload | looking for file Name along with path:[{}]",fromFile);
 
-        if(!nseFileUtils.isFileExist(fromFile)) {
+        if(!nseFileUtils.isFilePresent(fromFile)) {
             LOGGER.warn("IDX-upload | file not found: [{}]", fromFile);
             return;
         }

@@ -92,7 +92,7 @@ public class EmailServiceImpl implements EmailService {
             emailSender.send(message);
             LOGGER.info("Mailed  | Successfully - {}", outputFileName == null ? subject : outputFileName);
         } catch (MessagingException e) {
-            LOGGER.error("Mailing | Error {}", e);
+            LOGGER.error("Mailing | Error:", e);
         }
     }
 

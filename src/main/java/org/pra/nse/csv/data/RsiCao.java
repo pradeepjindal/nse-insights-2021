@@ -33,7 +33,7 @@ public class RsiCao {
                     //.map(this::convertToCSV)
                     .forEach(pw::println);
         } catch (FileNotFoundException e) {
-            LOGGER.error("Error: {}", e);
+            LOGGER.error("Error:", e);
             throw new RuntimeException("RSI | could not create file: " + toPath);
         }
     }
@@ -72,7 +72,7 @@ public class RsiCao {
                     //.map(this::convertToCSV)
                     .forEach(pw::println);
         } catch (IOException e) {
-            LOGGER.error("Error: {}", e);
+            LOGGER.error("Error:", e);
             throw new RuntimeException("rsi: Could not create file");
         }
     }

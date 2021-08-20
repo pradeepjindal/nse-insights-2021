@@ -57,7 +57,7 @@ public class ManishProcessorB {
         String foLatestFileName = praFileUtils.getLatestFileNameFor(NseCons.FM_FILES_PATH, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1, forDate);
         String outputPathAndFileNameForDynamicFile = ProCo.outputPathAndFileNameForDynamicFile(outputFileName, foLatestFileName);
 
-        if(nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile)) {
+        if(nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile)) {
             LOGGER.warn("report already present (regeneration and email would be skipped): {}", outputPathAndFileNameForDynamicFile);
             return;
         }
@@ -76,7 +76,7 @@ public class ManishProcessorB {
         csvWriterB.write(praBeans, outputPathAndFileNameForDynamicFile, foMonthlyExpiryDates);
 
         //-------------------------------------------------------
-        if (nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile)) {
+        if (nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile)) {
             LOGGER.info("---------------------------------------------------------------------------------------------------------------");
             LOGGER.info("SUCCESS! manishDataB.csv File has been placed at: " + outputPathAndFileNameForDynamicFile);
             LOGGER.info("---------------------------------------------------------------------------------------------------------------");
@@ -85,7 +85,7 @@ public class ManishProcessorB {
         }
 
         // email
-        if ( nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile) ) {
+        if ( nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile) ) {
             String fileName = ApCo.MANISH_FILE_NAME_B +"-"+ ProCo.extractDate(foLatestFileName) + ApCo.REPORTS_FILE_EXT;
             emailService.sendAttachmentMessage("ca.manish.thakkar@gmail.com", fileName, fileName, outputPathAndFileNameForDynamicFile, ApCo.MANISH_FILE_NAME_B);
             emailService.sendAttachmentMessage("pradeepjindal.mca@gmail.com", fileName, fileName, outputPathAndFileNameForDynamicFile, ApCo.MANISH_FILE_NAME_B);
@@ -98,7 +98,7 @@ public class ManishProcessorB {
 		try {
             process(ApCo.MANISH_FILE_NAME_B, LocalDate.now());
 		} catch(Exception e) {
-            LOGGER.error("{}", e);
+            LOGGER.error("error:", e);
 		}
         LOGGER.info("Manish Processor B | ============================== | Finished");
     }

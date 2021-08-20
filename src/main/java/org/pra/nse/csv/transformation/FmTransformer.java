@@ -10,8 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,11 +70,43 @@ public class FmTransformer extends BaseTransformer {
     }
 
     private void looper(Map<String, String> filePairMap) {
-        filePairMap.forEach( (nseFileName, praFileName) -> {
-            //TODO - block transforming of 28-Aug-2019 file
-            //transformationHelper.transform(Data_Dir, ApCo.PRA_FM_FILE_PREFIX, nseFileName, praFileName);
-            transformationHelper.transform(Data_Dir, Target_Data_Dir, ApCo.PRA_FM_FILE_PREFIX, nseFileName, praFileName);
-        });
+        //TODO - block transforming of 28-Aug-2019 file
+        filePairMap.forEach(this::validateAndTransform);
     }
+
+    private void validateAndTransform(String nseFileName, String praFileName) {
+        String source = Data_Dir + File.separator + nseFileName;
+        String target = Target_Data_Dir + File.separator + praFileName;
+
+        if(nseFileUtils.isFilePresent(target)) {
+            LOGGER.info("FM | already transformed - {}", target);
+            return;
+        }
+
+        if (nseFileUtils.isFileAbsent(source)) {
+            LOGGER.info("FM | source not found - {}", source);
+            return;
+        }
+
+        long fileSize = 0;
+        try {
+            fileSize = Files.size(Paths.get(source));
+        } catch (IOException e) {
+            LOGGER.error("FM - error reading file - {}", source);
+        }
+
+        if (fileSize == 0) {
+            LOGGER.warn("FM file size is ZERO (may be holiday file) - {}", source);
+            return;
+        }
+
+        try {
+            transformationHelper.transform(Data_Dir, Target_Data_Dir, ApCo.PRA_FM_FILE_PREFIX, nseFileName, praFileName);
+            LOGGER.info("FM | transformed");
+        } catch (Exception e) {
+            LOGGER.warn("FM | Error while transforming file: {} {}", source, e);
+        }
+    }
+
 
 }

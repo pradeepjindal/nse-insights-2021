@@ -65,7 +65,7 @@ public class PradeepProcessorB {
                 csvWriter.write(praBeans, outputPathAndFileNameForDynamicFile, foMonthlyExpiryDates);
         //-------------------------------------------------------
 
-        if(nseFileUtils.isFileExist(outputPathAndFileNameForDynamicFile)) {
+        if(nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile)) {
             LOGGER.info("---------------------------------------------------------------------------------------------------------------");
             LOGGER.info("SUCCESS! praData.csv File has been placed at: " + outputPathAndFileNameForDynamicFile);
             LOGGER.info("---------------------------------------------------------------------------------------------------------------");
@@ -80,7 +80,7 @@ public class PradeepProcessorB {
 		try {
             process(LocalDate.now());
 		} catch(Exception e) {
-            LOGGER.error("{}", e);
+            LOGGER.error("error:", e);
 		}
         LOGGER.info("Pradeep Processor B | ============================== | Finished");
     }

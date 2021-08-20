@@ -74,18 +74,15 @@ public class DmTransformer extends BaseTransformer {
     }
 
     private void looper(Map<String, String> filePairMap) {
-        filePairMap.forEach( (nseFileName, praFileName) -> {
-            //transform(nseFileName, praFileName);
-            transform2(nseFileName, praFileName);
-        });
+        filePairMap.forEach(this::validateAndTransform);
     }
 
     private void transform(String nseFileName, String praFileName) {
         String source = Data_Dir + File.separator + nseFileName;
         String target = Data_Dir + File.separator + praFileName;
-        if(nseFileUtils.isFileExist(target)) {
+        if(nseFileUtils.isFilePresent(target)) {
             LOGGER.info("DM | already transformed - {}", target);
-        } else if (nseFileUtils.isFileExist(source)) {
+        } else if (nseFileUtils.isFilePresent(source)) {
             try {
                 int outputRowsCount = transformToDmCsv(source, Data_Dir);
                 LOGGER.info("DM | source transformed - {}, output rows {}", target, outputRowsCount);
@@ -96,21 +93,39 @@ public class DmTransformer extends BaseTransformer {
             LOGGER.info("DM | source not found - {}", source);
         }
     }
-    private void transform2(String nseFileName, String praFileName) {
+    private void validateAndTransform(String nseFileName, String praFileName) {
         String source = Data_Dir + File.separator + nseFileName;
         String target = Target_Data_Dir + File.separator + praFileName;
-        if(nseFileUtils.isFileExist(target)) {
+
+        if(nseFileUtils.isFilePresent(target)) {
             LOGGER.info("DM | already transformed - {}", target);
-        } else if (nseFileUtils.isFileExist(source)) {
-            try {
-                int outputRowsCount = transformToDmCsv(source, Target_Data_Dir);
-                LOGGER.info("DM | transformed - {}, output rows {}", target, outputRowsCount);
-            } catch (Exception e) {
-                LOGGER.warn("DM | Error while transforming file: {} {}", source, e);
-            }
-        } else {
-            LOGGER.info("DM | source not found - {}", source);
+            return;
         }
+
+        if (nseFileUtils.isFileAbsent(source)) {
+            LOGGER.info("MAT | source not found - {}", source);
+            return;
+        }
+
+        long fileSize = 0;
+        try {
+            fileSize = Files.size(Paths.get(source));
+        } catch (IOException e) {
+            LOGGER.error("MAT - error reading file - {}", source);
+        }
+
+        if (fileSize == 0) {
+            LOGGER.warn("MAT file size is ZERO (may be holiday file) - {}", source);
+            return;
+        }
+
+        try {
+            int outputRowsCount = transformToDmCsv(source, Target_Data_Dir);
+            LOGGER.info("DM | transformed - {}, output rows {}", target, outputRowsCount);
+        } catch (Exception e) {
+            LOGGER.warn("DM | Error while transforming file: {} {}", source, e);
+        }
+
     }
     private int transformToDmCsv(String downloadedDirAndFileName, String tgtDataDir) {
         int firstIndex = downloadedDirAndFileName.lastIndexOf("_");
@@ -123,6 +138,7 @@ public class DmTransformer extends BaseTransformer {
         String toFile = tgtDataDir + File.separator + csvFileName;
         AtomicInteger atomicInteger = new AtomicInteger();
         AtomicInteger outGoingRows = new AtomicInteger();
+
         File csvOutputFile = new File(toFile);
         try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
             try (Stream<String> stream = Files.lines(Paths.get(downloadedDirAndFileName))) {
@@ -137,10 +153,10 @@ public class DmTransformer extends BaseTransformer {
                             }
                         }).forEach(pw::println);
             } catch (IOException e) {
-                LOGGER.warn("Error in MAT entry: {}", e);
+                LOGGER.warn("Error in MAT entry:", e);
             }
         } catch (FileNotFoundException e) {
-            LOGGER.warn("Error: {}", e);
+            LOGGER.warn("Error:", e);
         }
         return  outGoingRows.intValue();
     }

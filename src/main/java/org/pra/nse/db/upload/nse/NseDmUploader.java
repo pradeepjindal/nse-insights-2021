@@ -89,7 +89,7 @@ public class NseDmUploader {
         String fromFile = Data_Dir + File.separator+ ApCo.PRA_DM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
         //LOGGER.info("DM-upload | looking for file Name along with path:[{}]",fromFile);
 
-        if(!nseFileUtils.isFileExist(fromFile)) {
+        if(!nseFileUtils.isFilePresent(fromFile)) {
             LOGGER.warn("DM-upload | file not found: [{}]", fromFile);
             return;
         }

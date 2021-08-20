@@ -78,7 +78,7 @@ public class FmCsvReader {
             }
             LOGGER.info("CSV, Total Rows Count: [{}]", beans.size());
         } catch (IOException e) {
-            LOGGER.error("Error occurred while loading object list from file: {}", e);
+            LOGGER.error("Error occurred while loading object list from file:", e);
             new RuntimeException("error reading fm file");
         }
         //System.out.println("TOTAL beans read=" + beans.size());

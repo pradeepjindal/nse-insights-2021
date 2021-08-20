@@ -90,7 +90,7 @@ public class NseCmUploader {
         String fromFile = Data_Dir + File.separator+ ApCo.PRA_CM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
         //LOGGER.info("CM-upload | looking for file Name along with path:[{}]",fromFile);
 
-        if(!nseFileUtils.isFileExist(fromFile)) {
+        if(!nseFileUtils.isFilePresent(fromFile)) {
             LOGGER.warn("CM-upload | file not found: [{}]", fromFile);
             return;
         }
