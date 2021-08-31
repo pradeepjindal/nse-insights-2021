@@ -1,9 +1,11 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
+import org.pra.nse.csv.bean.in.DmBean;
 import org.pra.nse.csv.bean.in.FmBean;
 import org.pra.nse.csv.read.FmCsvReader;
 import org.pra.nse.db.dao.FmDao;
+import org.pra.nse.db.model.NseDeliveryMarketTab;
 import org.pra.nse.db.model.NseFutureMarketTab;
 import org.pra.nse.db.model.NseOptionMarketTab;
 import org.pra.nse.db.repository.NseFmRepo;
@@ -96,9 +98,14 @@ public class NseFmUploader {
             LOGGER.warn("FM-upload | file not found: [{}]", fromFile);
             return;
         }
+
         Map<FmBean, FmBean> foBeanMap = csvReader.read(null, fromFile);
         //LOGGER.info("{}", foBeanMap.size());
+        upload(foBeanMap);
+    }
 
+
+    private void upload(Map<FmBean, FmBean> foBeanMap) {
         NseFutureMarketTab futureTab = new NseFutureMarketTab();
         NseOptionMarketTab optionTab = new NseOptionMarketTab();
         AtomicInteger recordSucceed = new AtomicInteger();
@@ -153,5 +160,4 @@ public class NseFmUploader {
         LOGGER.info("FM-upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
         if (recordFailed.get() > 0) throw new RuntimeException("FM-upload | some record could not be persisted");
     }
-
 }

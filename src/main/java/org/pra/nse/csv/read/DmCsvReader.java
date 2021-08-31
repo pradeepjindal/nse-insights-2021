@@ -3,6 +3,8 @@ package org.pra.nse.csv.read;
 import org.pra.nse.ApCo;
 import org.pra.nse.NseCons;
 import org.pra.nse.csv.bean.in.DmBean;
+import org.pra.nse.refdata.IdxCategoryEnum;
+import org.pra.nse.refdata.IdxFiveHundredService;
 import org.pra.nse.util.NseFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,7 @@ public class DmCsvReader {
         DmBean bean;
         String[] header;
         Map<String, DmBean> beanMap = new HashMap<>();
+        boolean not_EQ_or_BE_series;
         try {
             header = beanReader.getHeader(true);
             if (header == null) {
@@ -62,13 +65,16 @@ public class DmCsvReader {
             }
             while( (bean = beanReader.read(DmBean.class, header, processors)) != null ) {
                 //LOGGER.info(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(), beanReader.getRowNumber(), matBean));
-                if("EQ".equals(bean.getSecurityType())) {
-                    if(beanMap.containsKey(bean.getSymbol())) {
-                        LOGGER.warn("Symbol already present in map: old value = [{}], new value = [{}]",
-                                beanMap.get(bean.getSymbol()), bean);
-                    }
-                    beanMap.put(bean.getSymbol(), bean);
+//                if(IdxFiveHundredService.isNotMember(IdxCategoryEnum.IDX_500, bean.getSymbol()))
+//                    continue;
+                not_EQ_or_BE_series = ! ("EQ".equals(bean.getSecurityType()) || "BE".equals(bean.getSecurityType()));
+                if(not_EQ_or_BE_series)
+                    continue;
+                if(beanMap.containsKey(bean.getSymbol())) {
+                    LOGGER.warn("Symbol already present in map: old value = [{}], new value = [{}]",
+                            beanMap.get(bean.getSymbol()), bean);
                 }
+                beanMap.put(bean.getSymbol(), bean);
             }
         } catch (IOException e) {
             LOGGER.warn("some error:", e);

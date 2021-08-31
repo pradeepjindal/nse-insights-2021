@@ -146,10 +146,12 @@ public class RsiCalculator {
             bean = calculationBatch(forDate, forDays, mapKeySymbol, mapDtoList_OfGivenSymbol);
             if(bean.getAtpRsiSma() != null) beans.add(bean);
         }
+        //
         return beans;
     }
 
-    private RsiBean calculationBatch(LocalDate forDate, int forDays, String mapKeySymbol, List<DeliverySpikeDto> mapDtoList_OfGivenSymbol) {
+    private RsiBean calculationBatch(LocalDate forDate, int forDays, String mapKeySymbol,
+                                     List<DeliverySpikeDto> mapDtoList_OfGivenSymbol) {
         RsiBean bean = new RsiBean();
         bean.setSymbol(mapKeySymbol);
         bean.setTradeDate(forDate);
@@ -172,7 +174,8 @@ public class RsiCalculator {
                     LOGGER.debug("calc-CloseRSi, Tdyclose-Yesclose: {}, (tradeDate: {})", dto.getTdycloseMinusYesclose(), dto.getTradeDate());
                     LOGGER.debug("calc-CloseRSi, Tdyclose - Yesclose : {} - {} = {}",
                             dto.getClose(), dto.getBackDto().getClose(), dto.getClose().subtract(dto.getBackDto().getClose()));
-                    return dto.getTdycloseMinusYesclose();
+                    //return dto.getTdycloseMinusYesclose();
+                    return dto.getClose().subtract(dto.getBackDto().getClose());
                 },
                 (dto, calculatedValue) -> bean.setCloseRsiSma(calculatedValue)
         );
@@ -183,7 +186,8 @@ public class RsiCalculator {
                     LOGGER.debug("calc-LastRsi, Tdylast-Yeslast: {}, (tradeDate: {})", dto.getTdylastMinusYeslast(), dto.getTradeDate());
                     LOGGER.debug("calc-LastRsi, Tdylast - Yeslast : {} - {} = {}",
                             dto.getLast(), dto.getBackDto().getLast(), dto.getLast().subtract(dto.getBackDto().getLast()));
-                    return dto.getTdylastMinusYeslast();
+                    //return dto.getTdylastMinusYeslast();
+                    return dto.getLast().subtract(dto.getBackDto().getLast());
                 },
                 (dto, calculatedValue) -> bean.setLastRsiSma(calculatedValue)
         );
@@ -198,43 +202,50 @@ public class RsiCalculator {
                 },
                 (dto, calculatedValue) -> bean.setDelRsiSma(calculatedValue)
         );
-
+        //
         return bean;
     }
 
-    private void calculateRsi(LocalDate forDate, int forDays, String symbol,
-                            List<DeliverySpikeDto> spikeDtoList,
-                            Function<DeliverySpikeDto, BigDecimal> functionSupplier,
-                            BiConsumer<DeliverySpikeDto,BigDecimal> biConsumer) {
+    public BigDecimal calculateRsi(LocalDate forDate, int forDays, String symbol,
+                                    List<DeliverySpikeDto> spikeDtoList,
+                                    Function<DeliverySpikeDto, BigDecimal> functionSupplier,
+                                    BiConsumer<DeliverySpikeDto,BigDecimal> biConsumer) {
 //        if(spikeDtoList.size() != 10) {
 //            LOGGER.warn("size of the dto list is not 10, it is {}, for {}", spikeDtoList.size(), spikeDtoList.get(0).getSymbol());
 //        }
 
         //LOGGER.info("for symbol = {}", symbol);
         BigDecimal upSum = BigDecimal.ZERO;
+        double gains = 0;
         short upCtr = 0;
         BigDecimal dnSum = BigDecimal.ZERO;
         short dnCtr = 0;
+        double losses = 0;
 
+        LocalDate tradeDate = null;
         DeliverySpikeDto latestDto = null;
         for(DeliverySpikeDto dsDto:spikeDtoList) {
             //LOGGER.info("loopDto = {}", dsDto.toFullCsvString());
-            if(dsDto.getTradeDate().compareTo(forDate)  == 0) {
+            tradeDate = dsDto.getTradeDate();
+            if(tradeDate.compareTo(forDate)  == 0) {
                 latestDto = dsDto;
+                continue;
             }
 
             //if(dsDto.getTdycloseMinusYesclose().compareTo(zero) > 0)  {
-            BigDecimal rawPriceStrength = functionSupplier.apply(dsDto);
-            if(rawPriceStrength == null || rawPriceStrength.compareTo(BigDecimal.ZERO) == 0)  {
-                rawPriceStrength = BigDecimal.ZERO;
-            } else if(rawPriceStrength.compareTo(BigDecimal.ZERO) == 1)  {
+            BigDecimal changeInPrice = functionSupplier.apply(dsDto);
+            gains += Math.max(0, changeInPrice.doubleValue());
+            losses += Math.max(0, changeInPrice.doubleValue() * -1 );
+            if(changeInPrice == null || changeInPrice.compareTo(BigDecimal.ZERO) == 0)  {
+                changeInPrice = BigDecimal.ZERO;
+            } else if(changeInPrice.compareTo(BigDecimal.ZERO) == 1)  {
                 upCtr++;
-                upSum = upSum.add(rawPriceStrength);
-                LOGGER.debug("up, rawPriceStrength {}, upSum {}, upCtr {}", rawPriceStrength, upSum, upCtr);
-            } else if(rawPriceStrength.compareTo(BigDecimal.ZERO) == -1) {
+                upSum = upSum.add(changeInPrice);
+                LOGGER.debug("up, changeInPrice {}, upSum {}, upCtr {}", changeInPrice, upSum, upCtr);
+            } else if(changeInPrice.compareTo(BigDecimal.ZERO) == -1) {
                 dnCtr++;
-                dnSum = dnSum.add(rawPriceStrength);
-                LOGGER.debug("dn, rawPriceStrength {}, dnSum {}, dnCtr {}", rawPriceStrength, dnSum, dnCtr);
+                dnSum = dnSum.add(changeInPrice);
+                LOGGER.debug("dn, changeInPrice {}, dnSum {}, dnCtr {}", changeInPrice, dnSum, dnCtr);
             } else {
                 LOGGER.error("rsi | {}, UNKNOWN CONDITION", Du.symbol(symbol));
             }
@@ -283,6 +294,135 @@ public class RsiCalculator {
         rsi = NumberUtils.HUNDRED.subtract(rsi);
         LOGGER.debug("rsi | {}, [rsi = 100 - (100 / (1+rs))] = {}", Du.symbol(symbol), rsi);
         //==============================================
+
+        if(latestDto != null) biConsumer.accept(latestDto, rsi);
+        else LOGGER.warn("skipping rsi, latestDto is null for {}, may be phasing out from FnO", Du.symbol(symbol));
+        //LOGGER.info("for symbol = {}, rsi = {}", symbol, rsi);
+
+        // new calc
+        {
+            double ratio = gains / losses;
+            double calculatedRsi =  100 - (100 / (1 + ratio));
+            double change = gains + losses;
+            double abc = (change == 0) ? 50 : (100 * gains / change);
+            System.out.println(abc);
+        }
+        {
+            double avgGains = gains/20;
+            double avgLosses = losses/20;
+            double ratio = avgGains / avgLosses;
+            double calculatedRsi =  100 - (100 / (1 + ratio));
+            double change = gains + losses;
+            double abc = (change == 0) ? 50 : (100 * gains / change);
+            System.out.println(abc);
+        }
+        {
+            double avgGains = gains/19;
+            double avgLosses = losses/19;
+            double ratio = avgGains / avgLosses;
+            double calculatedRsi =  100 - (100 / (1 + ratio));
+            double change = gains + losses;
+            double abc = (change == 0) ? 50 : (100 * gains / change);
+            System.out.println(abc);
+        }
+        {
+            double avgGains = gains/upCtr;
+            double avgLosses = losses/dnCtr;
+            double ratio = avgGains / avgLosses;
+            double calculatedRsi =  100 - (100 / (1 + ratio));
+            double change = gains + losses;
+            double abc = (change == 0) ? 50 : (100 * gains / change);
+            System.out.println(abc);
+        }
+        return rsi;
+    }
+
+    public void calculate(LocalDate forDate, String symbol,
+                          List<DeliverySpikeDto> spikeDtoList,
+                          Function<DeliverySpikeDto, BigDecimal> functionSupplier,
+                          BiConsumer<DeliverySpikeDto,BigDecimal> biConsumer) {
+//        if(spikeDtoList.size() != 10) {
+//            LOGGER.warn("size of the dto list is not 10, it is {}, for {}", spikeDtoList.size(), spikeDtoList.get(0).getSymbol());
+//        }
+
+        //LOGGER.info("for symbol = {}", symbol);
+        BigDecimal up = BigDecimal.ZERO;
+        short upCtr = 0;
+        BigDecimal dn = BigDecimal.ZERO;
+        short dnCtr = 0;
+
+        LOGGER.debug("spikeDtoList size {}", spikeDtoList.size());
+        DeliverySpikeDto latestDto = null;
+        for(DeliverySpikeDto dsDto:spikeDtoList) {
+            //LOGGER.info("loopDto = {}", dsDto.toFullCsvString());
+            if(dsDto.getTradeDate().compareTo(forDate)  == 0) {
+                latestDto = dsDto;
+            }
+
+            //if(dsDto.getTdycloseMinusYesclose().compareTo(zero) > 0)  {
+            BigDecimal rawPriceStrength = functionSupplier.apply(dsDto);
+            if(rawPriceStrength == null || rawPriceStrength.compareTo(BigDecimal.ZERO) == 0)  {
+                rawPriceStrength = BigDecimal.ZERO;
+            } else if(rawPriceStrength.compareTo(BigDecimal.ZERO) == 1)  {
+                upCtr++;
+                up = up.add(rawPriceStrength);
+                LOGGER.debug("up, rawPriceStrength {}, up {}, upCtr {}", rawPriceStrength, up, upCtr);
+            } else if(rawPriceStrength.compareTo(BigDecimal.ZERO) == -1) {
+                dnCtr++;
+                dn = dn.add(rawPriceStrength);
+                LOGGER.debug("dn, rawPriceStrength {}, dn {}, dnCtr {}", rawPriceStrength, dn, dnCtr);
+            } else {
+                LOGGER.error("rsi | {}, UNKNOWN CONDITION", Du.symbol(symbol));
+            }
+        }
+        LOGGER.debug("rsi | {}, forDate = {}, upCtr = {}, dnCtr = {}", Du.symbol(symbol), forDate, upCtr, dnCtr);
+//        if(upCtr == 0 || dnCtr == 0) {
+//            LOGGER.warn("rsi | forSymbol = {}, forDate = {}, upCtr = {}, dnCtr = {}", symbol, forDate, upCtr, dnCtr);
+//        }
+//        if(upCtr == 3 && dnCtr == 0) {
+//            LOGGER.info("rsi+ | forSymbol = {}, forDate = {}, upCtr = {}, dnCtr = {}", symbol, forDate, upCtr, dnCtr);
+//        }
+//        if(upCtr == 0 && dnCtr == 3) {
+//            LOGGER.info("rsi- | forSymbol = {}, forDate = {}, upCtr = {}, dnCtr = {}", symbol, forDate, upCtr, dnCtr);
+//        }
+
+        //LOGGER.info("latestDto = {}", latestDto.toFullCsvString());
+        //up = up.divide(upCtr == 0 ? BigDecimal.ONE : new BigDecimal(upCtr), 2, RoundingMode.HALF_UP);
+        BigDecimal upAvg = NumberUtils.divide(up, new BigDecimal(upCtr));
+        //dn = dn.divide(dnCtr == 0 ? BigDecimal.ONE : new BigDecimal(dnCtr), 2, RoundingMode.HALF_UP);
+        BigDecimal dnAvg = NumberUtils.divide(dn, new BigDecimal(dnCtr));
+
+        BigDecimal rs = BigDecimal.ZERO;
+        if(up.compareTo(BigDecimal.ZERO) == 0 && dn.abs().compareTo(BigDecimal.ZERO) == 0) {
+            LOGGER.warn("rsi | {}, Up and Dn both are Zero", Du.symbol(symbol));
+            rs = BigDecimal.ZERO;
+        } else if (up.compareTo(BigDecimal.ZERO) == 1 && dn.abs().compareTo(BigDecimal.ZERO) == 0) {
+            LOGGER.debug("rsi | {}, all closing are Up ({})", Du.symbol(symbol), upAvg);
+            //rs = up.divide(BigDecimal.ONE, 2, RoundingMode.HALF_UP);
+            rs = upAvg;
+        } else if (up.compareTo(BigDecimal.ZERO) == 0 && dn.abs().compareTo(BigDecimal.ZERO) == 1) {
+            LOGGER.debug("rsi | {}, all closing are Dn ({})", Du.symbol(symbol), dnAvg);
+            //rs = up.divide(dn.abs(), 2, RoundingMode.HALF_UP);
+            rs = BigDecimal.ZERO;
+        } else {
+            LOGGER.debug("rsi | {}, Up and Dn both are non-Zero  ({})  ({})", Du.symbol(symbol), upAvg, dnAvg);
+            //rs = up.divide(dn.abs(), 2, RoundingMode.HALF_UP);
+            rs = NumberUtils.divide(upAvg, dnAvg.abs());
+        }
+        LOGGER.debug("rsi | {}, (rs) ={}, upAvg = {}, dnAvg = {}", Du.symbol(symbol), rs, upAvg, dnAvg);
+
+        //rsi = 100 - (100 / (1 + rs));
+        //------------------------------------------
+        //(1 + rs)
+        BigDecimal rsi = rs.add(BigDecimal.ONE);
+        LOGGER.debug("rsi | {}, (1 + rs) = {}", Du.symbol(symbol), rsi);
+        //(100 / (1 + rs)
+        rsi = NumberUtils.divide(NumberUtils.HUNDRED, rsi);
+        LOGGER.debug("rsi | {}, (100 / (1 + rs) = {}", Du.symbol(symbol), rsi);
+        //100 - (100 / (1 + rs))
+        rsi = NumberUtils.HUNDRED.subtract(rsi);
+        LOGGER.debug("rsi | {}, 100 - (100 / (1 + rs)) = {}", Du.symbol(symbol), rsi);
+        //===========================================
 
         if(latestDto != null) biConsumer.accept(latestDto, rsi);
         else LOGGER.warn("skipping rsi, latestDto is null for {}, may be phasing out from FnO", Du.symbol(symbol));

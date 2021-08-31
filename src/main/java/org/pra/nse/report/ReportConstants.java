@@ -45,6 +45,7 @@ public class ReportConstants {
             "symbol,trade_date,day," +
 //            "open,high,low,hlp,close,last,closingBell,closeToLastPct,atp,hlm,ohlc," +
                     "open,high,low,close,last,ohlc,ocMid,oTOc," +
+                    "RelativeStrength" +
                     "AtpDelUpTrend,AtpDelDnTrend,trdLakh,delLakh,atp,atpChgPct,mvwap,fuOiLots,fuOiChgPct,AtpOiTrendI1,AtpOiTrendI2," +
                     "hlMid,atpMhlm,hld,hlp,cToL_Pct," +
 

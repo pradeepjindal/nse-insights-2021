@@ -107,14 +107,14 @@ public class DmTransformer extends BaseTransformer {
             return;
         }
 
-        long fileSize = 0;
+        long bytes = 0;
         try {
-            fileSize = Files.size(Paths.get(source));
+            bytes = Files.size(Paths.get(source));
         } catch (IOException e) {
             LOGGER.error("MAT - error reading file - {}", source);
         }
 
-        if (fileSize == 0) {
+        if (bytes == 0) {
             LOGGER.warn("MAT file size is ZERO (may be holiday file) - {}", source);
             return;
         }

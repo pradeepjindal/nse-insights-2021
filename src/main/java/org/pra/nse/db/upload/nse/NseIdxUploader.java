@@ -104,8 +104,13 @@ public class NseIdxUploader {
             LOGGER.warn("IDX-upload | file not found: [{}]", fromFile);
             return;
         }
-        Map<String, IdxBean> latestBeanMap = csvReader.read(fromFile);
 
+        Map<String, IdxBean> latestBeanMap = csvReader.read(fromFile);
+        upload(latestBeanMap);
+    }
+
+
+    private void upload(Map<String, IdxBean> latestBeanMap) {
         NseIndexMarketTab target = new NseIndexMarketTab();
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();

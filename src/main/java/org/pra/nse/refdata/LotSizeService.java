@@ -11,24 +11,21 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class PraStocksNew {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PraStocksNew.class);
-    private static final String fileName = "pra-top-90-lots.csv";
+public class LotSizeService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LotSizeService.class);
+    private static final String fileName = "pra-top-70-lots.csv";
     private static List<LotSizeBean> lotSizeBeanList;
     private static Map<String, Long> lotSizeBeanMap;
 
     private static Map<String, List<LotSizeBean>> fileNameKey_lotSizeBeanList = new HashMap<>();
     private static Map<String, Map<String, Long>> fileNameKey_lotSizeBeanMap = new HashMap<>();
 
-//    public enum FM_CATEGORY_ENUM {
-//        FM_ALL, FM_TOP_90, FM_TOP_30
-//    };
     private static EnumMap<FmCategoryEnum, String> enumMap = new EnumMap<FmCategoryEnum, String>(FmCategoryEnum.class);
 
     static {
         enumMap.put(FmCategoryEnum.FM_ALL   , "fm-lots.csv");
-        enumMap.put(FmCategoryEnum.FM_TOP_90, "pra-top-90-lots.csv");
-        enumMap.put(FmCategoryEnum.FM_TOP_40, "pra-top-40-lots.csv");
+        enumMap.put(FmCategoryEnum.FM_TOP_70, "pra-top-70-lots.csv");
+        enumMap.put(FmCategoryEnum.FM_TOP_35, "pra-top-35-lots.csv");
     }
 
     public static long getLotSizeAsLong(FmCategoryEnum category, String symbol) {
@@ -72,7 +69,7 @@ public class PraStocksNew {
     }
 
     private static File readFile(String fileName) {
-        return new File(PraStocksNew.class.getClassLoader().getResource(fileName).getFile());
+        return new File(LotSizeService.class.getClassLoader().getResource(fileName).getFile());
     }
 
     private static void readCsv2(String fileName, File refFile) {

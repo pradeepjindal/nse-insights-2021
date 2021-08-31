@@ -94,8 +94,12 @@ public class NseCmUploader {
             LOGGER.warn("CM-upload | file not found: [{}]", fromFile);
             return;
         }
-        Map<String, CmBean> latestBeanMap = csvReader.read(fromFile);
 
+        Map<String, CmBean> latestBeanMap = csvReader.read(fromFile);
+        upload(latestBeanMap);
+    }
+
+    private void upload(Map<String, CmBean> latestBeanMap) {
         NseCashMarketTab target = new NseCashMarketTab();
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();

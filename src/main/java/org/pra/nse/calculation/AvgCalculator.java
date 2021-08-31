@@ -100,8 +100,7 @@ public class AvgCalculator {
         return beans;
     }
 
-    private List<AvgBean> loopIt(LocalDate forDate, int forDays,
-                                 Map<String, List<DeliverySpikeDto>> symbolDtosMap) {
+    private List<AvgBean> loopIt(LocalDate forDate, int forDays, Map<String, List<DeliverySpikeDto>> symbolDtosMap) {
         List<AvgBean> beans = new ArrayList<>();
         symbolDtosMap.forEach( (mapSymbol, mapDtoList_OfGivenSymbol) -> {
             String listSymbol = mapDtoList_OfGivenSymbol.get(0).getSymbol();
@@ -114,20 +113,20 @@ public class AvgCalculator {
             bean.setTradeDate(forDate);
             bean.setForDays(forDays);
 
-            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
+            calculateAvg(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {
 //                        LOGGER.info("dt:{}, val:{}, del:{}, oi:{}", dto.getTradeDate(), dto.getVolume, dto.getDelivery, oiSumMap.get(dto.getSymbol());
                         return dto.getAtp();
                     },
                     (dto, calculatedValue) -> bean.setAtpSma(calculatedValue)
             );
-            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
+            calculateAvg(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {
                         return dto.getTraded();
                     },
                     (dto, calculatedValue) -> bean.setTrdSma(calculatedValue)
             );
-            calculate(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
+            calculateAvg(forDate, mapSymbol, mapDtoList_OfGivenSymbol,
                     dto -> {
                         return dto.getDelivery();
                     },
@@ -146,7 +145,7 @@ public class AvgCalculator {
         return beans;
     }
 
-    private void calculate(LocalDate forDate, String symbol,
+    private void calculateAvg(LocalDate forDate, String symbol,
                             List<DeliverySpikeDto> spikeDtoList,
                             Function<DeliverySpikeDto, BigDecimal> functionSupplier,
                             BiConsumer<DeliverySpikeDto, BigDecimal> biConsumer) {

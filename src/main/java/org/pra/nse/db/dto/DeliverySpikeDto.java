@@ -220,6 +220,8 @@ public class DeliverySpikeDto {
                 + ohlc + ","
                 + open.add(close).divide(new BigDecimal(2), 2, RoundingMode.HALF_EVEN) + ","
                 + close.subtract(open) + ","
+                + "ToDo,"
+
                 + atpDelForUpTrend + ","
                 + atpDelForDnTrend + ","
                 + volume.subtract(delivery).divide(new BigDecimal(100000), 2, RoundingMode.HALF_EVEN) + ","

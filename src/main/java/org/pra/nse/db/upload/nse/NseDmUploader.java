@@ -1,9 +1,11 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
+import org.pra.nse.csv.bean.in.CmBean;
 import org.pra.nse.csv.bean.in.DmBean;
 import org.pra.nse.csv.read.DmCsvReader;
 import org.pra.nse.db.dao.DmDao;
+import org.pra.nse.db.model.NseCashMarketTab;
 import org.pra.nse.db.model.NseDeliveryMarketTab;
 import org.pra.nse.db.repository.NseDmRepo;
 import org.pra.nse.util.DateUtils;
@@ -93,12 +95,17 @@ public class NseDmUploader {
             LOGGER.warn("DM-upload | file not found: [{}]", fromFile);
             return;
         }
-        Map<String, DmBean> mtLatestBeanMap = csvReader.read(fromFile);
 
+        Map<String, DmBean> latestBeanMap = csvReader.read(fromFile);
+        upload(latestBeanMap);
+    }
+
+
+    private void upload(Map<String, DmBean> latestBeanMap) {
         NseDeliveryMarketTab target = new NseDeliveryMarketTab();
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();
-        mtLatestBeanMap.values().forEach( source-> {
+        latestBeanMap.values().forEach( source-> {
             target.reset();
             target.setSymbol(source.getSymbol());
             target.setSecurityType(source.getSecurityType());
@@ -116,5 +123,4 @@ public class NseDmUploader {
         LOGGER.info("DM-upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
         if (recordFailed.get() > 0) throw new RuntimeException("DM-upload | some record could not be persisted");
     }
-
 }
