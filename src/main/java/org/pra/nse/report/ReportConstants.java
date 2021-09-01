@@ -46,7 +46,7 @@ public class ReportConstants {
 //            "open,high,low,hlp,close,last,closingBell,closeToLastPct,atp,hlm,ohlc," +
                     "open,high,low,close,last,ohlc,ocMid,oTOc," +
                     "RelativeStrength" +
-                    "AtpDelUpTrend,AtpDelDnTrend,trdLakh,delLakh,atp,atpChgPct,mvwap,fuOiLots,fuOiChgPct,AtpOiTrendI1,AtpOiTrendI2," +
+                    ",AtpDelUpTrend,AtpDelDnTrend,trdLakh,delLakh,atp,atpChgPct,mvwap,fuOiLots,fuOiChgPct,AtpOiTrendI1,AtpOiTrendI2," +
                     "hlMid,atpMhlm,hld,hlp,cToL_Pct," +
 
 //            "calcAtpFixGrowth,calcAtpDynGrowth,atpChgPct," +
