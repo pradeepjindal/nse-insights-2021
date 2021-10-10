@@ -1,14 +1,11 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.csv.bean.in.DmBean;
 import org.pra.nse.csv.bean.in.FmBean;
 import org.pra.nse.csv.read.FmCsvReader;
-import org.pra.nse.db.dao.FmDao;
-import org.pra.nse.db.model.NseDeliveryMarketTab;
-import org.pra.nse.db.model.NseFutureMarketTab;
+import org.pra.nse.csv.read.OmCsvReader;
+import org.pra.nse.db.dao.OmDao;
 import org.pra.nse.db.model.NseOptionMarketTab;
-import org.pra.nse.db.repository.NseFmRepo;
 import org.pra.nse.db.repository.NseOmRepo;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
@@ -24,14 +21,14 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class NseFmUploader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NseFmUploader.class);
+public class NseOmUploader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NseOmUploader.class);
 
-    private final NseFmRepo futureMarketRepository;
-    private final FmDao dao;
+    private final NseOmRepo optionMarketRepository;
+    private final OmDao dao;
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
-    private final FmCsvReader csvReader;
+    private final OmCsvReader csvReader;
 
     private String fileDirName = ApCo.FM_DIR_NAME;
     private String filePrefix = ApCo.PRA_FM_FILE_PREFIX;
@@ -39,16 +36,16 @@ public class NseFmUploader {
 
     private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.FM_DIR_NAME;
 
-    public NseFmUploader(NseFmRepo repository,
-                         FmDao dao,
+    public NseOmUploader(NseOmRepo repository,
+                         OmDao dao,
                          NseFileUtils nseFileUtils,
                          PraFileUtils praFileUtils,
-                         FmCsvReader fmCsvReader) {
-        this.futureMarketRepository = repository;
+                         OmCsvReader omCsvReader) {
+        this.optionMarketRepository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;
         this.praFileUtils = praFileUtils;
-        this.csvReader = fmCsvReader;
+        this.csvReader = omCsvReader;
     }
 
 
@@ -71,7 +68,7 @@ public class NseFmUploader {
         LocalDate processingDate = fromDate.minusDays(1);
         do {
             processingDate = processingDate.plusDays(1);
-            LOGGER.info("{} | upload processing date: [{}], {}", filePrefix, processingDate, processingDate.getDayOfWeek());
+            LOGGER.info("OM-upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
             if(DateUtils.isTradingOnHoliday(processingDate)) {
                 uploadForDate(processingDate);
             } else if (DateUtils.isWeekend(processingDate)) {
@@ -84,7 +81,7 @@ public class NseFmUploader {
 
     public void uploadForDate(LocalDate forDate) {
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("FM-upload | already uploaded | for date:[{}]", forDate);
+            LOGGER.info("OM-upload | already uploaded | for date:[{}]", forDate);
             return;
         } else {
 //            LOGGER.info("FM-upload | uploading - for date:[{}]", forDate);
@@ -94,7 +91,7 @@ public class NseFmUploader {
         //LOGGER.info("FM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(nseFileUtils.isFileAbsent(fromFile)) {
-            LOGGER.warn("FM-upload | file not found: [{}]", fromFile);
+            LOGGER.warn("OM-upload | file not found: [{}]", fromFile);
             return;
         }
 
@@ -105,7 +102,6 @@ public class NseFmUploader {
 
 
     private void upload(Map<FmBean, FmBean> foBeanMap) {
-        NseFutureMarketTab futureTab = new NseFutureMarketTab();
         NseOptionMarketTab optionTab = new NseOptionMarketTab();
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordSkipped = new AtomicInteger();
@@ -113,24 +109,24 @@ public class NseFmUploader {
 
         foBeanMap.values().forEach( source -> {
             try {
-                if("FUTIVX".equals(source.getInstrument()) || "FUTIDX".equals(source.getInstrument()) || "FUTSTK".equals(source.getInstrument())) {
-                    futureTab.reset();
-                    futureTab.setInstrument(source.getInstrument());
-                    futureTab.setSymbol(source.getSymbol());
-                    futureTab.setExpiryDate(DateUtils.toLocalDate(source.getExpiry_Dt()));
-                    futureTab.setStrikePrice(source.getStrike_Pr());
-                    futureTab.setOptionType(source.getOption_Typ());
-                    futureTab.setOpen(source.getOpen());
-                    futureTab.setHigh(source.getHigh());
-                    futureTab.setLow(source.getLow());
-                    futureTab.setClose(source.getClose());
-                    futureTab.setSettlePrice(source.getSettle_Pr());
-                    futureTab.setContracts(source.getContracts());
-                    futureTab.setValueInLakh(source.getVal_InLakh());
-                    futureTab.setOpenInt(source.getOpen_Int());
-                    futureTab.setChangeInOi(source.getChg_In_Oi());
-                    futureTab.setTradeDate(DateUtils.toLocalDate(source.getTimestamp()));
-                    futureMarketRepository.save(futureTab);
+                if("OPTIDX".equals(source.getInstrument()) || "OPTSTK".equals(source.getInstrument())) {
+                    optionTab.reset();
+                    optionTab.setInstrument(source.getInstrument());
+                    optionTab.setSymbol(source.getSymbol());
+                    optionTab.setExpiryDate(DateUtils.toLocalDate(source.getExpiry_Dt()));
+                    optionTab.setStrikePrice(source.getStrike_Pr());
+                    optionTab.setOptionType(source.getOption_Typ());
+                    optionTab.setOpen(source.getOpen());
+                    optionTab.setHigh(source.getHigh());
+                    optionTab.setLow(source.getLow());
+                    optionTab.setClose(source.getClose());
+                    optionTab.setSettlePrice(source.getSettle_Pr());
+                    optionTab.setContracts(source.getContracts());
+                    optionTab.setValueInLakh(source.getVal_InLakh());
+                    optionTab.setOpenInt(source.getOpen_Int());
+                    optionTab.setChangeInOi(source.getChg_In_Oi());
+                    optionTab.setTradeDate(DateUtils.toLocalDate(source.getTimestamp()));
+                    optionMarketRepository.save(optionTab);
                     recordSucceed.incrementAndGet();
                 } else {
                     recordSkipped.incrementAndGet();
@@ -140,7 +136,8 @@ public class NseFmUploader {
             }
 
         });
-        LOGGER.info("FM-upload | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
-        if (recordFailed.get() > 0) throw new RuntimeException("FM-upload | some record could not be persisted");
+        LOGGER.info("OM-upload | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
+        if (recordFailed.get() > 0) throw new RuntimeException("OM-upload | some record could not be persisted");
     }
+
 }

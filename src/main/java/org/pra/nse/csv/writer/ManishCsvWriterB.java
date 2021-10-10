@@ -98,7 +98,6 @@ public class ManishCsvWriterB {
 
     private Map<String, ManishBean> convert(List<PraBean> praBeans, TreeSet<LocalDate> foExpiryDates) {
         Map<String, ManishBean> manishBeanMap = new HashMap<>();
-        List<LocalDate> foExpiryDateAscList = new ArrayList<>();
         praBeans.forEach( praBean -> {
             if("FUTSTK".equals(praBean.getInstrument()) && praBean.getExpiryLocalDate().equals(foExpiryDates.first())) {
                 ManishBean manishBean = new ManishBean();
@@ -124,6 +123,7 @@ public class ManishCsvWriterB {
             }
         });
 
+        List<LocalDate> foExpiryDateAscList = foExpiryDates.stream().toList();
         praBeans.forEach( praBean -> {
             if("FUTSTK".equals(praBean.getInstrument())) {
 

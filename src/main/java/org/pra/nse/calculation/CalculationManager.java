@@ -40,7 +40,7 @@ public class CalculationManager implements Manager {
         LOGGER.info(".");
         LOGGER.info("____________________ Calculation Manager");
 
-//        rsiCalculator.calculateAndReturn(LocalDate.of(2021, 7, 23), 20, "ABFRL");
+//        rsiCalculator.calculateAndReturn(LocalDate.of(2021, 9, 14), 5, "HDFC");
 //        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 //        return;
 

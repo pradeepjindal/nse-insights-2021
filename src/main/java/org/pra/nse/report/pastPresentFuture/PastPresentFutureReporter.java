@@ -1,4 +1,4 @@
-package org.pra.nse.report;
+package org.pra.nse.report.pastPresentFuture;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.db.dto.DeliverySpikeDto;
@@ -26,8 +26,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.pra.nse.report.ReportConstants.PPF_CSV_HEADER_2;
-import static org.pra.nse.report.ReportConstants.PPF;
+import static org.pra.nse.report.pastPresentFuture.ReportConstants.PPF_CSV_HEADER_2;
+import static org.pra.nse.report.pastPresentFuture.ReportConstants.PPF;
 
 @Component
 public class PastPresentFutureReporter {
@@ -109,7 +109,7 @@ public class PastPresentFutureReporter {
         LocalDate minDate = dateService.getMinTradeDate(forDate, forMinusDays);
 
         //load Rsi
-        loadRsi(forDate, forMinusDays);
+//        loadRsi(forDate, forMinusDays);
         //load Mfi
         loadMfi(forDate, forMinusDays);
 

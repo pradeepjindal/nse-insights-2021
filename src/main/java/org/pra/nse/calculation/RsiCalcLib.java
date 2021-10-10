@@ -1,15 +1,20 @@
 package org.pra.nse.calculation;
 
+import javassist.compiler.ast.Symbol;
 import org.pra.nse.csv.data.RsiBean;
 import org.pra.nse.db.dto.DeliverySpikeDto;
+import org.pra.nse.service.DataServiceI;
 import org.pra.nse.util.Du;
 import org.pra.nse.util.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.Json;
+import javax.json.JsonObject;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -37,7 +42,8 @@ public class RsiCalcLib {
         return bean;
     }
 
-    public static RsiBean calculateRsiOnClose(LocalDate forDate, int forDays, String mapKeySymbol,
+    public static RsiBean calculateRsiOnClose(DataServiceI dataService,
+                                              LocalDate forDate, int forDays, String mapKeySymbol,
                                               List<DeliverySpikeDto> mapDtoList_OfGivenSymbol) {
         RsiBean bean = new RsiBean();
         bean.setSymbol(mapKeySymbol);
@@ -45,7 +51,7 @@ public class RsiCalcLib {
         bean.setForDays(forDays);
 
         LOGGER.debug("calc-CloseRSi");
-        calculateRsi(forDate, forDays, mapKeySymbol, mapDtoList_OfGivenSymbol,
+        calculateLatestSimpleRsi(dataService, forDate, forDays, mapKeySymbol, mapDtoList_OfGivenSymbol,
                 dto -> {
                     LOGGER.debug("calc-CloseRSi, Tdyclose-Yesclose: {}, (tradeDate: {})", dto.getTdycloseMinusYesclose(), dto.getTradeDate());
                     LOGGER.debug("calc-CloseRSi, Tdyclose - Yesclose : {} - {} = {}",
@@ -58,7 +64,8 @@ public class RsiCalcLib {
         return bean;
     }
 
-    public static RsiBean calculateRsiOnLast(LocalDate forDate, int forDays, String mapKeySymbol,
+    public static RsiBean calculateRsiOnLast(DataServiceI dataService,
+                                             LocalDate forDate, int forDays, String mapKeySymbol,
                                              List<DeliverySpikeDto> mapDtoList_OfGivenSymbol) {
         RsiBean bean = new RsiBean();
         bean.setSymbol(mapKeySymbol);
@@ -66,7 +73,7 @@ public class RsiCalcLib {
         bean.setForDays(forDays);
 
         LOGGER.debug("calc-LastRsi");
-        calculateRsi(forDate, forDays, mapKeySymbol, mapDtoList_OfGivenSymbol,
+        calculateLatestSimpleRsi(dataService, forDate, forDays, mapKeySymbol, mapDtoList_OfGivenSymbol,
                 dto -> {
                     LOGGER.debug("calc-LastRsi, Tdylast-Yeslast: {}, (tradeDate: {})", dto.getTdylastMinusYeslast(), dto.getTradeDate());
                     LOGGER.debug("calc-LastRsi, Tdylast - Yeslast : {} - {} = {}",
@@ -79,7 +86,7 @@ public class RsiCalcLib {
         return bean;
     }
 
-    public static RsiBean calculateRsiOnDelivery(LocalDate forDate, int forDays, String mapKeySymbol,
+    private static RsiBean calculateRsiOnDelivery(LocalDate forDate, int forDays, String mapKeySymbol,
                                                  List<DeliverySpikeDto> mapDtoList_OfGivenSymbol) {
         RsiBean bean = new RsiBean();
         bean.setSymbol(mapKeySymbol);
@@ -101,7 +108,100 @@ public class RsiCalcLib {
     }
 
 
-    public static void calculateRsi(LocalDate forDate, int forDays, String symbol,
+    private static double calculateLatestSimpleRsi(DataServiceI dataService,
+                                                  LocalDate forDate, int forDays, String symbol,
+                                                  List<DeliverySpikeDto> spikeDtoList,
+                                                  Function<DeliverySpikeDto, BigDecimal> functionSupplier,
+                                                  BiConsumer<DeliverySpikeDto,BigDecimal> biConsumer) {
+
+        //first rsi
+        LocalDate firstDate = spikeDtoList.get(0).getTradeDate();
+        Map<String, List<DeliverySpikeDto>> symbolMap = dataService.getRawDataBySymbol(firstDate, forDays, symbol);
+        JsonObject first_avgUp_avgDn = calculateFirstSimpleRsi(dataService, forDate, forDays, symbol, symbolMap.get(symbol), functionSupplier, biConsumer);
+        double firstAvgUp = Double.valueOf(String.valueOf(first_avgUp_avgDn.get("avgUp")));
+        double firstAvgDn = Double.valueOf(String.valueOf(first_avgUp_avgDn.get("avgDn")));
+        // latest rsi
+        double previoudAvgGain = firstAvgUp;
+        double previoudAvgLoss = firstAvgDn;
+        double currentGain = 0;
+        double currentLoss = 0;
+
+        LocalDate tradeDate = null;
+        DeliverySpikeDto latestDto = null;
+        int loopCtr = 0;
+        double currentAvgGain = 0;
+        double currentAvgLoss = 0;
+        for(DeliverySpikeDto dsDto:spikeDtoList) {
+            ++loopCtr;
+            LOGGER.debug("loopCtr= {}", loopCtr);
+
+            tradeDate = dsDto.getTradeDate();
+            if(tradeDate.compareTo(forDate)  == 0) latestDto = dsDto;
+
+            if(tradeDate.equals(firstDate)) continue;
+
+            BigDecimal changeInPrice = functionSupplier.apply(dsDto);
+            currentGain += Math.max(0, changeInPrice.doubleValue());
+            currentLoss += Math.max(0, changeInPrice.doubleValue() * -1 );
+
+            currentAvgGain = ( previoudAvgGain * (forDays-1) + currentGain) / forDays;
+            currentAvgLoss = ( previoudAvgLoss * (forDays-1) + currentLoss) / forDays;
+
+            previoudAvgGain = currentAvgGain;
+            previoudAvgLoss = currentAvgLoss;
+        }
+
+        double rs = currentAvgGain / currentAvgLoss;
+        double rsi =  100 - (100 / (1 + rs));
+        System.out.println(symbol + " | rsi=" + rsi);
+
+        if(latestDto != null) biConsumer.accept(latestDto, new BigDecimal(rsi));
+        else LOGGER.warn("skipping rsi, latestDto is null for {}, may be phasing out from FnO", Du.symbol(symbol));
+        return rsi;
+    }
+
+    private static JsonObject calculateFirstSimpleRsi(DataServiceI dataService,
+                                                 LocalDate forDate, int forDays, String symbol,
+                                                List<DeliverySpikeDto> spikeDtoList,
+                                                Function<DeliverySpikeDto, BigDecimal> functionSupplier,
+                                                BiConsumer<DeliverySpikeDto,BigDecimal> biConsumer) {
+        double gains = 0;
+        double losses = 0;
+
+        LocalDate tradeDate = null;
+        DeliverySpikeDto latestDto = null;
+        int loopCtr = 0;
+        for(DeliverySpikeDto dsDto:spikeDtoList) {
+            ++loopCtr;
+            LOGGER.debug("loopCtr= {}", loopCtr);
+
+            tradeDate = dsDto.getTradeDate();
+            if(tradeDate.compareTo(forDate)  == 0) latestDto = dsDto;
+            //if(loopCtr == 1) continue;
+
+            BigDecimal changeInPrice = functionSupplier.apply(dsDto);
+            gains += Math.max(0, changeInPrice.doubleValue());
+            losses += Math.max(0, changeInPrice.doubleValue() * -1 );
+        }
+
+        double avgGain = gains/forDays;
+        double avgLoss = losses/forDays;
+
+        double rs = gains / losses;
+        double rsi =  100 - (100 / (1 + rs));
+
+//        if(latestDto != null) biConsumer.accept(latestDto, new BigDecimal(rsi));
+//        else LOGGER.warn("skipping rsi, latestDto is null for {}, may be phasing out from FnO", Du.symbol(symbol));
+
+        JsonObject value = Json.createObjectBuilder()
+                .add("avgUp", avgGain)
+                .add("avgDn", avgLoss)
+                .build();
+
+        return value;
+    }
+
+    private static void calculateRsi(LocalDate forDate, int forDays, String symbol,
                               List<DeliverySpikeDto> spikeDtoList,
                               Function<DeliverySpikeDto, BigDecimal> functionSupplier,
                               BiConsumer<DeliverySpikeDto,BigDecimal> biConsumer) {
@@ -139,15 +239,6 @@ public class RsiCalcLib {
             }
         }
         LOGGER.debug("rsi | {}, forDate={}, upCtr={}, upSum={}, dnCtr={}, dnSum={}", Du.symbol(symbol), forDate, upCtr, upSum, dnCtr, dnSum);
-//        if(upCtr == 0 || dnCtr == 0) {
-//            LOGGER.warn("rsi | forSymbol = {}, forDate = {}, upCtr = {}, dnCtr = {}", symbol, forDate, upCtr, dnCtr);
-//        }
-//        if(upCtr == 3 && dnCtr == 0) {
-//            LOGGER.info("rsi+ | forSymbol = {}, forDate = {}, upCtr = {}, dnCtr = {}", symbol, forDate, upCtr, dnCtr);
-//        }
-//        if(upCtr == 0 && dnCtr == 3) {
-//            LOGGER.info("rsi- | forSymbol = {}, forDate = {}, upCtr = {}, dnCtr = {}", symbol, forDate, upCtr, dnCtr);
-//        }
 
         BigDecimal upAvg = NumberUtils.divide(upSum, new BigDecimal(forDays));
         BigDecimal dnAvg = NumberUtils.divide(dnSum, new BigDecimal(forDays));
@@ -171,7 +262,7 @@ public class RsiCalcLib {
         LOGGER.debug("rsi | {}, [rs = upAvg/dnAvg.abs] = {}, upAvg = {}, dnAvg = {}", Du.symbol(symbol), rs, upAvg, dnAvg);
 
         //rsi = 100 - (100 / (1 + rs));
-        //------------------------------------------
+        //--------------------------------------
         //(1 + rs)
         BigDecimal rsi = rs.add(BigDecimal.ONE);
         LOGGER.debug("rsi | {}, [rsi = 1+rs] = {}", Du.symbol(symbol), rsi);

@@ -1,4 +1,4 @@
-package org.pra.nse.report;
+package org.pra.nse.report.pastPresentFuture;
 
 import org.pra.nse.db.model.CalcMfiTab;
 import org.pra.nse.db.model.CalcRsiTab;

@@ -1,11 +1,10 @@
 package org.pra.nse.report;
 
 import org.pra.nse.Manager;
+import org.pra.nse.report.pastPresentFuture.PastPresentFutureReporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
 
 /**
  * polymorphism is not letting me share the data in base class

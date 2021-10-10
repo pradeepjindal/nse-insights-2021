@@ -2,6 +2,7 @@ package org.pra.nse.processor;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.NseCons;
+import org.pra.nse.PraCons;
 import org.pra.nse.ProCo;
 import org.pra.nse.csv.bean.out.PraBean;
 import org.pra.nse.csv.merge.CmMerger;
@@ -51,7 +52,7 @@ public class ManishProcessor {
 
     public void process(LocalDate processForDate) throws IOException {
         String outputPathAndFileNameForFixFile = ProCo.outputPathAndFileNameForFixFile(ApCo.MANISH_FILE_NAME);
-        String foLatestFileName = praFileUtils.getLatestFileNameFor(NseCons.FM_FILES_PATH, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1, processForDate);
+        String foLatestFileName = praFileUtils.getLatestFileNameFor(PraCons.FM_FILES_PATH, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1, processForDate);
         String outputPathAndFileNameForDynamicFile = ProCo.outputPathAndFileNameForDynamicFile(ApCo.MANISH_FILE_NAME, foLatestFileName);
 
         if(nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile)) {

@@ -18,8 +18,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class FmCsvReader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FmCsvReader.class);
+public class OmCsvReader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OmCsvReader.class);
 
     public Map<FmBean, FmBean> read(Map<FmBean, FmBean> foBeanMap, String fromFile) {
         Map<FmBean, FmBean> localFoBeanMap = new HashMap<>();
@@ -72,7 +72,7 @@ public class FmCsvReader {
 //            LOGGER.warn("OPTIDX and OPTSTK are disbled, hence would not be loaded");
             while (it.hasNextValue()) {
                 FmBean fmBean = it.nextValue();
-                if("FUTIVX".equals(fmBean.getInstrument().trim()) || "FUTIDX".equals(fmBean.getInstrument().trim()) || "FUTSTK".equals(fmBean.getInstrument().trim())) {
+                if("OPTIDX".equals(fmBean.getInstrument().trim()) || "OPTSTK".equals(fmBean.getInstrument().trim())) {
                     beans.add(fmBean);
                 }
             }

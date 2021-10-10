@@ -1,4 +1,4 @@
-package org.pra.nse.report;
+package org.pra.nse.report.pastPresentFuture;
 
 public class IndicatorUtils {
     public static String calculateHammerManishVersion(float open, float high, float low, float close) {

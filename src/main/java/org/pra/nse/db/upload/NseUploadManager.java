@@ -14,15 +14,18 @@ public class NseUploadManager implements Manager {
 
     private final NseCmUploader nseCmUploader;
     private final NseFmUploader nseFmUploader;
+    private final NseOmUploader nseOmUploader;
     private final NseDmUploader nseDmUploader;
     private final NseIdxUploader nseIdxUploader;
 
     public NseUploadManager(NseCmUploader nseCmUploader,
                             NseFmUploader nseFmUploader,
+                            NseOmUploader nseOmUploader,
                             NseDmUploader nseDmUploader,
                             NseIdxUploader nseIdxUploader) {
         this.nseCmUploader = nseCmUploader;
         this.nseFmUploader = nseFmUploader;
+        this.nseOmUploader = nseOmUploader;
         this.nseDmUploader = nseDmUploader;
         this.nseIdxUploader = nseIdxUploader;
     }
@@ -38,6 +41,8 @@ public class NseUploadManager implements Manager {
         nseDmUploader.uploadFromDefaultDate();
         LOGGER.info("----------");
         nseFmUploader.uploadFromDefaultDate();
+        LOGGER.info("----------");
+        nseOmUploader.uploadFromDefaultDate();
         LOGGER.info("----------");
         nseIdxUploader.uploadFromDefaultDate();
 
