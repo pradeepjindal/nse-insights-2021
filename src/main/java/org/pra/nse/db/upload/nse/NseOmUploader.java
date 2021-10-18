@@ -2,7 +2,6 @@ package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.csv.bean.in.FmBean;
-import org.pra.nse.csv.read.FmCsvReader;
 import org.pra.nse.csv.read.OmCsvReader;
 import org.pra.nse.db.dao.OmDao;
 import org.pra.nse.db.model.NseOptionMarketTab;
@@ -17,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,7 +49,12 @@ public class NseOmUploader {
         this.csvReader = omCsvReader;
     }
 
-
+    public void uploadAll() {
+        uploadFromDate(ApCo.NSE_FM_FILE_AVAILABLE_FROM_DATE);
+    }
+    public void upload2021() {
+        uploadFromDate(LocalDate.of(2021, 10, 1));
+    }
     public void uploadFromDefaultDate() {
         uploadFromDate(defaultDate);
     }
@@ -97,12 +103,13 @@ public class NseOmUploader {
 
         Map<FmBean, FmBean> foBeanMap = csvReader.read(null, fromFile);
         //LOGGER.info("{}", foBeanMap.size());
-        upload(foBeanMap);
+//        upload(forDate, foBeanMap);
+        uploadBulk(forDate, foBeanMap);
     }
 
 
-    private void upload(Map<FmBean, FmBean> foBeanMap) {
-        NseOptionMarketTab optionTab = new NseOptionMarketTab();
+    private void upload(LocalDate forDate, Map<FmBean, FmBean> foBeanMap) {
+        NseOptionMarketTab target = new NseOptionMarketTab();
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordSkipped = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();
@@ -110,23 +117,35 @@ public class NseOmUploader {
         foBeanMap.values().forEach( source -> {
             try {
                 if("OPTIDX".equals(source.getInstrument()) || "OPTSTK".equals(source.getInstrument())) {
-                    optionTab.reset();
-                    optionTab.setInstrument(source.getInstrument());
-                    optionTab.setSymbol(source.getSymbol());
-                    optionTab.setExpiryDate(DateUtils.toLocalDate(source.getExpiry_Dt()));
-                    optionTab.setStrikePrice(source.getStrike_Pr());
-                    optionTab.setOptionType(source.getOption_Typ());
-                    optionTab.setOpen(source.getOpen());
-                    optionTab.setHigh(source.getHigh());
-                    optionTab.setLow(source.getLow());
-                    optionTab.setClose(source.getClose());
-                    optionTab.setSettlePrice(source.getSettle_Pr());
-                    optionTab.setContracts(source.getContracts());
-                    optionTab.setValueInLakh(source.getVal_InLakh());
-                    optionTab.setOpenInt(source.getOpen_Int());
-                    optionTab.setChangeInOi(source.getChg_In_Oi());
-                    optionTab.setTradeDate(DateUtils.toLocalDate(source.getTimestamp()));
-                    optionMarketRepository.save(optionTab);
+                    target.reset();
+                    target.setInstrument(source.getInstrument());
+                    target.setSymbol(source.getSymbol());
+                    target.setExpiryDate(DateUtils.toLocalDate(source.getExpiry_Dt()));
+                    target.setStrikePrice(source.getStrike_Pr());
+                    target.setOptionType(source.getOption_Typ());
+                    target.setOpen(source.getOpen());
+                    target.setHigh(source.getHigh());
+                    target.setLow(source.getLow());
+                    target.setClose(source.getClose());
+                    target.setSettlePrice(source.getSettle_Pr());
+                    target.setContracts(source.getContracts());
+                    target.setValueInLakh(source.getVal_InLakh());
+                    target.setOpenInt(source.getOpen_Int());
+                    target.setChangeInOi(source.getChg_In_Oi());
+                    target.setTradeDate(DateUtils.toLocalDate(source.getTimestamp()));
+                    //
+                    target.setTds(forDate.toString());
+                    target.setTdn(Integer.valueOf(forDate.toString().replace("-", "")));
+
+                    LocalDate edt = DateUtils.toLocalDate(source.getExpiry_Dt());
+                    target.setEds(edt.toString());
+                    target.setEdn(Integer.valueOf(edt.toString().replace("-", "")));
+
+                    LocalDate fix_expiry_date = LocalDate.of(edt.getYear(), edt.getMonthValue(), 25);
+                    target.setFeds(fix_expiry_date.toString());
+                    target.setFedn(Integer.valueOf(fix_expiry_date.toString().replace("-", "")));
+
+                    optionMarketRepository.save(target);
                     recordSucceed.incrementAndGet();
                 } else {
                     recordSkipped.incrementAndGet();
@@ -136,6 +155,71 @@ public class NseOmUploader {
             }
 
         });
+        LOGGER.info("OM-upload | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
+        if (recordFailed.get() > 0) throw new RuntimeException("OM-upload | some record could not be persisted");
+    }
+
+    private void uploadBulk(LocalDate forDate, Map<FmBean, FmBean> foBeanMap) {
+        AtomicInteger recordSucceed = new AtomicInteger();
+        AtomicInteger recordSkipped = new AtomicInteger();
+        AtomicInteger recordFailed = new AtomicInteger();
+
+        List<NseOptionMarketTab> list = new ArrayList<>();
+        foBeanMap.values().forEach( source -> {
+            try {
+                if("OPTIDX".equals(source.getInstrument()) || "OPTSTK".equals(source.getInstrument())) {
+                    NseOptionMarketTab target = new NseOptionMarketTab();
+                    target.setInstrument(source.getInstrument());
+                    target.setSymbol(source.getSymbol());
+                    target.setExpiryDate(DateUtils.toLocalDate(source.getExpiry_Dt()));
+                    target.setStrikePrice(source.getStrike_Pr());
+                    target.setOptionType(source.getOption_Typ());
+                    target.setOpen(source.getOpen());
+                    target.setHigh(source.getHigh());
+                    target.setLow(source.getLow());
+                    target.setClose(source.getClose());
+                    target.setSettlePrice(source.getSettle_Pr());
+                    target.setContracts(source.getContracts());
+                    target.setValueInLakh(source.getVal_InLakh());
+                    target.setOpenInt(source.getOpen_Int());
+                    target.setChangeInOi(source.getChg_In_Oi());
+                    target.setTradeDate(DateUtils.toLocalDate(source.getTimestamp()));
+                    //
+                    target.setTds(forDate.toString());
+                    target.setTdn(Integer.valueOf(forDate.toString().replace("-", "")));
+
+                    LocalDate edt = DateUtils.toLocalDate(source.getExpiry_Dt());
+                    target.setEds(edt.toString());
+                    target.setEdn(Integer.valueOf(edt.toString().replace("-", "")));
+
+                    LocalDate fix_expiry_date = LocalDate.of(edt.getYear(), edt.getMonthValue(), 25);
+                    target.setFeds(fix_expiry_date.toString());
+                    target.setFedn(Integer.valueOf(fix_expiry_date.toString().replace("-", "")));
+
+                    list.add(target);
+                    recordSucceed.incrementAndGet();
+                } else {
+                    recordSkipped.incrementAndGet();
+                }
+            }catch(DataIntegrityViolationException dive) {
+                recordFailed.incrementAndGet();
+            }
+        });
+
+        int batchSize = 1000;
+        List<NseOptionMarketTab> batchList;
+        LOGGER.info("total records to be saved = {}", list.size());
+        for(int i = 0; i < list.size(); i = i + batchSize) {
+            if(i + batchSize < list.size()) {
+//                LOGGER.info("from: {}, to: {}", i, i + batchSize -1);
+                batchList = list.subList(i, i + batchSize);
+            } else {
+//                LOGGER.info("from: {}, to: {}", i, list.size() -1);
+                batchList = list.subList(i, list.size());
+            }
+            optionMarketRepository.saveAll(batchList);
+        }
+
         LOGGER.info("OM-upload | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
         if (recordFailed.get() > 0) throw new RuntimeException("OM-upload | some record could not be persisted");
     }

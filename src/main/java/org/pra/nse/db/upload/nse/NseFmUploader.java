@@ -1,15 +1,11 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.csv.bean.in.DmBean;
 import org.pra.nse.csv.bean.in.FmBean;
 import org.pra.nse.csv.read.FmCsvReader;
 import org.pra.nse.db.dao.FmDao;
-import org.pra.nse.db.model.NseDeliveryMarketTab;
 import org.pra.nse.db.model.NseFutureMarketTab;
-import org.pra.nse.db.model.NseOptionMarketTab;
 import org.pra.nse.db.repository.NseFmRepo;
-import org.pra.nse.db.repository.NseOmRepo;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -51,7 +47,12 @@ public class NseFmUploader {
         this.csvReader = fmCsvReader;
     }
 
-
+    public void uploadAll() {
+        uploadFromDate(ApCo.NSE_FM_FILE_AVAILABLE_FROM_DATE);
+    }
+    public void upload2021() {
+        uploadFromDate(LocalDate.of(2021, 7, 1));
+    }
     public void uploadFromDefaultDate() {
         uploadFromDate(defaultDate);
     }
@@ -100,13 +101,12 @@ public class NseFmUploader {
 
         Map<FmBean, FmBean> foBeanMap = csvReader.read(null, fromFile);
         //LOGGER.info("{}", foBeanMap.size());
-        upload(foBeanMap);
+        upload(forDate, foBeanMap);
     }
 
 
-    private void upload(Map<FmBean, FmBean> foBeanMap) {
-        NseFutureMarketTab futureTab = new NseFutureMarketTab();
-        NseOptionMarketTab optionTab = new NseOptionMarketTab();
+    private void upload(LocalDate forDate, Map<FmBean, FmBean> foBeanMap) {
+        NseFutureMarketTab target = new NseFutureMarketTab();
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordSkipped = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();
@@ -114,23 +114,35 @@ public class NseFmUploader {
         foBeanMap.values().forEach( source -> {
             try {
                 if("FUTIVX".equals(source.getInstrument()) || "FUTIDX".equals(source.getInstrument()) || "FUTSTK".equals(source.getInstrument())) {
-                    futureTab.reset();
-                    futureTab.setInstrument(source.getInstrument());
-                    futureTab.setSymbol(source.getSymbol());
-                    futureTab.setExpiryDate(DateUtils.toLocalDate(source.getExpiry_Dt()));
-                    futureTab.setStrikePrice(source.getStrike_Pr());
-                    futureTab.setOptionType(source.getOption_Typ());
-                    futureTab.setOpen(source.getOpen());
-                    futureTab.setHigh(source.getHigh());
-                    futureTab.setLow(source.getLow());
-                    futureTab.setClose(source.getClose());
-                    futureTab.setSettlePrice(source.getSettle_Pr());
-                    futureTab.setContracts(source.getContracts());
-                    futureTab.setValueInLakh(source.getVal_InLakh());
-                    futureTab.setOpenInt(source.getOpen_Int());
-                    futureTab.setChangeInOi(source.getChg_In_Oi());
-                    futureTab.setTradeDate(DateUtils.toLocalDate(source.getTimestamp()));
-                    futureMarketRepository.save(futureTab);
+                    target.reset();
+                    target.setInstrument(source.getInstrument());
+                    target.setSymbol(source.getSymbol());
+                    target.setExpiryDate(DateUtils.toLocalDate(source.getExpiry_Dt()));
+                    target.setStrikePrice(source.getStrike_Pr());
+                    target.setOptionType(source.getOption_Typ());
+                    target.setOpen(source.getOpen());
+                    target.setHigh(source.getHigh());
+                    target.setLow(source.getLow());
+                    target.setClose(source.getClose());
+                    target.setSettlePrice(source.getSettle_Pr());
+                    target.setContracts(source.getContracts());
+                    target.setValueInLakh(source.getVal_InLakh());
+                    target.setOpenInt(source.getOpen_Int());
+                    target.setChangeInOi(source.getChg_In_Oi());
+                    target.setTradeDate(DateUtils.toLocalDate(source.getTimestamp()));
+                    //
+                    target.setTds(forDate.toString());
+                    target.setTdn(Integer.valueOf(forDate.toString().replace("-", "")));
+
+                    LocalDate edt = DateUtils.toLocalDate(source.getExpiry_Dt());
+                    target.setEds(edt.toString());
+                    target.setEdn(Integer.valueOf(edt.toString().replace("-", "")));
+
+                    LocalDate fix_expiry_date = LocalDate.of(edt.getYear(), edt.getMonthValue(), 25);
+                    target.setFeds(fix_expiry_date.toString());
+                    target.setFedn(Integer.valueOf(fix_expiry_date.toString().replace("-", "")));
+
+                    futureMarketRepository.save(target);
                     recordSucceed.incrementAndGet();
                 } else {
                     recordSkipped.incrementAndGet();

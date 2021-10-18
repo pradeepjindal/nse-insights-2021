@@ -31,6 +31,9 @@ public class NseIndexMarketTab implements Serializable {
     private double pe;
     private double pb;
     private double divYield;
+    private String tds;
+    private long tdn;
+
 
 //    @Id
 //    @GeneratedValue(generator = "question_generator")
@@ -57,6 +60,8 @@ public class NseIndexMarketTab implements Serializable {
         pe = 0;
         pb = 0;
         divYield = 0;
+        tds = null;
+        tdn = 0;
     }
 
     public static long getSerialVersionUID() {
@@ -181,6 +186,22 @@ public class NseIndexMarketTab implements Serializable {
 
     public void setDivYield(double divYield) {
         this.divYield = divYield;
+    }
+
+    public String getTds() {
+        return tds;
+    }
+
+    public void setTds(String tds) {
+        this.tds = tds;
+    }
+
+    public long getTdn() {
+        return tdn;
+    }
+
+    public void setTdn(long tdn) {
+        this.tdn = tdn;
     }
 
 }

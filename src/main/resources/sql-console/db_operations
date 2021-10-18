@@ -2,3 +2,11 @@ pg_dump --username=postgres -s postgres > schema.sql
 
 C:\rdbms\PostgreSQLPort_13.1\App\PgSQL\bin>pg_dump --username=postgres -s postgres > schema.sql
 
+
+
+DUMP schema
+C:\rdbms\PostgreSQLPort_13.1\App\PgSQL\bin>pg_dump.exe -p 5433 -U postgres -s postgres > dump_13.3b-(2021-10-18-schema).dmp
+
+
+RESTORE schema
+C:\rdbms\PostgreSQLPort_13.1\App\PgSQL\bin>psql -d postgres -h localhost -U postgres < dump_13.3b-(2021-10-18-schema).dmp

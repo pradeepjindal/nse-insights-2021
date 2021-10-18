@@ -47,6 +47,12 @@ public class NseCmUploader {
         this.csvReader = cmCsvReader;
     }
 
+    public void uploadAll() {
+        uploadFromDate(ApCo.NSE_CM_FILE_AVAILABLE_FROM_DATE);
+    }
+    public void upload2021() {
+        uploadFromDate(LocalDate.of(2021, 1, 1));
+    }
 
     public void uploadFromDefaultDate() {
         uploadFromDate(defaultDate);
@@ -84,7 +90,7 @@ public class NseCmUploader {
             LOGGER.info("CM-upload | already uploaded | for date:[{}]", forDate);
             return;
         } else {
-//            LOGGER.info("CM-upload | uploading - for date:[{}]", forDate);
+            LOGGER.info("CM-upload | uploading - for date:[{}]", forDate);
         }
 
         String fromFile = Data_Dir + File.separator+ ApCo.PRA_CM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
@@ -96,10 +102,10 @@ public class NseCmUploader {
         }
 
         Map<String, CmBean> latestBeanMap = csvReader.read(fromFile);
-        upload(latestBeanMap);
+        upload(forDate, latestBeanMap);
     }
 
-    private void upload(Map<String, CmBean> latestBeanMap) {
+    private void upload(LocalDate forDate, Map<String, CmBean> latestBeanMap) {
         NseCashMarketTab target = new NseCashMarketTab();
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();
@@ -118,6 +124,9 @@ public class NseCmUploader {
             target.setTradeDate(DateUtils.toLocalDate(source.getTimestamp()));
             target.setTotalTrades(source.getTotalTrades());
             target.setIsin(source.getIsin());
+            //
+            target.setTds(forDate.toString());
+            target.setTdn(Integer.valueOf(forDate.toString().replace("-", "")));
             try {
                 //TODO batch insert for efficiency
                 repository.save(target);

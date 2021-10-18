@@ -31,7 +31,13 @@ public class NseOptionMarketTab implements Serializable {
     private long openInt;
     private long changeInOi;
     private LocalDate tradeDate;
-
+    //
+    private String tds;
+    private long tdn;
+    private String eds;
+    private long edn;
+    private String feds;
+    private long fedn;
 
     public void reset() {
         id = null;
@@ -50,6 +56,13 @@ public class NseOptionMarketTab implements Serializable {
         openInt = 0;
         changeInOi = 0;
         tradeDate = null;
+        //
+        tds = null;
+        tdn = 0;
+        eds = null;
+        edn = 0;
+        feds = null;
+        fedn = 0;
     }
 
 
@@ -211,4 +224,53 @@ public class NseOptionMarketTab implements Serializable {
     public void setTradeDate(LocalDate trade_date) {
         this.tradeDate = trade_date;
     }
+
+    public String getTds() {
+        return tds;
+    }
+
+    public void setTds(String tds) {
+        this.tds = tds;
+    }
+
+    public long getTdn() {
+        return tdn;
+    }
+
+    public void setTdn(long tdn) {
+        this.tdn = tdn;
+    }
+
+    public String getEds() {
+        return eds;
+    }
+
+    public void setEds(String eds) {
+        this.eds = eds;
+    }
+
+    public long getEdn() {
+        return edn;
+    }
+
+    public void setEdn(long edn) {
+        this.edn = edn;
+    }
+
+    public String getFeds() {
+        return feds;
+    }
+
+    public void setFeds(String feds) {
+        this.feds = feds;
+    }
+
+    public long getFedn() {
+        return fedn;
+    }
+
+    public void setFedn(long fedn) {
+        this.fedn = fedn;
+    }
+
 }

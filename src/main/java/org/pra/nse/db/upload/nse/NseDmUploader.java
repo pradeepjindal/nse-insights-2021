@@ -49,7 +49,12 @@ public class NseDmUploader {
         this.csvReader = csvReader;
     }
 
-
+    public void uploadAll() {
+        uploadFromDate(ApCo.NSE_DM_FILE_AVAILABLE_FROM_DATE);
+    }
+    public void upload2021() {
+        uploadFromDate(LocalDate.of(2021, 1, 1));
+    }
     public void uploadFromDefaultDate() {
         uploadFromDate(defaultDate);
     }
@@ -97,11 +102,11 @@ public class NseDmUploader {
         }
 
         Map<String, DmBean> latestBeanMap = csvReader.read(fromFile);
-        upload(latestBeanMap);
+        upload(forDate, latestBeanMap);
     }
 
 
-    private void upload(Map<String, DmBean> latestBeanMap) {
+    private void upload(LocalDate forDate, Map<String, DmBean> latestBeanMap) {
         NseDeliveryMarketTab target = new NseDeliveryMarketTab();
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();
@@ -113,6 +118,9 @@ public class NseDmUploader {
             target.setDeliverableQty(source.getDeliverableQty());
             target.setDeliveryToTradeRatio(source.getDeliveryToTradeRatio());
             target.setTradeDate(DateUtils.toLocalDate(source.getTradeDate()));
+            //
+            target.setTds(forDate.toString());
+            target.setTdn(Integer.valueOf(forDate.toString().replace("-", "")));
             try {
                 repository.save(target);
                 recordSucceed.incrementAndGet();

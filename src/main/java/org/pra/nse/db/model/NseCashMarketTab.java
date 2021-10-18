@@ -30,6 +30,8 @@ public class NseCashMarketTab implements Serializable {
     private LocalDate tradeDate;
     private long totalTrades;
     private String isin;
+    private String tds;
+    private long tdn;
 
 //    @Id
 //    @GeneratedValue(generator = "question_generator")
@@ -55,6 +57,8 @@ public class NseCashMarketTab implements Serializable {
         tradeDate = null;
         totalTrades = 0;
         isin = null;
+        tds = null;
+        tdn = 0;
     }
 
 
@@ -169,4 +173,21 @@ public class NseCashMarketTab implements Serializable {
     public void setIsin(String isin) {
         this.isin = isin;
     }
+
+    public String getTds() {
+        return tds;
+    }
+
+    public void setTds(String tds) {
+        this.tds = tds;
+    }
+
+    public long getTdn() {
+        return tdn;
+    }
+
+    public void setTdn(long tdn) {
+        this.tdn = tdn;
+    }
+
 }

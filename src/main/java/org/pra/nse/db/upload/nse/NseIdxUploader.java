@@ -51,7 +51,9 @@ public class NseIdxUploader {
     public void uploadAll() {
         uploadFromDate(ApCo.NSE_IDX_FILE_AVAILABLE_FROM_DATE);
     }
-
+    public void upload2021() {
+        uploadFromDate(LocalDate.of(2021, 1, 1));
+    }
     public void uploadFromDefaultDate() {
         LocalDate uploadFromDate;
         if(ApCo.UPLOAD_NSE_FROM_DATE.isBefore(NSE_IDX_FILE_AVAILABLE_FROM_DATE)) uploadFromDate = NSE_IDX_FILE_AVAILABLE_FROM_DATE;
@@ -106,11 +108,11 @@ public class NseIdxUploader {
         }
 
         Map<String, IdxBean> latestBeanMap = csvReader.read(fromFile);
-        upload(latestBeanMap);
+        upload(forDate, latestBeanMap);
     }
 
 
-    private void upload(Map<String, IdxBean> latestBeanMap) {
+    private void upload(LocalDate forDate, Map<String, IdxBean> latestBeanMap) {
         NseIndexMarketTab target = new NseIndexMarketTab();
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();
@@ -131,6 +133,9 @@ public class NseIdxUploader {
             target.setPe(source.getPe());
             target.setPb(source.getPb());
             target.setDivYield(source.getDivYield());
+            //
+            target.setTds(forDate.toString());
+            target.setTdn(Integer.valueOf(forDate.toString().replace("-", "")));
             try {
                 //TODO batch insert for efficiency
                 repository.save(target);

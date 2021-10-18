@@ -24,7 +24,8 @@ public class NseDeliveryMarketTab implements Serializable {
     private long deliverableQty;
     private double deliveryToTradeRatio;
     private LocalDate tradeDate;
-
+    private String tds;
+    private long tdn;
 
     public void reset() {
         id = null;
@@ -34,6 +35,8 @@ public class NseDeliveryMarketTab implements Serializable {
         deliverableQty = 0;
         deliveryToTradeRatio = 0;
         tradeDate = null;
+        tds = null;
+        tdn = 0;
     }
 
 
@@ -92,4 +95,21 @@ public class NseDeliveryMarketTab implements Serializable {
     public void setTradeDate(LocalDate tradeDate) {
         this.tradeDate = tradeDate;
     }
+
+    public String getTds() {
+        return tds;
+    }
+
+    public void setTds(String tds) {
+        this.tds = tds;
+    }
+
+    public long getTdn() {
+        return tdn;
+    }
+
+    public void setTdn(long tdn) {
+        this.tdn = tdn;
+    }
+
 }
