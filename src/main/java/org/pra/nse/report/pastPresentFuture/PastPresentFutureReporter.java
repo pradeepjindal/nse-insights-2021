@@ -118,8 +118,14 @@ public class PastPresentFutureReporter {
         List<CalcAvgTab> oldAvgList = calcAvgRepository.findByTradeDateAndForDays(minDate, forMinusDays);
         Map<String, CalcAvgTab> calcAvgMap = oldAvgList.stream().collect(Collectors.toMap(row->row.getSymbol(), row-> row));
 
-        Set<String> symbolSet = LotSizeService.getSymbolSet(FmCategoryEnum.FM_TOP_70);
-        Map<String, List<DeliverySpikeDto>> symbolMap = dataService.getRichDataBySymbolForSymbolSet(forDate, forMinusDays, symbolSet);
+        Map<String, List<DeliverySpikeDto>> symbolMap;
+        if(ApCo.ALL_FM_STOCKS) {
+            symbolMap = dataService.getRichDataBySymbol(forDate, forMinusDays);
+        } else {
+            Set<String> symbolSet = LotSizeService.getSymbolSet(FmCategoryEnum.FM_TOP_70);
+            symbolMap = dataService.getRichDataBySymbolForSymbolSet(forDate, forMinusDays, symbolSet);
+        }
+
         ReportHelper.enrichGrowth(calcAvgMap, symbolMap);
         ReportHelper.enrichAtpDelAndOiTrend(symbolMap);
         ReportHelper.enrichNarrowRange(symbolMap);
