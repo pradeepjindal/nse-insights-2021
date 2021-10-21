@@ -25,8 +25,8 @@ public class ApCo {
     public static final LocalDate TRANSFORM_NSE_FROM_DATE  = LocalDate.of(2021,10,18);
     public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2021,10,18);
     //
-    public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2021,10,18);
-    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,10,18);
+    public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2021,9,1);
+    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,9,1);
     //
     public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2021,10,18);
     public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2021,10,18);
@@ -41,6 +41,7 @@ public class ApCo {
 
     public static final boolean REFRESH_MATERIALIZED_VIEWS = true;
     public static final boolean ALL_FM_STOCKS = true;
+    public static final boolean PPF_REPORT_INCREMENTAL = false;
 
     //public static final String ROOT_DIR = System.getProperty("user.home");
     //public static final String ROOT_DIR = "d:" + File.separator + "nseHome";

@@ -92,6 +92,16 @@ public class PastPresentFutureReporter {
         String fileName = report_name + "-" + forDate.toString() + "" + ApCo.REPORTS_FILE_EXT;
         String filePath = ApCo.ROOT_DIR + File.separator + outputDirName + File.separator + fileName;
 
+        if(ApCo.PPF_REPORT_INCREMENTAL) {
+            for(char i='a'; i<'z'; i++) {
+                if(nseFileUtils.isFilePresent(filePath)) {
+                    filePath = filePath.replace("-" + (char)(i-1) , "");
+                    filePath = filePath.replace(".csv", "") + "-" + i + ".csv";
+                } else {
+                    break;
+                }
+            }
+        }
         LOGGER.info("{} | for:{}", report_name, forDate.toString());
         if(nseFileUtils.isFilePresent(filePath)) {
             LOGGER.warn("{} already present (regeneration and email would be skipped): {}", report_name, filePath);

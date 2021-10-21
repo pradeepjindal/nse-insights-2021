@@ -51,7 +51,7 @@ public class NseFmUploader {
         uploadFromDate(ApCo.NSE_FM_FILE_AVAILABLE_FROM_DATE);
     }
     public void upload2021() {
-        uploadFromDate(LocalDate.of(2021, 7, 1));
+        uploadFromDate(LocalDate.of(2021, 1, 1));
     }
     public void uploadFromDefaultDate() {
         uploadFromDate(defaultDate);
