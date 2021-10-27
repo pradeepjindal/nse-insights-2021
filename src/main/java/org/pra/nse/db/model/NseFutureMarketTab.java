@@ -38,6 +38,8 @@ public class NseFutureMarketTab implements Serializable {
     private long edn;
     private String feds;
     private long fedn;
+    //
+    private long lotSize;
 
     public void reset() {
         id = null;
@@ -63,6 +65,8 @@ public class NseFutureMarketTab implements Serializable {
         edn = 0;
         feds = null;
         fedn = 0;
+        //
+        lotSize = 0;
     }
 
 
@@ -273,4 +277,11 @@ public class NseFutureMarketTab implements Serializable {
         this.fedn = fedn;
     }
 
+    public long getLotSize() {
+        return lotSize;
+    }
+
+    public void setLotSize(long lotSize) {
+        this.lotSize = lotSize;
+    }
 }

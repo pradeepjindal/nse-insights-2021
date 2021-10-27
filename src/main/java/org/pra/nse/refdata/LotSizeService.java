@@ -20,7 +20,7 @@ public class LotSizeService {
     private static Map<String, List<LotSizeBean>> fileNameKey_lotSizeBeanList = new HashMap<>();
     private static Map<String, Map<String, Long>> fileNameKey_lotSizeBeanMap = new HashMap<>();
 
-    private static EnumMap<FmCategoryEnum, String> enumMap = new EnumMap<FmCategoryEnum, String>(FmCategoryEnum.class);
+    private static EnumMap<FmCategoryEnum, String> enumMap = new EnumMap<>(FmCategoryEnum.class);
 
     static {
         enumMap.put(FmCategoryEnum.FM_ALL   , "fm-lots.csv");
@@ -28,8 +28,8 @@ public class LotSizeService {
         enumMap.put(FmCategoryEnum.FM_TOP_35, "pra-top-35-lots.csv");
     }
 
-    public static long getLotSizeAsLong(FmCategoryEnum category, String symbol) {
-        String fileName = enumMap.get(category);
+    public static long getLotSizeAsLong(String symbol) {
+        String fileName = enumMap.get(FmCategoryEnum.FM_ALL);
         if(fileNameKey_lotSizeBeanMap.get(fileName) == null) {
             File refFile = readFile("data/" + fileName);
             readCsv2(fileName, refFile);

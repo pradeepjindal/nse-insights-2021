@@ -6,6 +6,7 @@ import org.pra.nse.csv.read.FmCsvReader;
 import org.pra.nse.db.dao.FmDao;
 import org.pra.nse.db.model.NseFutureMarketTab;
 import org.pra.nse.db.repository.NseFmRepo;
+import org.pra.nse.refdata.LotSizeService;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -141,6 +142,8 @@ public class NseFmUploader {
                     LocalDate fix_expiry_date = LocalDate.of(edt.getYear(), edt.getMonthValue(), 25);
                     target.setFeds(fix_expiry_date.toString());
                     target.setFedn(Integer.valueOf(fix_expiry_date.toString().replace("-", "")));
+                    //
+                    target.setLotSize(LotSizeService.getLotSizeAsLong(source.getSymbol()));
 
                     futureMarketRepository.save(target);
                     recordSucceed.incrementAndGet();
