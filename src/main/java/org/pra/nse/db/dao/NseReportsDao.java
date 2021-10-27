@@ -53,6 +53,7 @@ public class NseReportsDao {
             jdbcTemplate.execute("REFRESH MATERIALIZED VIEW fm_expiry_date_ranking_mv WITH DATA ");
             jdbcTemplate.execute("REFRESH MATERIALIZED VIEW cfd_data_cd_left_join_f_mv WITH DATA ");
             jdbcTemplate.execute("REFRESH MATERIALIZED VIEW cfd_data_cd_left_join_f_mv2 WITH DATA ");
+            jdbcTemplate.execute("REFRESH MATERIALIZED VIEW cfd_data_cd_left_join_f_mv3 WITH DATA ");
         }
 
         List<DeliverySpikeDto> result = jdbcTemplate.query(

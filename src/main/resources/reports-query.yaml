@@ -149,12 +149,12 @@ sqlDeliverySpikeThreeFor30DayzOrderBySymbolAndTradeDate: >
     ) distinct_future_stocks,
     (
       select *
-      from cm_date_linking_view1 v1, cfd_data_cd_left_join_f_mv2 d1
+      from cm_date_linking_view1 v1, cfd_data_cd_left_join_f_mv3 d1
       where v1.One_trade_date = d1.trade_Date
     ) tdy,
     (
       select *
-      from cm_date_linking_view1 v2, cfd_data_cd_left_join_f_mv2 d2
+      from cm_date_linking_view1 v2, cfd_data_cd_left_join_f_mv3 d2
       where v2.two_trade_date = d2.trade_Date
     ) yes
   WHERE tdy.symbol = distinct_future_stocks.symbol
