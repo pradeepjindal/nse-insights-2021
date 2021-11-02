@@ -48,7 +48,7 @@ public class NseReportsDao {
     public List<DeliverySpikeDto> getDeliverySpikeTwo() {
         Instant startTime = Instant.now();
         LOGGER.info("DAO | fetching data using - deliverySpikeThree");
-        if (ApCo.REFRESH_MATERIALIZED_VIEWS) {
+        if (ApCo.REFRESH_MATERIALIZED_VIEWS_FLAG) {
             jdbcTemplate.execute("REFRESH MATERIALIZED VIEW cm_trade_date_ranking_mv WITH DATA ");
             jdbcTemplate.execute("REFRESH MATERIALIZED VIEW fm_expiry_date_ranking_mv WITH DATA ");
             jdbcTemplate.execute("REFRESH MATERIALIZED VIEW cfd_data_cd_left_join_f_mv WITH DATA ");

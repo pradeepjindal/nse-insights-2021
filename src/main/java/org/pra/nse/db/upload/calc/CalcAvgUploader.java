@@ -71,7 +71,7 @@ public class CalcAvgUploader extends BaseUploader {
             LOGGER.info("{} upload | uploading - for date:[{}]", calc_name, forDate);
             List<AvgBean> beans = calculator.calculateAndReturn(forDate);
             upload(beans);
-        } else if(dataCtr > 0 && ApCo.RE_UPLOAD_CALC && ApCo.RE_UPLOAD_CALC_FROM_DATE.isBefore(forDate)) {
+        } else if(dataCtr > 0 && ApCo.RE_UPLOAD_CALC_FLAG && ApCo.RE_UPLOAD_CALC_FROM_DATE.isBefore(forDate)) {
             LOGGER.info("{} upload | RE-UPLOADING - for date:[{}]", calc_name, forDate);
             repo.deleteByTradeDate(forDate);
         } else {

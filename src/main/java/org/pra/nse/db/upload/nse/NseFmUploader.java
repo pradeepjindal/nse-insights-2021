@@ -52,7 +52,7 @@ public class NseFmUploader {
         uploadFromDate(ApCo.NSE_FM_FILE_AVAILABLE_FROM_DATE);
     }
     public void upload2021() {
-        uploadFromDate(LocalDate.of(2021, 1, 1));
+        uploadFromDate(LocalDate.of(2021, 8, 1));
     }
     public void uploadFromDefaultDate() {
         uploadFromDate(defaultDate);
@@ -143,7 +143,11 @@ public class NseFmUploader {
                     target.setFeds(fix_expiry_date.toString());
                     target.setFedn(Integer.valueOf(fix_expiry_date.toString().replace("-", "")));
                     //
-                    target.setLotSize(LotSizeService.getLotSizeAsLong(source.getSymbol()));
+                    long lotSize = LotSizeService.getLotSizeAsLong(source.getSymbol());
+                    if(lotSize==0)
+                        LOGGER.info("{} not found - probably new entry in the FnO", source.getSymbol());
+                    else
+                        target.setLotSize(lotSize);
 
                     futureMarketRepository.save(target);
                     recordSucceed.incrementAndGet();

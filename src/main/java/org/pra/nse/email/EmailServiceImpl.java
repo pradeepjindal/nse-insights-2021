@@ -50,7 +50,7 @@ public class EmailServiceImpl implements EmailService {
         if(fileForDate == null) {
             fileForDate = DateUtils.getLocalDateFromPath(pathToAttachment, NseCons.AB_FILE_NAME_DATE_REGEX, NseCons.AB_FILE_NAME_DATE_FORMAT);
         }
-        if (!ApCo.EMAIL_ENABLED ) {
+        if (!ApCo.EMAIL_ENABLED_FLAG) {
             LOGGER.info("Mailing | disabled, mailing requests ignored");
             return;
         } else if (to.contains("manish") && !ApCo.EMAIL_ENABLED_FOR_MANISH) {

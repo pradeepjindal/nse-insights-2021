@@ -147,6 +147,11 @@ public class NseOmUploader {
                     target.setFedn(Integer.valueOf(fix_expiry_date.toString().replace("-", "")));
                     //
                     target.setLotSize(LotSizeService.getLotSizeAsLong(source.getSymbol()));
+//                    long lotSize = LotSizeService.getLotSizeAsLong(source.getSymbol());
+//                    if(lotSize==0)
+//                        LOGGER.info("{} not found - probably new entry in the FnO", source.getSymbol());
+//                    else
+//                        target.setLotSize(lotSize);
 
                     optionMarketRepository.save(target);
                     recordSucceed.incrementAndGet();
@@ -198,6 +203,13 @@ public class NseOmUploader {
                     LocalDate fix_expiry_date = LocalDate.of(edt.getYear(), edt.getMonthValue(), 25);
                     target.setFeds(fix_expiry_date.toString());
                     target.setFedn(Integer.valueOf(fix_expiry_date.toString().replace("-", "")));
+                    //
+                    target.setLotSize(LotSizeService.getLotSizeAsLong(source.getSymbol()));
+//                    long lotSize = LotSizeService.getLotSizeAsLong(source.getSymbol());
+//                    if(lotSize==0)
+//                        LOGGER.info("{} not found - probably new entry in the FnO", source.getSymbol());
+//                    else
+//                        target.setLotSize(lotSize);
 
                     list.add(target);
                     recordSucceed.incrementAndGet();
