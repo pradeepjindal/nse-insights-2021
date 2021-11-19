@@ -75,7 +75,7 @@ public class NseOmUploader {
         LocalDate processingDate = fromDate.minusDays(1);
         do {
             processingDate = processingDate.plusDays(1);
-            LOGGER.info("OM-upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
+            LOGGER.info("om- | upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
             if(DateUtils.isTradingOnHoliday(processingDate)) {
                 uploadForDate(processingDate);
             } else if (DateUtils.isWeekend(processingDate)) {
@@ -88,7 +88,7 @@ public class NseOmUploader {
 
     public void uploadForDate(LocalDate forDate) {
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("OM-upload | already uploaded | for date:[{}]", forDate);
+            LOGGER.info("om- | upload | already uploaded | for date:[{}]", forDate);
             return;
         } else {
 //            LOGGER.info("FM-upload | uploading - for date:[{}]", forDate);
@@ -98,7 +98,7 @@ public class NseOmUploader {
         //LOGGER.info("FM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(nseFileUtils.isFileAbsent(fromFile)) {
-            LOGGER.warn("OM-upload | file not found: [{}]", fromFile);
+            LOGGER.warn("om- | upload | file not found: [{}]", fromFile);
             return;
         }
 
@@ -163,7 +163,7 @@ public class NseOmUploader {
             }
 
         });
-        LOGGER.info("OM-upload | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
+        LOGGER.info("om- | upload | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
         if (recordFailed.get() > 0) throw new RuntimeException("OM-upload | some record could not be persisted");
     }
 
@@ -235,7 +235,7 @@ public class NseOmUploader {
             optionMarketRepository.saveAll(batchList);
         }
 
-        LOGGER.info("OM-upload | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
+        LOGGER.info("om- | upload | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
         if (recordFailed.get() > 0) throw new RuntimeException("OM-upload | some record could not be persisted");
     }
 

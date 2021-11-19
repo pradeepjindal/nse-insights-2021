@@ -78,7 +78,7 @@ public class MainProcess implements ApplicationRunner {
 
         try {
             DirUtils.createRootFolder();
-            //downloadManager.execute();
+            downloadManager.execute();
             transformationManager.execute();
             nseUploadManager.execute();
 

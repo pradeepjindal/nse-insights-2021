@@ -112,6 +112,7 @@ public class NseFmUploader {
         AtomicInteger recordSkipped = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();
 
+        AtomicInteger lotSizeNotFoundCounter = new AtomicInteger();
         foBeanMap.values().forEach( source -> {
             try {
                 if("FUTIVX".equals(source.getInstrument()) || "FUTIDX".equals(source.getInstrument()) || "FUTSTK".equals(source.getInstrument())) {
@@ -144,8 +145,10 @@ public class NseFmUploader {
                     target.setFedn(Integer.valueOf(fix_expiry_date.toString().replace("-", "")));
                     //
                     long lotSize = LotSizeService.getLotSizeAsLong(source.getSymbol());
-                    if(lotSize==0)
+                    if(lotSize==0) {
+                        lotSizeNotFoundCounter.incrementAndGet();
                         LOGGER.info("{} not found - probably new entry in the FnO", source.getSymbol());
+                    }
                     else
                         target.setLotSize(lotSize);
 
@@ -159,7 +162,12 @@ public class NseFmUploader {
             }
 
         });
+
         LOGGER.info("FM-upload | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
+
+        if(lotSizeNotFoundCounter.get() > 0)  throw new RuntimeException("lot size not found for some of FnO stocks: " + lotSizeNotFoundCounter.get());
+
         if (recordFailed.get() > 0) throw new RuntimeException("FM-upload | some record could not be persisted");
     }
+
 }

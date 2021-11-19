@@ -79,7 +79,7 @@ public class NseIdxUploader {
         LocalDate processingDate = fromDate.minusDays(1);
         do {
             processingDate = processingDate.plusDays(1);
-            LOGGER.info("IDX-upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
+            LOGGER.info("nx- | upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
             if(DateUtils.isTradingOnHoliday(processingDate)) {
                 uploadForDate(processingDate);
             } else if (DateUtils.isWeekend(processingDate)) {
@@ -93,7 +93,7 @@ public class NseIdxUploader {
     public void uploadForDate(LocalDate forDate) {
         //TODO check that number of rows in file and number of rows in table matches for the given date
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("IDX-upload | already uploaded | for date:[{}]", forDate);
+            LOGGER.info("nx- | upload | already uploaded | for date:[{}]", forDate);
             return;
         } else {
 //            LOGGER.info("IDX-upload | uploading - for date:[{}]", forDate);
@@ -103,7 +103,7 @@ public class NseIdxUploader {
         //LOGGER.info("IDX-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFilePresent(fromFile)) {
-            LOGGER.warn("IDX-upload | file not found: [{}]", fromFile);
+            LOGGER.warn("nx- | upload | file not found: [{}]", fromFile);
             return;
         }
 
@@ -144,7 +144,7 @@ public class NseIdxUploader {
                 recordFailed.incrementAndGet();
             }
         });
-        LOGGER.info("IDX-upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
+        LOGGER.info("nx- | upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
         if (recordFailed.get() > 0) throw new RuntimeException("IDX-upload | some record could not be persisted");
     }
 
