@@ -21,18 +21,18 @@ public class ApCo {
     public static final LocalTime DAILY_DOWNLOAD_TIME = LocalTime.of(18,0,0,0);
 
     //public static final LocalDate DOWNLOAD_FROM_DATE    = LocalDate.of(2021,4,18);
-    public static final LocalDate DOWNLOAD_NSE_FROM_DATE = LocalDate.of(2021,11,21);
-    public static final LocalDate TRANSFORM_NSE_FROM_DATE  = LocalDate.of(2021,11,21);
-    public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2021,11,21);
+    public static final LocalDate DOWNLOAD_NSE_FROM_DATE = LocalDate.of(2021,12,11);
+    public static final LocalDate TRANSFORM_NSE_FROM_DATE  = LocalDate.of(2021,12,11);
+    public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2021,12,11);
     //
-    public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2021,11,21);
-    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,11,21);
+    public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2021,12,11);
+    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,12,11);
     //
-    public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2021,11,21);
-    public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2021,11,21);
+    public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2021,12,11);
+    public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2021,12,11);
 
     public static final boolean RE_UPLOAD_CALC_FLAG = false;
-    public static final LocalDate RE_UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,11,21);
+    public static final LocalDate RE_UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,12,11);
 
     public static final boolean EMAIL_ENABLED_FLAG = false;
     public static final boolean EMAIL_ENABLED_FOR_MANISH = true;
@@ -65,6 +65,7 @@ public class ApCo {
         public static final String REPORTS_DIR_NAME_DSR = "reports-dsr";
 
     public static final String REPORTS_DIR_NAME_PPF = "reports-ppf";
+    public static final String REPORTS_DIR_NAME_DAILY_MARKET_SCAN = "reports-dms";
 
         public static final String REPORTS_DIR_NAME_MANISH = "reports-manish";
         public static final String REPORTS_DIR_NAME_SHUVI = "reports-shuvi";

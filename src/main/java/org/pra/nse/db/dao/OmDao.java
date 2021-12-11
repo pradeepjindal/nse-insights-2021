@@ -1,8 +1,10 @@
 package org.pra.nse.db.dao;
 
 import org.pra.nse.config.YamlPropertyLoaderFactory;
+import org.pra.nse.db.dto.LotSizeDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,10 @@ public class OmDao {
 
     @Value("${activeOptionScriptsForGivenDateSql}")
     private String activeFutureScriptsForGivenDateSql;
+
+    @Value("${lotSizeSql}")
+    private String lotSizeSql;
+
 
     OmDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -47,6 +53,11 @@ public class OmDao {
                 Integer.class,
                 tradeDate.toString()
         );
+    }
+
+    public List<LotSizeDto> getLotSizeList() {
+        List<LotSizeDto> result = jdbcTemplate.query(lotSizeSql, new BeanPropertyRowMapper<LotSizeDto>(LotSizeDto.class));
+        return result;
     }
 
 }

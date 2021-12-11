@@ -25,6 +25,7 @@ public class DataService implements Manager, DataServiceI {
     private final NseReportsDao nseReportsDao;
     private final DataServiceHelper dataServiceHelper;
     private final DateService dateService;
+    private final FuOpLotService fuOpLotService;
 
     private final NavigableMap<Integer, LocalDate>  tradeDates_Asc_NavigableMap = new TreeMap<>();
     private final List<LocalDate>                   tradeDates_Desc_LinkedList = new LinkedList<>();
@@ -44,11 +45,13 @@ public class DataService implements Manager, DataServiceI {
     public DataService(PraFileUtils praFileUtils,
                        NseReportsDao nseReportsDao,
                        DataServiceHelper dataServiceHelper,
-                       DateService dateService) {
+                       DateService dateService,
+                       FuOpLotService fuOpLotService) {
         this.praFileUtils = praFileUtils;
         this.nseReportsDao = nseReportsDao;
         this.dataServiceHelper = dataServiceHelper;
         this.dateService = dateService;
+        this.fuOpLotService = fuOpLotService;
     }
 
 
@@ -163,7 +166,7 @@ public class DataService implements Manager, DataServiceI {
 
     private void bootUpRawData() {
         dbData = nseReportsDao.getDeliverySpikeTwo();
-        dataServiceHelper.enrichWithFutureLotData(dbData);
+        dataServiceHelper.enrichWithFutureLotData(dbData, fuOpLotService);
         dataMap_byTradeDateAndSymbol = dataServiceHelper.transformAllData_ByTradeDateAndSymbol(dbData);
         dataMap_bySymbolAndTradeDate = dataServiceHelper.transformAllData_BySymbolAndTradeDate(dbData);
 
@@ -357,14 +360,22 @@ public class DataService implements Manager, DataServiceI {
             if( null == dto.getFuTotTrdVal()) {
                 //
             } else {
+                //
+
+
+                //
                 BigDecimal lotSiz = dto.getLotSize();
                 BigDecimal totalTradedQuantityOfFutures = dto.getFuContracts().multiply(lotSiz);
                 dto.setFuVol(totalTradedQuantityOfFutures);
                 BigDecimal totalTradeValueOfFutures = dto.getFuTotTrdVal();
                 BigDecimal fuAtp = NumberUtils.divide(totalTradeValueOfFutures, totalTradedQuantityOfFutures);
                 dto.setFuAtp(fuAtp);
+
+                //
                 BigDecimal fuAtpMinusCmAtp = fuAtp.subtract(dto.getAtp());
-                dto.setFuAtpMinusCmAtp(fuAtpMinusCmAtp);
+                double fuAtpMinusCmAtpPct = fuAtpMinusCmAtp.doubleValue() / (dto.getAtp().doubleValue() / 100);
+                double rounded_fuAtpMinusCmAtpPct = NumberUtils.round(fuAtpMinusCmAtpPct, 2);
+                dto.setFuAtpMinusCmAtpPct(new BigDecimal(rounded_fuAtpMinusCmAtpPct));
                 if (dto.getFuOi() == null) {
                     //LOGGER.warn("oi is null");
                 } else {

@@ -66,7 +66,9 @@ public class CmDownloader {
     }
 
 
-    private List<String> prepareFileUrls(LocalDate fromDate) {
+    private List<String>
+
+    prepareFileUrls(LocalDate fromDate) {
         List<String> filesToBeDownloaded = nseFileUtils.constructFileNames(fromDate, File_Date_Format, File_Prefix,File_Suffix + File_Ext);
         filesToBeDownloaded.removeAll(nseFileUtils.fetchFileNames(Data_Dir, null, null));
         return nseFileUtils.constructFileDownloadUrlWithYearAndMonth(Base_Url, filesToBeDownloaded);

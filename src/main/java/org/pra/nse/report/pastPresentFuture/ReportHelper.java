@@ -72,6 +72,13 @@ public class ReportHelper {
                     // fix
                     BigDecimal atpFixGrowth = NumberUtils.divide(dto.getAtp(), atpFixOnePercent);
                     dto.setAtpFixGrowth(atpFixGrowth);
+                    {
+                        if(dto.getBackDto() != null && dto.getBackDto().getAtpFixGrowth() != null) {
+                            BigDecimal yesAtpFixGrowth = dto.getBackDto().getAtpFixGrowth() == null ? BigDecimal.ZERO: dto.getBackDto().getAtpFixGrowth();
+                            BigDecimal atpFixGrowthChg = atpFixGrowth.subtract(yesAtpFixGrowth);
+                            dto.setAtpFixGrowthChg(atpFixGrowthChg);
+                        }
+                    }
                     BigDecimal trdFixGrowth = NumberUtils.divide(dto.getTraded(), trdFixOnePercent);
                     dto.setTrdFixGrowth(trdFixGrowth);
                     BigDecimal delFixGrowth = NumberUtils.divide(dto.getDelivery(), delFixOnePercent);
@@ -96,12 +103,22 @@ public class ReportHelper {
         LOGGER.info("enrichGrowth - completed");
     }
 
+    public static void enrichDayTrend(Map<String, List<DeliverySpikeDto>> symbolMap) {
+        LOGGER.info("enrichDayTrend - ");
+        LOGGER.info("enrichDayTrend - total symbols: {}", symbolMap.size());
+        for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
+            //LOGGER.info("enrichDayTrend - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
+            EnrichmentHelper.enrichDayTrendForEachSymbol(entry.getKey(), entry.getValue());
+        }
+        LOGGER.info("enrichDayTrend - completed");
+    }
+
     public static void enrichAtpDelAndOiTrend(Map<String, List<DeliverySpikeDto>> symbolMap) {
         LOGGER.info("enrichTrend - ");
         LOGGER.info("enrichTrend - total symbols: {}", symbolMap.size());
         for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
-            LOGGER.info("enrichTrend - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
-            enrichTrendForEachSymbol(entry.getKey(), entry.getValue());
+            //LOGGER.info("enrichTrend - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
+            EnrichmentHelper.enrichTrendForEachSymbol(entry.getKey(), entry.getValue());
         }
         LOGGER.info("enrichTrend - completed");
     }
@@ -110,8 +127,8 @@ public class ReportHelper {
         LOGGER.info("enrichNarrowRange - ");
         LOGGER.info("enrichNarrowRange - total symbols: {}", symbolMap.size());
         for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
-            LOGGER.info("enrichNarrowRange - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
-            enrichNarrowRangeForEachSymbol(entry.getValue());
+            //LOGGER.info("enrichNarrowRange - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
+            EnrichmentHelper.enrichNarrowRangeForEachSymbol(entry.getValue());
         }
         LOGGER.info("enrichNarrowRange - completed");
     }
@@ -120,8 +137,8 @@ public class ReportHelper {
         LOGGER.info("enrichHammer - ");
         LOGGER.info("enrichHammer - total symbols: {}", symbolMap.size());
         for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
-            LOGGER.info("enrichHammer - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
-            enrichHammerForEachSymbol(entry.getValue());
+            //LOGGER.info("enrichHammer - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
+            EnrichmentHelper.enrichHammerForEachSymbol(entry.getValue());
         }
         LOGGER.info("enrichHammer - completed");
     }
@@ -130,183 +147,33 @@ public class ReportHelper {
         LOGGER.info("enrichVwap - ");
         LOGGER.info("enrichVwap - total symbols: {}", symbolMap.size());
         for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
-            LOGGER.info("enrichVwap - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
-            enrichVwapForEachSymbol(entry.getValue());
+            //LOGGER.info("enrichVwap - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
+            EnrichmentHelper.enrichVwapForEachSymbol(entry.getValue());
         }
         LOGGER.info("enrichVwap - completed");
     }
 
 
-    private static void enrichVwapForEachSymbol(List<DeliverySpikeDto> DeliverySpikeDtoList) {
-        DeliverySpikeDto tmpDto;
-        boolean notLogged;
-        for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
-            BigDecimal mvwap = BigDecimal.ZERO;
-            BigDecimal price = BigDecimal.ZERO;
-            BigDecimal sumPrice = BigDecimal.ZERO;
-            BigDecimal sumVolume = BigDecimal.ZERO;
-            //int size = DeliverySpikeDtoList.size() > 19 ? -20 : (DeliverySpikeDtoList.size()-1) * -1;
-            notLogged = true;
-            for(int i=-20; i<0; i++) {
-                try{
-                    tmpDto = dto.getDto(i);
-                    price = tmpDto.getAtp().multiply(tmpDto.getDelivery());
-                    sumPrice = sumPrice.add(price);
-                    sumVolume = sumVolume.add(tmpDto.getDelivery());
-                } catch (NullPointerException npe) {
-                    if(notLogged) {
-                        LOGGER.warn("enrichVwap - {}, skipping, no back data (seems new entry in FnO), {}", Du.symbol(dto.getSymbol()), dto.getTradeDate());
-                        notLogged = false;
-                    }
-                }
-            }
-            mvwap = NumberUtils.divide(sumPrice, sumVolume);
-            dto.setMvwap(mvwap);
+    public static void enrichDeliveryDiversion(Map<String, List<DeliverySpikeDto>> symbolMap) {
+        LOGGER.info("enrichDeliveryDiversion - ");
+        LOGGER.info("enrichDeliveryDiversion - total symbols: {}", symbolMap.size());
+        for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
+            //LOGGER.info("enrichDeliveryDiversion - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
+            EnrichmentHelper.enrichDeliveryDiversionForEachSymbol(entry.getValue());
         }
-
+        LOGGER.info("enrichDeliveryDiversion - completed");
     }
 
-    private static void enrichHammerForEachSymbol(List<DeliverySpikeDto> DeliverySpikeDtoList) {
-        String hammer;
-        for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
-            //LOGGER.info("symbol: {}, dt: {}", dto.getSymbol(), dto.getTradeDate());
-            try {
-                hammer = IndicatorUtils.calculateHammerManishVersion(
-                        dto.getOpen().floatValue(),
-                        dto.getHigh().floatValue(),
-                        dto.getLow().floatValue(),
-                        dto.getClose().floatValue());
-                dto.setHammer(hammer);
-            } catch (NullPointerException npe) {
-                LOGGER.warn("enrichHammer - {}, skipping, no back data (seems new entry in FnO), {}", Du.symbol(dto.getSymbol()), dto.getTradeDate());
-            }
+    public static void enrichLongShortBuildup(Map<String, List<DeliverySpikeDto>> symbolMap) {
+        LOGGER.info("enrichLongShortBuildup - ");
+        LOGGER.info("enrichLongShortBuildup - total symbols: {}", symbolMap.size());
+        for(Map.Entry<String, List<DeliverySpikeDto>> entry : symbolMap.entrySet()) {
+            //LOGGER.info("enrichLongShortBuildup - {}, rows: {}", Du.symbol(entry.getKey()), entry.getValue().size());
+            EnrichmentHelper.enrichLongShortBuildupForEachSymbol(entry.getValue());
         }
+        LOGGER.info("enrichLongShortBuildup - completed");
     }
 
-    private static void enrichNarrowRangeForEachSymbol(List<DeliverySpikeDto> DeliverySpikeDtoList) {
-//        float[][] nrArray = new float[DeliverySpikeDtoList.size()+5][DeliverySpikeDtoList.size()+5];
-//        int i = 0;
-        for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
-            //LOGGER.info("symbol: {}, dt: {}", dto.getSymbol(), dto.getTradeDate());
-            try {
-                float t1 = dto.getHighLowDiff().floatValue();
-                float t2 = dto.getBackDto().getHighLowDiff().floatValue();
-                float t3 = dto.getBackDto().getBackDto().getHighLowDiff().floatValue();
-                float t4 = dto.getBackDto().getBackDto().getBackDto().getHighLowDiff().floatValue();
-                if( t1 < t2 && t1 < t3 && t1 < t4) {
-                    dto.setNR4(t1);
-                }
-            } catch (NullPointerException npe) {
-                LOGGER.warn("enrichNarrowRange - {}, skipping, no back data (seems new entry in FnO), {}", Du.symbol(dto.getSymbol()), dto.getTradeDate());
-            }
-            try {
-                float t1 = dto.getHighLowDiff().floatValue();
-                float t2 = dto.getDto(-1).getHighLowDiff().floatValue();
-                float t3 = dto.getDto(-2).getHighLowDiff().floatValue();
-                float t4 = dto.getDto(-3).getHighLowDiff().floatValue();
-                float t5 = dto.getDto(-4).getHighLowDiff().floatValue();
-                float t6 = dto.getDto(-5).getHighLowDiff().floatValue();
-                float t7 = dto.getDto(-6).getHighLowDiff().floatValue();
-                if( t1 < t2 && t1 < t3 && t1 < t4 && t1 < t5 && t1 < t6 && t1 < t7) {
-                    dto.setNR7(t1);
-                }
-            } catch (NullPointerException npe) {
-                LOGGER.warn("enrichNarrowRange - {}, skipping, no back data (seems new entry in FnO), {}", Du.symbol(dto.getSymbol()), dto.getTradeDate());
-            }
-        }
-    }
-
-    private static void enrichTrendForEachSymbol(String symbol, List<DeliverySpikeDto> DeliverySpikeDtoList) {
-        int i = 0;
-        for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
-            try {
-                if(dto.getBackDto() == null) {
-                    LOGGER.info("enrichTrend - {}, skipping, no back data (seems new entry in FnO)", Du.symbol(dto.getSymbol()));
-                    break;
-                } else {
-                    //enable for debugging logs
-//                    LOGGER.info("enrichTrend - {}, trdDt: {}, oi: {}", Du.symbol(dto.getSymbol()), dto.getTradeDate(), dto.getFuOi());
-                }
-                float fuOi = dto.getFuOi().floatValue();
-                if(fuOi == 0) {
-                    LOGGER.warn("enrichTrend - {}, oi: {}, fuTrdVal: {}", Du.symbol(dto.getSymbol()), dto.getFuOi(), dto.getFuTotTrdVal());
-                }
-                float atpDiffAbs = dto.getAtp().subtract(dto.getBackDto().getAtp()).floatValue();
-                float atpDiffPrcnt = atpDiffAbs / NumberUtils.onePercent(dto.getBackDto().getAtp()).intValue();
-                boolean atpPositiveAbs = atpDiffAbs > 1;
-                boolean atpNegativeAbs = atpDiffAbs < -1;
-                boolean atpNeutralAbs = !atpPositiveAbs && !atpNegativeAbs;
-                boolean atpPositivePrcnt = atpDiffPrcnt > 1;
-                boolean atpNegativePrcnt = atpDiffPrcnt < -1;
-                boolean atpNeutralPrcnt = !atpPositivePrcnt && !atpNegativePrcnt;
-                //
-                BigDecimal halfPercent = new BigDecimal(200);
-                float closeMinusAtpAbs = dto.getClose().subtract(dto.getAtp()).floatValue();
-                float closeMinusAtpPrcnt = closeMinusAtpAbs / NumberUtils.percent(dto.getAtp(), halfPercent).intValue();
-                boolean cMaPositiveAbs = closeMinusAtpAbs > 1;
-                boolean cMaNegativeAbs = closeMinusAtpAbs < -1;
-                boolean cMaNeutralAbs = !cMaPositiveAbs && !cMaNegativeAbs;
-                boolean cMaPositivePrcnt = closeMinusAtpPrcnt > 1;
-                boolean cMaNegativePrcnt = closeMinusAtpPrcnt < -1;
-                boolean cMaNeutralPrcnt = !cMaPositivePrcnt && !cMaNegativePrcnt;
-                //
-                float delDiffAbs = dto.getDelivery().subtract(dto.getBackDto().getDelivery()).floatValue();
-                float delDiffPrcnt = delDiffAbs / NumberUtils.onePercent(dto.getBackDto().getDelivery()).intValue();
-                boolean delPositiveAbs = delDiffAbs > 1;
-                boolean delNegativeAbs = delDiffAbs < -1;
-                boolean delNeutral = !delPositiveAbs && !delNegativeAbs;
-                boolean delPositivePrcnt = delDiffPrcnt > 1;
-                boolean delNegativePrcnt = delDiffPrcnt < -1;
-                boolean delNeutralPrcnt = !delPositivePrcnt && !delNegativePrcnt;
-
-//                     if (atpPositive && delPositive) dto.setAtpDelTrend("buyer-charging-up (demand-high)");
-//                else if (atpPositive && delNegative) dto.setAtpDelTrend("buyer-hesitating  (demand-hiccup)");
-//                else if (atpNegative && delPositive) dto.setAtpDelTrend("saler-flooding-dn (supply-high)");
-//                else if (atpNegative && delNegative) dto.setAtpDelTrend("saler-hesitating  (supply-hiccup)");
-//                else dto.setAtpDelTrend("");
-                     if (atpPositiveAbs && delPositiveAbs) dto.setAtpDelForUpTrend("Long- buyer-charging-up (high-demand)");
-                else if (atpNegativeAbs && delPositiveAbs) dto.setAtpDelForUpTrend("Shrt- saler-pressing-dn (high-supply)");
-                // to buy in delivery - supply can not be low, as intraday trader provides unlimited supply on higher price
-                             // but if delivery is
-                // to sel in delivery - demand can not be low, as intraday trader provides unlimited demand on lower price
-                else if (atpPositiveAbs && delNegativeAbs) dto.setAtpDelForUpTrend("- fever-buyer  (low-demand)");
-                else if (atpNegativeAbs && delNegativeAbs) dto.setAtpDelForUpTrend("- fever-saler  (low-supply)");
-                else if (atpNeutralAbs  && delPositiveAbs) dto.setAtpDelForUpTrend("Peek- balance-bearish (seler incresing)");
-                else if (atpNeutralAbs  && delNegativeAbs) dto.setAtpDelForUpTrend("Peek- balance-bearish (buyer holding)");
-                else dto.setAtpDelForUpTrend("");
-
-                //
-                     if (atpPositivePrcnt && delPositivePrcnt) dto.setAtpDelForDnTrend("Long- more-buyer (high-demand)");
-                else if (atpNegativePrcnt && delPositivePrcnt) dto.setAtpDelForDnTrend("Shrt- more-saler (high-supply)");
-                else if (atpPositivePrcnt && delNegativePrcnt) dto.setAtpDelForDnTrend("bear- less-buyer  (low-demand)");
-                else if (atpNegativePrcnt && delNegativePrcnt) dto.setAtpDelForDnTrend("bull- less-saler  (low-supply)");
-                else if (atpNeutralPrcnt  && delPositivePrcnt) dto.setAtpDelForDnTrend("bear- flat-price-balance (supply-surplus)");
-                else if (atpNeutralPrcnt  && delNegativePrcnt) dto.setAtpDelForDnTrend("bull- flat-stock-balance (supply-drying)");
-                else dto.setAtpDelForDnTrend("");
-                //
-                float oiDiff = dto.getFuOiLots().subtract(dto.getBackDto().getFuOiLots()).floatValue();
-                float oiDiffPrcnt = oiDiff / NumberUtils.onePercent(dto.getBackDto().getFuOiLots()).floatValue();
-                boolean oiPositive = oiDiff > 1;
-                boolean oiNegative = oiDiff < -1;
-                boolean oiPositivePrcnt = oiDiffPrcnt > 1;
-                boolean oiNegativePrcnt = oiDiffPrcnt < -1;
-                if (atpPositiveAbs && oiPositivePrcnt) dto.setAtpOiTrendI1("retailCust(B)-aggressive-buy  (long-buildup)");
-                else if (atpPositiveAbs && oiNegativePrcnt) dto.setAtpOiTrendI1("retailCust(B)-hesitating (profit-booking)-i-loss-booking");
-                else if (atpNegativeAbs && oiPositivePrcnt) dto.setAtpOiTrendI1("institute(S) -aggressive-sale (short-buildup)");
-                else if (atpNegativeAbs && oiNegativePrcnt) dto.setAtpOiTrendI1("institute(S) -hesitating (profit-booking)-r-loss-booking");
-                else dto.setAtpOiTrendI1("");
-                     if (atpPositiveAbs && oiPositivePrcnt) dto.setAtpOiTrendI2("retailCust(B)-aggressive-buy  (long-buildup)");
-                else if (atpPositiveAbs && oiNegativePrcnt) dto.setAtpOiTrendI2("SB/SC- shrt.booking or shrt.covering");
-                else if (atpNegativeAbs && oiPositivePrcnt) dto.setAtpOiTrendI2("institute(S) -aggressive-sale (short-buildup)");
-                else if (atpNegativeAbs && oiNegativePrcnt) dto.setAtpOiTrendI2("LB/LC- long.booking or long.covering");
-                else dto.setAtpOiTrendI2("");
-            } catch(Exception ex) {
-                LOGGER.error("", ex);
-                String errMsg = "enrichTrend - " + Du.symbol(dto.getSymbol()) + ", ERROR";
-                throw new RuntimeException(errMsg);
-            }
-        }
-    }
 
 //    public static void fillTheIndicatorsChg(LocalDate forDate, int forMinusDays) {
 //        LOGGER.info("DataManager - fillTheIndicators");

@@ -17,11 +17,17 @@ public class DeliverySpikeDto {
     private BigDecimal high;
     private BigDecimal low;
     private BigDecimal close;
+    private String dayTrend;
+    private String bullDay;
+    private String bearDay;
     private BigDecimal last;
     private BigDecimal ohlc;
     private BigDecimal avwap;
     private BigDecimal mvwap;
     private BigDecimal atp;
+
+    private BigDecimal atpMinusClose;
+    private BigDecimal atpMinusClosePrcnt;
 
     private BigDecimal highLowMid; //hlm
     private BigDecimal atpMhlm;
@@ -39,6 +45,7 @@ public class DeliverySpikeDto {
     private BigDecimal atpChgPrcnt;
 
     private BigDecimal atpFixGrowth;
+    private BigDecimal atpFixGrowthChg;
     private BigDecimal atpDynGrowth;
     private BigDecimal trdFixGrowth;
     private BigDecimal trdDynGrowth;
@@ -70,6 +77,7 @@ public class DeliverySpikeDto {
     private String atpOiTrend;
     private String atpOiTrendI1;
     private String atpOiTrendI2;
+    private String delDiversion;
 
     private BigDecimal volume;
     private BigDecimal traded;
@@ -79,7 +87,7 @@ public class DeliverySpikeDto {
     private BigDecimal fuContracts;
     private BigDecimal fuTotTrdVal;
     private BigDecimal fuAtp;
-    private BigDecimal fuAtpMinusCmAtp;
+    private BigDecimal fuAtpMinusCmAtpPct;
     private BigDecimal fuVol;
     private BigDecimal fuOiLots;
     private BigDecimal fuOiChgPrcnt;
@@ -104,7 +112,9 @@ public class DeliverySpikeDto {
     private BigDecimal vdr;
     private BigDecimal delAccumulation;
 
-
+    private String longShortBuildup;
+    private String longBuildup;
+    private String shortBuildup;
 
     private BigDecimal delDiff;
     private BigDecimal lotSize;
@@ -213,6 +223,8 @@ public class DeliverySpikeDto {
                 + high + ","
                 + low + ","
                 + close + ","
+                + dayTrend + ","
+
                 + last + ","
 //                + closingBell + ","
 
@@ -232,8 +244,13 @@ public class DeliverySpikeDto {
                 + fuOiLots + ","
 //                + atpOiTrend + ","
                 + fuOiChgPrcnt + ","
+                + longShortBuildup + ","
                 + atpOiTrendI1 + ","
                 + atpOiTrendI2 + ","
+
+                + atpMinusClose + ","
+                + atpMinusClosePrcnt + ","
+                + delDiversion + ","
 
                 + highLowMid + ","
                 + atpMhlm + ","
@@ -242,6 +259,7 @@ public class DeliverySpikeDto {
                 + closeToLastPercent + ","
 
                 + atpFixGrowth + ","
+                + atpFixGrowthChg + ","
 //                + atpDynGrowth + ","
                 + trdFixGrowth + ","
 //                + volDynGrowth + ","
@@ -281,7 +299,44 @@ public class DeliverySpikeDto {
                 + delivery.divide(new BigDecimal(100000), 2, RoundingMode.HALF_EVEN) + ","
                 + vdr + ","
                 + fuAtp + ","
-                + fuAtpMinusCmAtp + ","
+                + fuAtpMinusCmAtpPct + ","
+                + hammer + ","
+                + (NR4 == 0 ? "" : NR4) + ","
+                + (NR7 == 0 ? "" : NR7);
+    }
+
+    public String toDailyMarketScanString() {
+        return  symbol + ","
+                + tradeDate + ","
+                + tradeDate.getDayOfWeek() + ","
+
+                + open + ","
+                + high + ","
+                + low + ","
+                + close + ","
+                + bullDay + ","
+                + bearDay + ","
+
+                + atp + ","
+                + atpChgPrcnt + ","
+                + mvwap + ","
+                + fuOiLots + ","
+                + fuOiChgPrcnt + ","
+                + longBuildup + ","
+                + shortBuildup + ","
+
+                + delDiversion + ","
+
+                + atpFixGrowth + ","
+                + atpFixGrowthChg + ","
+
+                + delFixGrowth + ","
+                + deliveryChgPrcnt + ","
+
+                + lotSize + ","
+
+                + fuAtp + ","
+                + fuAtpMinusCmAtpPct + ","
                 + hammer + ","
                 + (NR4 == 0 ? "" : NR4) + ","
                 + (NR7 == 0 ? "" : NR7);
@@ -839,12 +894,12 @@ public class DeliverySpikeDto {
         this.fuAtp = fuAtp;
     }
 
-    public BigDecimal getFuAtpMinusCmAtp() {
-        return fuAtpMinusCmAtp;
+    public BigDecimal getFuAtpMinusCmAtpPct() {
+        return fuAtpMinusCmAtpPct;
     }
 
-    public void setFuAtpMinusCmAtp(BigDecimal fuAtpMinusCmAtp) {
-        this.fuAtpMinusCmAtp = fuAtpMinusCmAtp;
+    public void setFuAtpMinusCmAtpPct(BigDecimal fuAtpMinusCmAtpPct) {
+        this.fuAtpMinusCmAtpPct = fuAtpMinusCmAtpPct;
     }
 
     public BigDecimal getAtpMhlm() {
@@ -1023,4 +1078,84 @@ public class DeliverySpikeDto {
         this.fuOiChgPrcnt = fuOiChgPrcnt;
     }
 
+    public BigDecimal getAtpMinusClose() {
+        return atpMinusClose;
+    }
+
+    public void setAtpMinusClose(BigDecimal atpMinusClose) {
+        this.atpMinusClose = atpMinusClose;
+    }
+
+    public BigDecimal getAtpMinusClosePrcnt() {
+        return atpMinusClosePrcnt;
+    }
+
+    public void setAtpMinusClosePrcnt(BigDecimal atpMinusClosePrcnt) {
+        this.atpMinusClosePrcnt = atpMinusClosePrcnt;
+    }
+
+    public String getDelDiversion() {
+        return delDiversion;
+    }
+
+    public void setDelDiversion(String delDiversion) {
+        this.delDiversion = delDiversion;
+    }
+
+    public BigDecimal getAtpFixGrowthChg() {
+        return atpFixGrowthChg;
+    }
+
+    public void setAtpFixGrowthChg(BigDecimal atpFixGrowthChg) {
+        this.atpFixGrowthChg = atpFixGrowthChg;
+    }
+
+    public String getDayTrend() {
+        return dayTrend;
+    }
+
+    public void setDayTrend(String dayTrend) {
+        this.dayTrend = dayTrend;
+    }
+
+    public String getLongShortBuildup() {
+        return longShortBuildup;
+    }
+
+    public void setLongShortBuildup(String longShortBuildup) {
+        this.longShortBuildup = longShortBuildup;
+    }
+
+    public String getBullDay() {
+        return bullDay;
+    }
+
+    public void setBullDay(String bullDay) {
+        this.bullDay = bullDay;
+    }
+
+    public String getBearDay() {
+        return bearDay;
+    }
+
+    public void setBearDay(String bearDay) {
+        this.bearDay = bearDay;
+    }
+
+
+    public String getLongBuildup() {
+        return longBuildup;
+    }
+
+    public void setLongBuildup(String longBuildup) {
+        this.longBuildup = longBuildup;
+    }
+
+    public String getShortBuildup() {
+        return shortBuildup;
+    }
+
+    public void setShortBuildup(String shortBuildup) {
+        this.shortBuildup = shortBuildup;
+    }
 }

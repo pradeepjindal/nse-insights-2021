@@ -114,6 +114,9 @@ sqlDeliverySpikeThreeFor30DayzOrderBySymbolAndTradeDate: >
     tdy.cmlast AS last,
     tdy.cmatp AS atp,
 
+    tdy.cmatp - tdy.cmclose atp_minus_close,
+    round((tdy.cmatp - tdy.cmclose)/(tdy.cmatp/100), 2) AS atp_minus_close_prcnt,
+
     round(tdy.cmopen / (yes.cmopen/100),2) - 100 AS open_chg_prcnt,
     round(tdy.cmhigh / (yes.cmhigh/100),2) - 100 AS high_chg_prcnt,
     round(tdy.cmlow / (yes.cmlow/100),2) - 100 AS low_chg_prcnt,

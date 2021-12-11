@@ -1,6 +1,7 @@
 package org.pra.nse.report;
 
 import org.pra.nse.Manager;
+import org.pra.nse.report.pastPresentFuture.DailyMarketScanReporter;
 import org.pra.nse.report.pastPresentFuture.PastPresentFutureReporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,9 +38,12 @@ public class ReportManager implements Manager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportManager.class);
 
     private final PastPresentFutureReporter pastPresentFutureReporter;
+    private final DailyMarketScanReporter dailyMarketScanReporter;
 
-    public ReportManager(PastPresentFutureReporter pastPresentFutureReporter) {
+    public ReportManager(PastPresentFutureReporter pastPresentFutureReporter,
+                         DailyMarketScanReporter dailyMarketScanReporter) {
         this.pastPresentFutureReporter = pastPresentFutureReporter;
+        this.dailyMarketScanReporter = dailyMarketScanReporter;
     }
 
     @Override
@@ -53,10 +57,15 @@ public class ReportManager implements Manager {
 
 //        pastPresentFutureReporter.reportFromLast(10);
 //        pastPresentFutureReporter.reportFromLast(15);
+
         pastPresentFutureReporter.reportFromLast(20);
+
 //        pastPresentFutureReporter.reportFromLast(40);
 
         //pastPresentFutureReporter.reportForDate(LocalDate.of(2021,4,15),20);
+
+        //-------------------------------------------------------
+        dailyMarketScanReporter.reportFromLast(20);
 
         LOGGER.info("======================================== Report Manager");
     }

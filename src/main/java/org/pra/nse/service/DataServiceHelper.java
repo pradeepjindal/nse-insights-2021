@@ -112,8 +112,9 @@ public class DataServiceHelper {
         return localMap;
     }
 
-    void enrichWithFutureLotData(List<DeliverySpikeDto> dbData) {
+    void enrichWithFutureLotData(List<DeliverySpikeDto> dbData, FuOpLotService fuOpLotService) {
         dbData.forEach( dto -> {
+            //BigDecimal lotSize1 = fuOpLotService.getLotSizeAsBigDecimal(dto.getSymbol(), dto.getTradeDate(), dto.getTradeDate());
             BigDecimal lotSize = LotSizeService.getLotSizeAsBigDecimal(FmCategoryEnum.FM_ALL, dto.getSymbol());
             dto.setLotSize(lotSize);
         });

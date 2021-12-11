@@ -13,7 +13,10 @@ import org.pra.nse.refdata.FmCategoryEnum;
 import org.pra.nse.refdata.LotSizeService;
 import org.pra.nse.service.DataServiceI;
 import org.pra.nse.service.DateService;
-import org.pra.nse.util.*;
+import org.pra.nse.util.DateUtils;
+import org.pra.nse.util.DirUtils;
+import org.pra.nse.util.NseFileUtils;
+import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -26,14 +29,14 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.pra.nse.report.pastPresentFuture.ReportConstants.PPF_CSV_HEADER_2;
-import static org.pra.nse.report.pastPresentFuture.ReportConstants.PPF;
+import static org.pra.nse.report.pastPresentFuture.ReportConstants.DMS;
+import static org.pra.nse.report.pastPresentFuture.ReportConstants.DAILY_MARKET_SCAN_CSV_HEADER_1;
 
 @Component
-public class PastPresentFutureReporter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PastPresentFutureReporter.class);
+public class DailyMarketScanReporter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DailyMarketScanReporter.class);
 
-    private final String outputDirName = ApCo.REPORTS_DIR_NAME_PPF;
+    private final String outputDirName = ApCo.REPORTS_DIR_NAME_DAILY_MARKET_SCAN;
 
     private final CalcRsiRepo calcRsiRepository;
     private final CalcMfiRepo calcMfiRepository;
@@ -45,13 +48,13 @@ public class PastPresentFutureReporter {
     private final DataServiceI dataService;
     private final DateService dateService;
 
-    PastPresentFutureReporter(CalcRsiRepo calcRsiRepository,
-                              CalcMfiRepo calcMfiRepository,
-                              CalcAvgRepo calcAvgRepository,
-                              EmailService emailService,
-                              NseFileUtils nseFileUtils,
-                              PraFileUtils praFileUtils,
-                              DataServiceI dataService, DateService dateService) {
+    DailyMarketScanReporter(CalcRsiRepo calcRsiRepository,
+                            CalcMfiRepo calcMfiRepository,
+                            CalcAvgRepo calcAvgRepository,
+                            EmailService emailService,
+                            NseFileUtils nseFileUtils,
+                            PraFileUtils praFileUtils,
+                            DataServiceI dataService, DateService dateService) {
         this.calcRsiRepository = calcRsiRepository;
         this.calcMfiRepository = calcMfiRepository;
         this.calcAvgRepository = calcAvgRepository;
@@ -86,7 +89,7 @@ public class PastPresentFutureReporter {
 
         String fixed_width_days_str = "_".concat(forMinusDays.toString());
         fixed_width_days_str = fixed_width_days_str.substring(fixed_width_days_str.length()-2, fixed_width_days_str.length());
-        String report_name = PPF.replace("days", fixed_width_days_str);
+        String report_name = DMS.replace("days", fixed_width_days_str);
 
         //String fileName = report_name + "-" + forDate.toString() + ApCo.REPORTS_FILE_EXT;
         String fileName = report_name + "-" + forDate.toString() + "" + ApCo.REPORTS_FILE_EXT;
@@ -116,7 +119,7 @@ public class PastPresentFutureReporter {
         Map<String, List<DeliverySpikeDto>> symbolMap;
         symbolMap = prepareReportData(forDate, forMinusDays, fullFileNameWithFullPath);
         writeReport(fullFileNameWithFullPath, symbolMap);
-        String str = "PPF-" +forDate+ "-(" +forMinusDays+ ").csv";
+        String str = "DMS-" +forDate+ "-(" +forMinusDays+ ").csv";
         emailReport(null, str, str, fullFileNameWithFullPath);
     }
 
@@ -277,18 +280,18 @@ public class PastPresentFutureReporter {
         }
         // create and collect csv lines
         List<String> csvLines = new LinkedList<>();
-        dtos.forEach( dto -> csvLines.add(dto.toPpfString2()) );
+        dtos.forEach( dto -> csvLines.add(dto.toDailyMarketScanString()) );
 
         // print csv lines
         File csvOutputFile = new File(toPath);
         try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
-            pw.println(PPF_CSV_HEADER_2);
+            pw.println(DAILY_MARKET_SCAN_CSV_HEADER_1);
             csvLines.stream()
                     //.map(this::convertToCSV)
                     .forEach(pw::println);
         } catch (FileNotFoundException e) {
             LOGGER.error("Error:", e);
-            throw new RuntimeException(PPF + ": Could not create file");
+            throw new RuntimeException(DMS + ": Could not create file");
         }
     }
 

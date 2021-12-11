@@ -6,7 +6,8 @@ C:\rdbms\PostgreSQLPort_13.1\App\PgSQL\bin>pg_dump --username=postgres -s postgr
 
 DUMP schema
 C:\rdbms\PostgreSQLPort_13.1\App\PgSQL\bin>pg_dump.exe -p 5433 -U postgres -s postgres > dump_13.3b-(2021-10-18-schema).dmp
-
+C:\rdbms\PostgreSQLPort_13.4a\App\PgSQL\bin>pg_dump.exe -p 5432 -U postgres -s postgres > dump_13.4a-(2021-12-11-schema).dmp
 
 RESTORE schema
-C:\rdbms\PostgreSQLPort_13.1\App\PgSQL\bin>psql -d postgres -h localhost -U postgres < dump_13.3b-(2021-10-18-schema).dmp
+C:\rdbms\PostgreSQLPort_13.1\App\PgSQL\bin>psql -h localhost -p 5432 -U postgres -d postgres < dump_13.3b-(2021-10-18-schema).dmp
+C:\rdbms\PostgreSQLPort_13.5a\App\PgSQL\bin>psql -h localhost -p 5433 -U postgres -d postgres < dump_13.4a-(2021-12-11-schema).dmp
