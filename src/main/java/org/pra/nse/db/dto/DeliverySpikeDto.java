@@ -302,7 +302,8 @@ public class DeliverySpikeDto {
                 + fuAtpMinusCmAtpPct + ","
                 + hammer + ","
                 + (NR4 == 0 ? "" : NR4) + ","
-                + (NR7 == 0 ? "" : NR7);
+                + (NR7 == 0 ? "" : NR7) + ","
+                + "OeH,OeL,CeH,CeL";
     }
 
     public String toDailyMarketScanString() {

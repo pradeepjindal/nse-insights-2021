@@ -70,7 +70,7 @@ public class ReportConstants {
                     ",lotSize" +
                     ",vol_InLakh,trd_InLakh,del_InLakh,vdr" +
                     ",fuAtp,fuAtpMcmAtp_pct" +
-                    ",Hammer,NR4,NR7";
+                    ",Hammer,NR4,NR7,OeL,OeH,CeH,CeL";
 
     static final String DAILY_MARKET_SCAN_CSV_HEADER_1 = ""
             + "symbol,tradeDate,tradeDay,"

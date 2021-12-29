@@ -126,47 +126,6 @@ public class EnrichmentHelper {
         }
     }
 
-    public static void enrichLongShortBuildupForEachSymbol(List<DeliverySpikeDto> DeliverySpikeDtoList) {
-        String buildup;
-        for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
-
-            float atpChg = dto.getAtpChgPrcnt().floatValue();
-            float atpMinusClose = dto.getAtpMinusClosePrcnt().floatValue();
-            float delChg = dto.getDeliveryChgPrcnt().floatValue();
-            float fuOiChg = dto.getFuOiChgPrcnt().floatValue();
-
-            boolean atpIsUp = atpChg > 1;
-            boolean atpIsDn = atpChg < -1;
-
-            boolean delIsUp = delChg > 50;
-            boolean delIsDn = delChg < -50;
-
-            boolean fuOiUp = fuOiChg > 4;
-            boolean fuOiDn = fuOiChg < -4;
-
-            buildup = "";
-            // long build up = price is up 1%+ and fu oi is up by 4%+
-            {
-                boolean longBuildUp = atpIsUp && fuOiUp;
-
-                if(longBuildUp) buildup = "LongBuildup";
-                dto.setLongShortBuildup(buildup);
-                dto.setLongBuildup(buildup);
-            }
-
-            buildup = "";
-            // short build up = price is dn 1%+ and fu oi is dn by 4%+
-            {
-                boolean shortBuildUp = atpIsDn && fuOiDn;
-
-                if(shortBuildUp) buildup = "____ShortBuildup";
-                dto.setLongShortBuildup(buildup);
-                dto.setShortBuildup(buildup.replace("_",""));
-            }
-
-        }
-    }
-
     public static void enrichDeliveryDiversionForEachSymbol(List<DeliverySpikeDto> DeliverySpikeDtoList) {
         for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
 
@@ -195,6 +154,56 @@ public class EnrichmentHelper {
                 boolean bullLostMoney = atpMinusClose > 0;
                 if(delIsUp && atpIsUp && bullLostMoney) {
                     dto.setDelDiversion(dto.getDelDiversion() + "_BullDay-Bull-LostMoney");
+                }
+            }
+
+        }
+    }
+
+    public static void enrichLongShortBuildupForEachSymbol(List<DeliverySpikeDto> DeliverySpikeDtoList) {
+        String buildup;
+        for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
+
+            if(dto.getSymbol().equals("METROPOLIS"))
+                System.out.println("");
+            if(dto.getSymbol().equals("TORNTPOWER"))
+                System.out.println("");
+
+            dto.setLongShortBuildup("");
+            dto.setLongBuildup("");
+            dto.setShortBuildup("");
+
+            float atpChg = dto.getAtpChgPrcnt().floatValue();
+            float atpMinusClose = dto.getAtpMinusClosePrcnt().floatValue();
+            float delChg = dto.getDeliveryChgPrcnt().floatValue();
+            float fuOiChg = dto.getFuOiChgPrcnt().floatValue();
+
+            boolean atpIsUp = atpChg > .90;
+            boolean atpIsDn = atpChg < -.90;
+
+            boolean delIsUp = delChg > 50;
+            boolean delIsDn = delChg < -50;
+
+            boolean fuOiUp = fuOiChg > 4;
+            boolean fuOiDn = fuOiChg < -4;
+
+            // long build up = price is up 1%+ and fu oi is up by 4%+
+            {
+                boolean longBuildUp = atpIsUp && fuOiUp;
+                if(longBuildUp) {
+                    buildup = "LongBuildup";
+                    dto.setLongShortBuildup(buildup);
+                    dto.setLongBuildup(buildup);
+                }
+            }
+
+            // short build up = price is dn 1%+ and fu oi is dn by 4%+
+            {
+                boolean shortBuildUp = atpIsDn && fuOiUp;
+                if(shortBuildUp) {
+                    buildup = "____ShortBuildup";
+                    dto.setLongShortBuildup(buildup);
+                    dto.setShortBuildup(buildup);
                 }
             }
 
