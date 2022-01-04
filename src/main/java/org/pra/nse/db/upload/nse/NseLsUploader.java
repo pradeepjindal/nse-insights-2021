@@ -1,6 +1,7 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
+import org.pra.nse.PraCons;
 import org.pra.nse.csv.bean.in.LsBean;
 import org.pra.nse.csv.read.LsCsvReader;
 import org.pra.nse.db.dao.NseLsDao;
@@ -30,8 +31,8 @@ public class NseLsUploader {
     private final PraFileUtils praFileUtils;
 
 
-    private final String fileDirName = ApCo.LS_DIR_NAME;
-    private final String filePrefix = ApCo.PRA_LS_FILE_PREFIX;
+    private final String fileDirName = PraCons.LS_DIR_NAME;
+    private final String filePrefix = PraCons.PRA_LS_FILE_PREFIX;
     private final String fileExtension = ApCo.DATA_FILE_EXT;
     private final LocalDate defaultDate = ApCo.UPLOAD_NSE_FROM_DATE;
 
@@ -100,7 +101,7 @@ public class NseLsUploader {
             latestFileDate_forDate = str == null ? LocalDate.now() : DateUtils.getLocalDateFromPath(str);
         }
 
-        String fromFile = Data_Dir + File.separator + ApCo.PRA_LS_FILE_PREFIX + latestFileDate_forDate + ApCo.DATA_FILE_EXT;
+        String fromFile = Data_Dir + File.separator + PraCons.PRA_LS_FILE_PREFIX + latestFileDate_forDate + ApCo.DATA_FILE_EXT;
         //LOGGER.info("LS-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(nseFileUtils.isFileAbsent(fromFile)) {

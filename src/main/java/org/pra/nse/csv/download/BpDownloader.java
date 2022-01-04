@@ -2,6 +2,7 @@ package org.pra.nse.csv.download;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.NseCons;
+import org.pra.nse.PraCons;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -57,7 +58,7 @@ public class BpDownloader {
     }
 
     public void downloadFromLastDate() {
-        String str = praFileUtils.getLatestFileNameFor(Data_Dir, ApCo.PRA_BP_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
+        String str = praFileUtils.getLatestFileNameFor(Data_Dir, PraCons.PRA_BP_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
         LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str);
         List<String> filesDownloadUrl = prepareFileUrls(dateOfLatestFile.plusDays(1));
         looper(filesDownloadUrl);
@@ -109,7 +110,7 @@ public class BpDownloader {
 
     private void transformToCsv(String downloadedDirAndFileName) {
         int firstIndex = downloadedDirAndFileName.lastIndexOf("_");
-        String csvFileName = ApCo.PRA_BP_FILE_PREFIX
+        String csvFileName = PraCons.PRA_BP_FILE_PREFIX
                 + DateUtils.transformDate(downloadedDirAndFileName.substring(firstIndex+1, firstIndex+9))
                 + ApCo.REPORTS_FILE_EXT;
         String toFile = ApCo.ROOT_DIR + File.separator + NseCons.BP_DIR_NAME + File.separator + csvFileName;

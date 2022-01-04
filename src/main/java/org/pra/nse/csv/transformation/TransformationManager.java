@@ -1,5 +1,6 @@
 package org.pra.nse.csv.transformation;
 
+import org.pra.nse.ApCo;
 import org.pra.nse.Manager;
 import org.pra.nse.refdata.FoService;
 import org.slf4j.Logger;
@@ -38,7 +39,13 @@ public class TransformationManager implements Manager {
     @Override
     public void execute() {
         LOGGER.info(".");
-        LOGGER.info("____________________ Transform Manager");
+        if(ApCo.MANAGER_TRANSFORM_DISABLED) {
+            LOGGER.info("____________________ Transform Manager - DISABLES");
+            return;
+        } else {
+            LOGGER.info("____________________ Transform Manager");
+        }
+
 
 //        FoService.getLotSize("SBIN", LocalDate.of(2021,12,29), LocalDate.of(2021,12,30));
 

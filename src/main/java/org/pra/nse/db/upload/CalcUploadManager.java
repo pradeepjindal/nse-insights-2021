@@ -1,5 +1,6 @@
 package org.pra.nse.db.upload;
 
+import org.pra.nse.ApCo;
 import org.pra.nse.Manager;
 import org.pra.nse.db.upload.calc.CalcAvgUploader;
 import org.pra.nse.db.upload.calc.CalcMfiUploader;
@@ -29,7 +30,12 @@ public class CalcUploadManager implements Manager {
     @Override
     public void execute() {
         LOGGER.info(".");
-        LOGGER.info("____________________ CALC - Upload Manager");
+        if(ApCo.MANAGER_CALC_UPLOAD_DISABLED) {
+            LOGGER.info("____________________ CALC Upload Manager - DISABLES");
+            return;
+        } else {
+            LOGGER.info("____________________ CALC Upload Manager");
+        }
 
         LOGGER.info("----------");
         calcAvgUploader.uploadFromDefaultDate();

@@ -1,6 +1,7 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
+import org.pra.nse.PraCons;
 import org.pra.nse.csv.bean.in.DmBean;
 import org.pra.nse.csv.read.DmCsvReader;
 import org.pra.nse.db.dao.NseDmDao;
@@ -29,11 +30,11 @@ public class NseDmUploader {
     private final PraFileUtils praFileUtils;
     private final DmCsvReader csvReader;
 
-    private String fileDirName = ApCo.DM_DIR_NAME;
-    private String filePrefix = ApCo.PRA_DM_FILE_PREFIX;
+    private String fileDirName = PraCons.DM_DIR_NAME;
+    private String filePrefix = PraCons.PRA_DM_FILE_PREFIX;
     private LocalDate defaultDate = ApCo.UPLOAD_NSE_FROM_DATE;
 
-    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.DM_DIR_NAME;
+    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + PraCons.DM_DIR_NAME;
 
     public NseDmUploader(NseDmRepo repository,
                          NseDmDao dao,
@@ -91,7 +92,7 @@ public class NseDmUploader {
 //            LOGGER.info("DM-upload | uploading - for date:[{}]", forDate);
         }
 
-        String fromFile = Data_Dir + File.separator+ ApCo.PRA_DM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
+        String fromFile = Data_Dir + File.separator + PraCons.PRA_DM_FILE_PREFIX + forDate + ApCo.DATA_FILE_EXT;
         //LOGGER.info("DM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFilePresent(fromFile)) {

@@ -45,18 +45,19 @@ public class ApCo {
     public static final boolean ALL_FM_STOCKS = true;
     public static final boolean PPF_REPORT_INCREMENTAL_FLAG = true;
 
+    public static final boolean MANAGER_DOWNLOAD_DISABLED = true;
+    public static final boolean MANAGER_TRANSFORM_DISABLED = true;
+    public static final boolean MANAGER_NSE_UPLOAD_DISABLED = true;
+    public static final boolean MANAGER_CALC_DISABLED = true;
+    public static final boolean MANAGER_CALC_UPLOAD_DISABLED = true;
+    public static final boolean MANAGER_REPORT_DISABLED = true;
+    public static final boolean MANAGER_PROCESS_DISABLED = true;
+
     //public static final String ROOT_DIR = System.getProperty("user.home");
     //public static final String ROOT_DIR = "d:" + File.separator + "nseHome";
     //public static final String ROOT_DIR = System.getProperty("user.home");
     public static final String ROOT_DIR = "d:" + File.separator + "nseEnv-2021" + File.separator + "nse-data";
 
-    public static final String CM_DIR_NAME = "pra-cm";
-    public static final String DM_DIR_NAME = "pra-dm";
-    public static final String FM_DIR_NAME = "pra-fm";
-    public static final String AB_DIR_NAME = "pra-ab";
-    public static final String NX_DIR_NAME = "pra-nx";
-    public static final String FO_DIR_NAME = "pra-fo";
-    public static final String LS_DIR_NAME = "pra-ls";
 
     public static final String AVG_DIR_NAME = "calc-avg";
     public static final String RSI_DIR_NAME = "calc-rsi";
@@ -78,15 +79,6 @@ public class ApCo {
     public static final String MANISH_DIR_NAME = "reports-manish";
     public static final String SHUVI_DIR_NAME = "reports-shuvi";
 
-
-    public static final String AB_FILE_PREFIX = "EQ_";
-    public static final String PRA_CM_FILE_PREFIX = "cm-";
-    public static final String PRA_FM_FILE_PREFIX = "fm-";
-    public static final String PRA_DM_FILE_PREFIX = "dm-";
-    public static final String PRA_BP_FILE_PREFIX = "bp-";
-    public static final String PRA_NX_FILE_PREFIX = "nx-";
-    public static final String PRA_LS_FILE_PREFIX = "ls-";
-    public static final String PRA_FO_FILE_PREFIX = "fo-";
 
     public static final String DATE_REGEX_yyyyMMdd = "\\d{4}-\\d{2}-\\d{2}";
     public static final String DATA_FILE_NAME_DATE_REGEX = "\\d{4}-\\d{2}-\\d{2}";

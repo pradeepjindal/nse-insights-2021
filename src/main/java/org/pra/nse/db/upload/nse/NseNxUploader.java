@@ -1,6 +1,7 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
+import org.pra.nse.PraCons;
 import org.pra.nse.csv.bean.in.NxBean;
 import org.pra.nse.csv.read.NxCsvReader;
 import org.pra.nse.db.dao.NseNxDao;
@@ -30,11 +31,11 @@ public class NseNxUploader {
     private final PraFileUtils praFileUtils;
     private final NxCsvReader csvReader;
 
-    private String fileDirName = ApCo.NX_DIR_NAME;
-    private String filePrefix = ApCo.PRA_NX_FILE_PREFIX;
+    private String fileDirName = PraCons.NX_DIR_NAME;
+    private String filePrefix = PraCons.PRA_NX_FILE_PREFIX;
     private LocalDate defaultDate = ApCo.UPLOAD_NSE_FROM_DATE;
 
-    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.NX_DIR_NAME;
+    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + PraCons.NX_DIR_NAME;
 
     public NseNxUploader(NseNxRepo repository,
                          NseNxDao dao,
@@ -99,7 +100,7 @@ public class NseNxUploader {
 //            LOGGER.info("IDX-upload | uploading - for date:[{}]", forDate);
         }
 
-        String fromFile = Data_Dir + File.separator+ ApCo.PRA_NX_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
+        String fromFile = Data_Dir + File.separator+ PraCons.PRA_NX_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
         //LOGGER.info("IDX-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFilePresent(fromFile)) {

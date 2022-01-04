@@ -31,10 +31,10 @@ public class DmMerger {
         LOGGER.info("MT-Merge | for date:[{}]", forDate);
         String fromFile;
         //fromFile = fileUtils.getLatestFileNameForMat(1);
-        fromFile = praFileUtils.getLatestFileNameFor(PraCons.DM_FILES_PATH, ApCo.PRA_DM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT,1, forDate);
+        fromFile = praFileUtils.getLatestFileNameFor(PraCons.DM_FILES_PATH, PraCons.PRA_DM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT,1, forDate);
         Map<String, DmBean> mtLatestBeanMap = csvReader.read(fromFile);
         //fromFile = fileUtils.getLatestFileNameForMat(2);
-        fromFile = praFileUtils.getLatestFileNameFor(PraCons.DM_FILES_PATH, ApCo.PRA_DM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT,2, forDate);
+        fromFile = praFileUtils.getLatestFileNameFor(PraCons.DM_FILES_PATH, PraCons.PRA_DM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT,2, forDate);
         Map<String, DmBean> matPreviousBeanMap = csvReader.read(fromFile);
         praBeans.forEach(praBean -> {
             if(mtLatestBeanMap.containsKey(praBean.getSymbol()) && matPreviousBeanMap.containsKey(praBean.getSymbol())) {

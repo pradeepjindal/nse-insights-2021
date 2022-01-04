@@ -1,6 +1,7 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
+import org.pra.nse.PraCons;
 import org.pra.nse.csv.bean.in.FmBean;
 import org.pra.nse.csv.read.FmCsvReader;
 import org.pra.nse.db.dao.NseFmDao;
@@ -30,11 +31,11 @@ public class NseFmUploader {
     private final PraFileUtils praFileUtils;
     private final FmCsvReader csvReader;
 
-    private String fileDirName = ApCo.FM_DIR_NAME;
-    private String filePrefix = ApCo.PRA_FM_FILE_PREFIX;
+    private String fileDirName = PraCons.FM_DIR_NAME;
+    private String filePrefix = PraCons.PRA_FM_FILE_PREFIX;
     private LocalDate defaultDate = ApCo.UPLOAD_NSE_FROM_DATE;
 
-    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.FM_DIR_NAME;
+    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + PraCons.FM_DIR_NAME;
 
     public NseFmUploader(NseFmRepo repository,
                          NseFmDao dao,
@@ -92,7 +93,7 @@ public class NseFmUploader {
 //            LOGGER.info("FM-upload | uploading - for date:[{}]", forDate);
         }
 
-        String fromFile = Data_Dir + File.separator+ ApCo.PRA_FM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
+        String fromFile = Data_Dir + File.separator + PraCons.PRA_FM_FILE_PREFIX + forDate + ApCo.DATA_FILE_EXT;
         //LOGGER.info("FM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(nseFileUtils.isFileAbsent(fromFile)) {

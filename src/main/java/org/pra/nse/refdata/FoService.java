@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.pra.nse.ApCo;
+import org.pra.nse.PraCons;
 import org.pra.nse.csv.bean.in.FoBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +20,8 @@ import java.util.*;
 public class FoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(FoService.class);
 
-    private static final String foDirName = ApCo.FO_DIR_NAME;
-    private static final String foFilePrefix = ApCo.PRA_FO_FILE_PREFIX;
+    private static final String foDirName = PraCons.FO_DIR_NAME;
+    private static final String foFilePrefix = PraCons.PRA_FO_FILE_PREFIX;
     private static final String foFileExtension = ApCo.CSV_FILE_EXT;
     private static final String DataDir = ApCo.ROOT_DIR + File.separator + foDirName;
 

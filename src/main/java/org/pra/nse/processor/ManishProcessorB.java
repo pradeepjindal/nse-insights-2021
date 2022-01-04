@@ -55,7 +55,7 @@ public class ManishProcessorB {
         if(forDate.isAfter(latestNseDate)) return;
 
         String outputPathAndFileNameForFixFile = ProCo.outputPathAndFileNameForFixFile(outputFileName);
-        String foLatestFileName = praFileUtils.getLatestFileNameFor(PraCons.FM_FILES_PATH, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1, forDate);
+        String foLatestFileName = praFileUtils.getLatestFileNameFor(PraCons.FM_FILES_PATH, PraCons.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1, forDate);
         String outputPathAndFileNameForDynamicFile = ProCo.outputPathAndFileNameForDynamicFile(outputFileName, foLatestFileName);
 
         if(nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile)) {

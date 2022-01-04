@@ -1,5 +1,6 @@
 package org.pra.nse.report;
 
+import org.pra.nse.ApCo;
 import org.pra.nse.Manager;
 import org.pra.nse.report.pastPresentFuture.DailyMarketScanReporter;
 import org.pra.nse.report.pastPresentFuture.PastPresentFutureReporter;
@@ -49,7 +50,12 @@ public class ReportManager implements Manager {
     @Override
     public void execute() {
         LOGGER.info(".");
-        LOGGER.info("____________________ Report Manager");
+        if(ApCo.MANAGER_REPORT_DISABLED) {
+            LOGGER.info("____________________ Report Manager - DISABLES");
+            return;
+        } else {
+            LOGGER.info("____________________ Report Manager");
+        }
 
         //pastPresentFutureReporterNew.reportFromLast(2);
 //        pastPresentFutureReporterNew.reportFromLast(3);

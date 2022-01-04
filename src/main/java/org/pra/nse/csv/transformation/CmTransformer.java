@@ -2,6 +2,7 @@ package org.pra.nse.csv.transformation;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.NseCons;
+import org.pra.nse.PraCons;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -27,8 +28,8 @@ public class CmTransformer extends BaseTransformer {
     private final String sourceFileSuffix = NseCons.NSE_CM_FILE_SUFFIX;
     private final String sourceFileExtension = ApCo.ZIP_FILE_EXT;
 
-    private final String targetDirName = ApCo.CM_DIR_NAME;
-    private final String targetFilePrefix = ApCo.PRA_CM_FILE_PREFIX;
+    private final String targetDirName = PraCons.CM_DIR_NAME;
+    private final String targetFilePrefix = PraCons.PRA_CM_FILE_PREFIX;
     private final String targetFileExtension = ApCo.CSV_FILE_EXT;
 
     private final LocalDate defaultDate = ApCo.TRANSFORM_NSE_FROM_DATE;
@@ -115,7 +116,7 @@ public class CmTransformer extends BaseTransformer {
         }
 
         try {
-            transformationHelper.transform(Source_Data_Dir, Target_Data_Dir, ApCo.PRA_CM_FILE_PREFIX, sourceFileName, targetFileName);
+            transformationHelper.transform(Source_Data_Dir, Target_Data_Dir, PraCons.PRA_CM_FILE_PREFIX, sourceFileName, targetFileName);
             LOGGER.info("CM | transformed");
         } catch (Exception e) {
             LOGGER.warn("CM | Error while transforming file: {} {}", source, e);

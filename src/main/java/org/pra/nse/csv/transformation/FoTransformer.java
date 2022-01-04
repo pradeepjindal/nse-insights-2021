@@ -2,6 +2,7 @@ package org.pra.nse.csv.transformation;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.NseCons;
+import org.pra.nse.PraCons;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -25,8 +26,8 @@ public class FoTransformer extends BaseTransformer {
     private final String sourceFilePrefix = NseCons.NSE_FO_FILE_PREFIX;
     private final String sourceFileExtension = ApCo.ZIP_FILE_EXT;
 
-    private final String targetDirName = ApCo.FO_DIR_NAME;
-    private final String targetFilePrefix = ApCo.PRA_FO_FILE_PREFIX;
+    private final String targetDirName = PraCons.FO_DIR_NAME;
+    private final String targetFilePrefix = PraCons.PRA_FO_FILE_PREFIX;
     private final String targetFileExtension = ApCo.CSV_FILE_EXT;
 
     private final LocalDate defaultDate = ApCo.TRANSFORM_NSE_FROM_DATE;

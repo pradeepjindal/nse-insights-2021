@@ -52,7 +52,7 @@ public class ManishProcessor {
 
     public void process(LocalDate processForDate) throws IOException {
         String outputPathAndFileNameForFixFile = ProCo.outputPathAndFileNameForFixFile(ApCo.MANISH_FILE_NAME);
-        String foLatestFileName = praFileUtils.getLatestFileNameFor(PraCons.FM_FILES_PATH, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1, processForDate);
+        String foLatestFileName = praFileUtils.getLatestFileNameFor(PraCons.FM_FILES_PATH, PraCons.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1, processForDate);
         String outputPathAndFileNameForDynamicFile = ProCo.outputPathAndFileNameForDynamicFile(ApCo.MANISH_FILE_NAME, foLatestFileName);
 
         if(nseFileUtils.isFilePresent(outputPathAndFileNameForDynamicFile)) {

@@ -31,11 +31,11 @@ public class CmMerger {
         LOGGER.info("CM-Merge | for date:[{}]", forDate);
         String fromFile;
         //fromFile = fileUtils.getLatestFileNameForCm(1);
-        fromFile = praFileUtils.getLatestFileNameFor(PraCons.CM_FILES_PATH, ApCo.PRA_CM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT,1, forDate);
+        fromFile = praFileUtils.getLatestFileNameFor(PraCons.CM_FILES_PATH, PraCons.PRA_CM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT,1, forDate);
         Map<String, CmBean> latestBeanMap = csvReader.read(fromFile);
         fromFile = null;
         //fromFile = fileUtils.getLatestFileNameForCm(2);
-        fromFile = praFileUtils.getLatestFileNameFor(PraCons.CM_FILES_PATH, ApCo.PRA_CM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT,2, forDate);
+        fromFile = praFileUtils.getLatestFileNameFor(PraCons.CM_FILES_PATH, PraCons.PRA_CM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT,2, forDate);
         Map<String, CmBean> previousBeanMap = csvReader.read(fromFile);
         praBeans.forEach(praBean -> {
             String symbol = praBean.getSymbol();

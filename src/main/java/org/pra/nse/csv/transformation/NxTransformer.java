@@ -2,6 +2,7 @@ package org.pra.nse.csv.transformation;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.NseCons;
+import org.pra.nse.PraCons;
 import org.pra.nse.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +27,8 @@ public class NxTransformer extends BaseTransformer {
     private final String sourceFilePrefix = NseCons.NSE_NX_FILE_PREFIX;
     private final String sourceFileExtension = NseCons.NSE_NX_FILE_EXT;
 
-    private final String targetDirName = ApCo.NX_DIR_NAME;
-    private final String targetFilePrefix = ApCo.PRA_NX_FILE_PREFIX;
+    private final String targetDirName = PraCons.NX_DIR_NAME;
+    private final String targetFilePrefix = PraCons.PRA_NX_FILE_PREFIX;
     private final String targetFileExtension = ApCo.CSV_FILE_EXT;
 
     private final LocalDate defaultDate = ApCo.TRANSFORM_NSE_FROM_DATE;

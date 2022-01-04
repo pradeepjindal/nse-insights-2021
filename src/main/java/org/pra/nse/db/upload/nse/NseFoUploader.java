@@ -1,6 +1,7 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
+import org.pra.nse.PraCons;
 import org.pra.nse.csv.bean.in.FoBean;
 import org.pra.nse.csv.read.FoCsvReader;
 import org.pra.nse.db.dao.NseFoDao;
@@ -30,12 +31,12 @@ public class NseFoUploader {
     private final PraFileUtils praFileUtils;
     private final FoCsvReader csvReader;
 
-    private String fileDirName = ApCo.FO_DIR_NAME;
-    private String filePrefix = ApCo.PRA_FO_FILE_PREFIX;
+    private String fileDirName = PraCons.FO_DIR_NAME;
+    private String filePrefix = PraCons.PRA_FO_FILE_PREFIX;
     private String fileExtension = ApCo.DATA_FILE_EXT;
     private LocalDate defaultDate = ApCo.UPLOAD_NSE_FROM_DATE;
 
-    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.FO_DIR_NAME;
+    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + PraCons.FO_DIR_NAME;
 
     public NseFoUploader(FoCsvReader csvReader,
                          NseFoRepo repository,

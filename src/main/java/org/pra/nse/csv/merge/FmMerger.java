@@ -33,11 +33,11 @@ public class FmMerger {
         LOGGER.info("FO-Merge | for date:[{}]", forDate);
         Map<FmBean, FmBean> foBeanMap;
         //String foLatestFileName = fileUtils.getLatestFileNameForFo(1);
-        String foLatestFileName = praFileUtils.getLatestFileNameFor(PraCons.FM_FILES_PATH, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT,1, forDate);
+        String foLatestFileName = praFileUtils.getLatestFileNameFor(PraCons.FM_FILES_PATH, PraCons.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT,1, forDate);
         if(null==foLatestFileName) throw new RuntimeException("Current FM File does not exist - aborting further processing");
         LOGGER.info("latestFileName FO: " + foLatestFileName);
         //String foPreviousFileName = fileUtils.getLatestFileNameForFo(2);
-        String foPreviousFileName = praFileUtils.getLatestFileNameFor(PraCons.FM_FILES_PATH, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT,2, forDate);
+        String foPreviousFileName = praFileUtils.getLatestFileNameFor(PraCons.FM_FILES_PATH, PraCons.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT,2, forDate);
         if(null==foPreviousFileName) throw new RuntimeException("Previous FM File does not exist - aborting further processing");
         LOGGER.info("previousFileName FO: " + foPreviousFileName);
 

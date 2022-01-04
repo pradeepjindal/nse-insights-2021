@@ -1,6 +1,7 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
+import org.pra.nse.PraCons;
 import org.pra.nse.csv.bean.in.CmBean;
 import org.pra.nse.csv.read.CmCsvReader;
 import org.pra.nse.db.dao.NseCmDao;
@@ -29,11 +30,11 @@ public class NseCmUploader {
     private final PraFileUtils praFileUtils;
     private final CmCsvReader csvReader;
 
-    private String fileDirName = ApCo.CM_DIR_NAME;
-    private String filePrefix = ApCo.PRA_CM_FILE_PREFIX;
+    private String fileDirName = PraCons.CM_DIR_NAME;
+    private String filePrefix = PraCons.PRA_CM_FILE_PREFIX;
     private LocalDate defaultDate = ApCo.UPLOAD_NSE_FROM_DATE;
 
-    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.CM_DIR_NAME;
+    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + PraCons.CM_DIR_NAME;
 
     public NseCmUploader(NseCmRepo repository,
                          NseCmDao dao,
@@ -93,7 +94,7 @@ public class NseCmUploader {
             LOGGER.info("CM-upload | uploading - for date:[{}]", forDate);
         }
 
-        String fromFile = Data_Dir + File.separator+ ApCo.PRA_CM_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
+        String fromFile = Data_Dir + File.separator + PraCons.PRA_CM_FILE_PREFIX + forDate + ApCo.DATA_FILE_EXT;
         //LOGGER.info("CM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFilePresent(fromFile)) {

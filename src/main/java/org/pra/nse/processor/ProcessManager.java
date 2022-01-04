@@ -34,7 +34,12 @@ public class ProcessManager implements Manager {
     @Override
     public void execute() {
         LOGGER.info(".");
-        LOGGER.info("____________________ Process Manager");
+        if(ApCo.MANAGER_PROCESS_DISABLED) {
+            LOGGER.info("____________________ Process Manager - DISABLES");
+            return;
+        } else {
+            LOGGER.info("____________________ Process Manager");
+        }
 
         //nseFileUtils.getDatesToBeComputed(()-> ApCo.PRADEEP_FILE_NAME)
         nseFileUtils.getDatesToBeComputed( ()-> ApCo.PRADEEP_FILE_NAME, ApCo.REPORTS_FROM_DATE)

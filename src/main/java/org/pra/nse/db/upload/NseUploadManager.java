@@ -1,12 +1,11 @@
 package org.pra.nse.db.upload;
 
+import org.pra.nse.ApCo;
 import org.pra.nse.Manager;
 import org.pra.nse.db.upload.nse.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
 
 
 @Component
@@ -19,19 +18,22 @@ public class NseUploadManager implements Manager {
     private final NseDmUploader nseDmUploader;
     private final NseNxUploader nseNxUploader;
     private final NseLsUploader nseLsUploader;
+    private final NseFoUploader nseFoUploader;
 
     public NseUploadManager(NseCmUploader nseCmUploader,
                             NseFmUploader nseFmUploader,
                             NseOmUploader nseOmUploader,
                             NseDmUploader nseDmUploader,
                             NseNxUploader nseNxUploader,
-                            NseLsUploader nseLsUploader) {
+                            NseLsUploader nseLsUploader,
+                            NseFoUploader nseFoUploader) {
         this.nseCmUploader = nseCmUploader;
         this.nseFmUploader = nseFmUploader;
         this.nseOmUploader = nseOmUploader;
         this.nseDmUploader = nseDmUploader;
         this.nseNxUploader = nseNxUploader;
         this.nseLsUploader = nseLsUploader;
+        this.nseFoUploader = nseFoUploader;
     }
 
 
@@ -39,6 +41,12 @@ public class NseUploadManager implements Manager {
     public void execute() {
         LOGGER.info(".");
         LOGGER.info("____________________ NSE - Upload Manager");
+        if(ApCo.MANAGER_NSE_UPLOAD_DISABLED) {
+            LOGGER.info("____________________ NSE Upload Manager - DISABLES");
+            return;
+        } else {
+            LOGGER.info("____________________ NSE Upload Manager");
+        }
 
 //        nseCmUploader.upload2021();
 //        nseCmUploader.uploadForDate(LocalDate.of(2020, 11, 23));
@@ -52,17 +60,20 @@ public class NseUploadManager implements Manager {
 //        nseNxUploader.upload2021();
 
 
-        nseCmUploader.uploadFromDefaultDate();
-        LOGGER.info("----------");
-        nseDmUploader.uploadFromDefaultDate();
-        LOGGER.info("----------");
-        nseFmUploader.uploadFromDefaultDate();
-        LOGGER.info("----------");
-        nseOmUploader.uploadFromDefaultDate();
-        LOGGER.info("----------");
-        nseNxUploader.uploadFromDefaultDate();
+//        nseCmUploader.uploadFromDefaultDate();
+//        LOGGER.info("----------");
+//        nseDmUploader.uploadFromDefaultDate();
+//        LOGGER.info("----------");
+//        nseFmUploader.uploadFromDefaultDate();
+//        LOGGER.info("----------");
+//        nseOmUploader.uploadFromDefaultDate();
+//        LOGGER.info("----------");
+//        nseNxUploader.uploadFromDefaultDate();
 //        LOGGER.info("----------");
 //        nseLsUploader.uploadFromDefaultDate();
+        LOGGER.info("----------");
+        nseFmUploader.uploadFromDefaultDate();
+
 
 //        nseCmUploader.uploadFromLatestDate();
 //        LOGGER.info("----------");

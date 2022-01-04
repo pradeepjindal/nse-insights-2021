@@ -78,7 +78,7 @@ public class MainProcess implements ApplicationRunner {
 
         try {
             DirUtils.createRootFolder();
-//            downloadManager.execute();
+            downloadManager.execute();
             transformationManager.execute();
             nseUploadManager.execute();
 
@@ -88,10 +88,10 @@ public class MainProcess implements ApplicationRunner {
                 reportManager.execute();
             }
 
-            if(praFileUtils.validateDownloadCDF() != null) {
-                processManager.execute();
-                //statisticsManager.execute();
-            }
+//            if(praFileUtils.validateDownloadCDF() != null) {
+//                processManager.execute();
+//                //statisticsManager.execute();
+//            }
 
             //statisticsManager.execute();
 

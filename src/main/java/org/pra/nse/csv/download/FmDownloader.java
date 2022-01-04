@@ -2,6 +2,7 @@ package org.pra.nse.csv.download;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.NseCons;
+import org.pra.nse.PraCons;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -50,7 +51,7 @@ public class FmDownloader {
     }
 
     public void downloadFromLastDate() {
-        String str = praFileUtils.getLatestFileNameFor(Data_Dir, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
+        String str = praFileUtils.getLatestFileNameFor(Data_Dir, PraCons.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
         LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str);
         List<String> filesDownloadUrls = prepareFileUrls(dateOfLatestFile.plusDays(1));
         if(filesDownloadUrls == null || filesDownloadUrls.size() == 0) return;

@@ -2,6 +2,7 @@ package org.pra.nse.csv.transformation;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.NseCons;
+import org.pra.nse.PraCons;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -30,8 +31,8 @@ public class DmTransformer extends BaseTransformer {
     private final String sourceFilePrefix = NseCons.NSE_DM_FILE_PREFIX;
     private final String sourceFileExtension = NseCons.NSE_DM_FILE_EXT;
 
-    private final String targetDirName = ApCo.DM_DIR_NAME;
-    private final String targetFilePrefix = ApCo.PRA_DM_FILE_PREFIX;
+    private final String targetDirName = PraCons.DM_DIR_NAME;
+    private final String targetFilePrefix = PraCons.PRA_DM_FILE_PREFIX;
     private final String targetFileExtension = ApCo.CSV_FILE_EXT;
 
     private final LocalDate defaultDate = ApCo.TRANSFORM_NSE_FROM_DATE;

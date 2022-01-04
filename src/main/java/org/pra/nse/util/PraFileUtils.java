@@ -150,7 +150,7 @@ public class PraFileUtils {
         return DateUtils.toLocalDate(getLatestCmStringDate());
     }
     private String getLatestCmStringDate() {
-        String cmDate = getLatestFileNameFor(PraCons.CM_FILES_PATH, ApCo.PRA_CM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
+        String cmDate = getLatestFileNameFor(PraCons.CM_FILES_PATH, PraCons.PRA_CM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
         cmDate = ProCo.extractDate(cmDate);
         return cmDate;
     }
@@ -159,7 +159,7 @@ public class PraFileUtils {
         return DateUtils.toLocalDate(getLatestDmStringDate());
     }
     private String getLatestDmStringDate() {
-        String mtDate = getLatestFileNameFor(PraCons.DM_FILES_PATH, ApCo.PRA_DM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
+        String mtDate = getLatestFileNameFor(PraCons.DM_FILES_PATH, PraCons.PRA_DM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
         mtDate = ProCo.extractDate(mtDate);
         return mtDate;
     }
@@ -168,7 +168,7 @@ public class PraFileUtils {
         return DateUtils.toLocalDate(getLatestFmStringDate());
     }
     private String getLatestFmStringDate() {
-        String foDate = getLatestFileNameFor(PraCons.FM_FILES_PATH, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
+        String foDate = getLatestFileNameFor(PraCons.FM_FILES_PATH, PraCons.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
         foDate = ProCo.extractDate(foDate);
         return foDate;
     }

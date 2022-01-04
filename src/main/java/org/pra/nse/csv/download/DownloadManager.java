@@ -1,5 +1,6 @@
 package org.pra.nse.csv.download;
 
+import org.pra.nse.ApCo;
 import org.pra.nse.Manager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,12 @@ public class DownloadManager implements Manager {
     @Override
     public void execute() {
         LOGGER.info(".");
-        LOGGER.info("____________________ Download Manager");
+        if(ApCo.MANAGER_DOWNLOAD_DISABLED) {
+            LOGGER.info("____________________ Download Manager - DISABLES");
+            return;
+        } else {
+            LOGGER.info("____________________ Download Manager");
+        }
 
         cmDownloader.downloadFromDefaultDate();
         LOGGER.info("----------");

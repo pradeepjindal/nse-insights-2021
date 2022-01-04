@@ -2,6 +2,7 @@ package org.pra.nse.csv.transformation;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.NseCons;
+import org.pra.nse.PraCons;
 import org.pra.nse.email.EmailService;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.DirUtils;
@@ -33,7 +34,7 @@ public class AbTransformer extends BaseTransformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbTransformer.class);
 
     private final String Source_Data_Dir = ApCo.ROOT_DIR + File.separator + NseCons.AB_DIR_NAME;
-    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.AB_DIR_NAME;
+    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + PraCons.AB_DIR_NAME;
 
 
     private final EmailService emailService;
@@ -55,11 +56,17 @@ public class AbTransformer extends BaseTransformer {
     }
 
     public void transformFromLatestDate() {
-        String str = praFileUtils.getLatestFileNameFor(Target_Data_Dir, ApCo.AB_FILE_PREFIX, NseCons.AB_FILE_EXT,  1,
-                LocalDate.now(), ApCo.DOWNLOAD_NSE_FROM_DATE, NseCons.AB_FILE_NAME_DTF);
+        String str = praFileUtils.getLatestFileNameFor(
+                Target_Data_Dir,
+                PraCons.AB_FILE_PREFIX,
+                NseCons.AB_FILE_EXT,
+                1,
+                LocalDate.now(),
+                ApCo.TRANSFORM_NSE_FROM_DATE,
+                NseCons.AB_FILE_NAME_DTF);
         LocalDate dateOfLatestFile;
         if(str==null)
-            dateOfLatestFile = ApCo.DOWNLOAD_NSE_FROM_DATE;
+            dateOfLatestFile = ApCo.TRANSFORM_NSE_FROM_DATE;
         else
             dateOfLatestFile = DateUtils.getLocalDateFromPath(str, NseCons.AB_FILE_NAME_DATE_REGEX, NseCons.AB_FILE_NAME_DATE_FORMAT);
 
@@ -70,10 +77,10 @@ public class AbTransformer extends BaseTransformer {
 
     private Map<String, String> prepare(LocalDate fromDate) {
         List<String> sourceFileNames = nseFileUtils.constructFileNames(
-                                    fromDate,
-                                    ApCo.PRA_FILE_NAME_DATE_FORMAT,
-                                    ApCo.PRA_CM_FILE_PREFIX,
-                                    ApCo.DATA_FILE_EXT);
+                fromDate,
+                ApCo.PRA_FILE_NAME_DATE_FORMAT,
+                PraCons.PRA_CM_FILE_PREFIX,
+                ApCo.DATA_FILE_EXT);
         //filesToBeDownloaded.removeAll(nseFileUtils.fetchFileNames(dataDir, null, null));
         //
         Map<String, String> filePairMap = new LinkedHashMap<>();
@@ -87,7 +94,7 @@ public class AbTransformer extends BaseTransformer {
         filePairMap = TransformationHelper.prepareFileNames(
                 sourceFileNames,
                 ApCo.DATA_FILE_NAME_DATE_REGEX, ApCo.DATA_FILE_NAME_DATE_FORMAT,
-                ApCo.AB_FILE_PREFIX, NseCons.AB_FILE_EXT, ApCo.ddMMMyyyy_DTF);
+                PraCons.AB_FILE_PREFIX, NseCons.AB_FILE_EXT, ApCo.ddMMMyyyy_DTF);
         return filePairMap;
     }
 

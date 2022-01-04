@@ -38,7 +38,12 @@ public class CalculationManager implements Manager {
     @Override
     public void execute() {
         LOGGER.info(".");
-        LOGGER.info("____________________ Calculation Manager");
+        if(ApCo.MANAGER_CALC_DISABLED) {
+            LOGGER.info("____________________ Calculation Manager - DISABLES");
+            return;
+        } else {
+            LOGGER.info("____________________ Calculation Manager");
+        }
 
 //        rsiCalculator.calculateAndReturn(LocalDate.of(2021, 9, 14), 5, "HDFC");
 //        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
