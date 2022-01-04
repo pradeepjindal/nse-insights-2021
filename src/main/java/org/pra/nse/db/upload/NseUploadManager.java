@@ -39,13 +39,12 @@ public class NseUploadManager implements Manager {
 
     @Override
     public void execute() {
-        LOGGER.info(".");
-        LOGGER.info("____________________ NSE - Upload Manager");
-        if(ApCo.MANAGER_NSE_UPLOAD_DISABLED) {
+//        LOGGER.info(".");
+        if(ApCo.MANAGER_NSE_UPLOAD_ENABLED) {
+            LOGGER.info("____________________ NSE Upload Manager");
+        } else {
             LOGGER.info("____________________ NSE Upload Manager - DISABLES");
             return;
-        } else {
-            LOGGER.info("____________________ NSE Upload Manager");
         }
 
 //        nseCmUploader.upload2021();
@@ -60,19 +59,17 @@ public class NseUploadManager implements Manager {
 //        nseNxUploader.upload2021();
 
 
-//        nseCmUploader.uploadFromDefaultDate();
-//        LOGGER.info("----------");
-//        nseDmUploader.uploadFromDefaultDate();
-//        LOGGER.info("----------");
-//        nseFmUploader.uploadFromDefaultDate();
-//        LOGGER.info("----------");
-//        nseOmUploader.uploadFromDefaultDate();
-//        LOGGER.info("----------");
-//        nseNxUploader.uploadFromDefaultDate();
-//        LOGGER.info("----------");
-//        nseLsUploader.uploadFromDefaultDate();
+        nseCmUploader.uploadFromDefaultDate();
+        LOGGER.info("----------");
+        nseDmUploader.uploadFromDefaultDate();
         LOGGER.info("----------");
         nseFmUploader.uploadFromDefaultDate();
+        LOGGER.info("----------");
+        nseOmUploader.uploadFromDefaultDate();
+        LOGGER.info("----------");
+        nseNxUploader.uploadFromDefaultDate();
+        LOGGER.info("----------");
+        nseFoUploader.uploadFromDefaultDate();
 
 
 //        nseCmUploader.uploadFromLatestDate();
@@ -82,16 +79,13 @@ public class NseUploadManager implements Manager {
 //        nseFmUploader.uploadFromLatestDate();
 //        LOGGER.info("----------");
 //        nseNxUploader.uploadFromLatestDate();
-//        LOGGER.info("----------");
-//        nseLsUploader.uploadFromLatestDate();
+
 
 //        LOGGER.info("----------");
 //        nseDmUploader.uploadFromDate(LocalDate.of(2017,1,1));
 //        LOGGER.info("----------");
 //        nseNxUploader.uploadFromDate(LocalDate.of(2020,1,1));
 
-//        LOGGER.info("----------");
-//        nseLsUploader.uploadFromDate(LocalDate.of(2019,12,31));
 
         //        LOGGER.info("----------");
 //        nseCmUploader.uploadForDate(LocalDate.of(2017,7,10));

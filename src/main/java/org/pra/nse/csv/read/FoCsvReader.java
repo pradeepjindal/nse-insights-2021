@@ -1,9 +1,11 @@
 package org.pra.nse.csv.read;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.pra.nse.csv.bean.in.FoBean;
+import org.pra.nse.csv.bean.in.LsBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -18,32 +20,10 @@ import java.util.*;
 public class FoCsvReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(FoCsvReader.class);
 
-    public Map<String, Map<LocalDate, FoBean>> read(String fileName) {
-        Map<String, Map<LocalDate, FoBean>> localFoBeanMap = new HashMap<>();
-        LOGGER.info("-----CSV Reader");
-
-        FoBean fmBean;
-        //int missing = 0;
-        Map.Entry<String, Integer> missingEntry = new AbstractMap.SimpleEntry<>("missing", 0);
-        List<FoBean> fmBeanList = new ArrayList<>();
-
-        fmBeanList = readCsv(fileName);
-
-        fmBeanList.stream().forEach( bean->{
-            localFoBeanMap.put(bean.getSymbol(), null);
-        });
-//            if(foBeanMap == null) {
-//                LOGGER.info("Total Beans in Map: " + localFoBeanMap.size());
-//                LOGGER.info("Total Data Rows : " + (beanReader.getRowNumber()-1));
-//                LOGGER.info("Total Map Rows : " + (localFoBeanMap.size()));
-//                LOGGER.info("Does all rows from csv accounted for ? : " + (beanReader.getRowNumber()-1 ==  localFoBeanMap.size() ? "Yes" : "No"));
-//            } else {
-//                LOGGER.info("Total Beans in Map: " + foBeanMap.size());
-//                LOGGER.info("Total Data Rows : " + (beanReader.getRowNumber()-1));
-//                LOGGER.info("Total Map Rows : " + (foBeanMap.size()));
-//                LOGGER.info("Does all rows from csv accounted for ? : " + (beanReader.getRowNumber()-1 ==  foBeanMap.size() ? "Yes" : "No"));
-//            }
-        return localFoBeanMap;
+    public List<FoBean> read(String fileName) {
+        List<FoBean> beanList;
+        beanList = readCsv(fileName);
+        return beanList;
     }
 
     private List<FoBean> readCsv(String fileName) {
@@ -51,7 +31,8 @@ public class FoCsvReader {
         try {
 //            csvFile = ResourceUtils.getFile("classpath:screens.csv");
             CsvMapper mapper = new CsvMapper();
-            CsvSchema schema = mapper.schemaFor(FoBean.class);
+            mapper.disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
+            CsvSchema schema = mapper.schemaFor(FoBean.class).withHeader();
             MappingIterator<FoBean> it = mapper.readerFor(FoBean.class).with(schema).readValues(new File(fileName));
             //return it.readAll();
             beans = new ArrayList<>();
@@ -65,7 +46,7 @@ public class FoCsvReader {
             LOGGER.error("Error:", ex);
             //return Collections.emptyList();
         }
-        beans.forEach( row -> LOGGER.info("{}", row));
+//        beans.forEach( row -> LOGGER.info("{}", row));
         return beans;
     }
 }

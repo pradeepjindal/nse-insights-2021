@@ -10,13 +10,13 @@ ALTER TABLE public.nse_fo_seq_id OWNER TO postgres;
 
 CREATE TABLE public.nse_fo_tab (
     id bigint DEFAULT nextval('public.nse_fo_seq_id'::regclass) NOT NULL,
+    instrument character (6) NOT NULL,
     symbol character(10) NOT NULL,
     trade_date date NOT NULL,
     expiry_date date NOT NULL,
-    instrument character (6) NOT NULL,
+    lot_size integer NOT NULL,
     quantity integer NOT NULL,
     contracts integer NOT NULL,
-    lot_size integer NOT NULL,
     turnover numeric (18,2) NOT NULL,
     file_date date NOT NULL,
     tdn integer,

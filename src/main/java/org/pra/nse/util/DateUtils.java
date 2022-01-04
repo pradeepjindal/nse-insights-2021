@@ -20,6 +20,10 @@ public class DateUtils {
         return forDate.isBefore(LocalDate.now()) || LocalTime.now().isAfter(ApCo.DAILY_DOWNLOAD_TIME);
     }
 
+    public static int toInt(LocalDate dt) {
+        return Integer.valueOf(dt.toString().replace("-", ""));
+    }
+
     public static LocalDate toLocalDate(Date utilDate) {
         //new java.sql.Date(date.getTime()).toLocalDate();
         Instant.ofEpochMilli(utilDate.getTime())

@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-
 @Component
 public class CalcUploadManager implements Manager {
     private static final Logger LOGGER = LoggerFactory.getLogger(CalcUploadManager.class);
@@ -30,11 +28,11 @@ public class CalcUploadManager implements Manager {
     @Override
     public void execute() {
         LOGGER.info(".");
-        if(ApCo.MANAGER_CALC_UPLOAD_DISABLED) {
+        if(ApCo.MANAGER_CALC_UPLOAD_ENABLED) {
+            LOGGER.info("____________________ CALC Upload Manager");
+        } else {
             LOGGER.info("____________________ CALC Upload Manager - DISABLES");
             return;
-        } else {
-            LOGGER.info("____________________ CALC Upload Manager");
         }
 
         LOGGER.info("----------");

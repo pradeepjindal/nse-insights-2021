@@ -33,12 +33,12 @@ public class DownloadManager implements Manager {
 
     @Override
     public void execute() {
-        LOGGER.info(".");
-        if(ApCo.MANAGER_DOWNLOAD_DISABLED) {
+//        LOGGER.info(".");
+        if(ApCo.MANAGER_DOWNLOAD_ENABLED) {
+            LOGGER.info("____________________ Download Manager");
+        } else {
             LOGGER.info("____________________ Download Manager - DISABLES");
             return;
-        } else {
-            LOGGER.info("____________________ Download Manager");
         }
 
         cmDownloader.downloadFromDefaultDate();

@@ -165,10 +165,6 @@ public class EnrichmentHelper {
     public static void enrichLongShortBuildupForEachSymbol(List<DeliverySpikeDto> DeliverySpikeDtoList) {
         String buildup;
         for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
-
-            if(dto.getSymbol().equals("METROPOLIS"))
-                System.out.println("");
-
             dto.setLongShortBuildup("");
             dto.setLongBuildup("");
             dto.setShortBuildup("");

@@ -50,11 +50,11 @@ public class ReportManager implements Manager {
     @Override
     public void execute() {
         LOGGER.info(".");
-        if(ApCo.MANAGER_REPORT_DISABLED) {
+        if(ApCo.MANAGER_REPORT_ENABLED) {
+            LOGGER.info("____________________ Report Manager");
+        } else {
             LOGGER.info("____________________ Report Manager - DISABLES");
             return;
-        } else {
-            LOGGER.info("____________________ Report Manager");
         }
 
         //pastPresentFutureReporterNew.reportFromLast(2);

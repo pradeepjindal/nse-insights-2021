@@ -34,7 +34,7 @@ public class ProcessManager implements Manager {
     @Override
     public void execute() {
         LOGGER.info(".");
-        if(ApCo.MANAGER_PROCESS_DISABLED) {
+        if(ApCo.MANAGER_PROCESS_ENABLED) {
             LOGGER.info("____________________ Process Manager - DISABLES");
             return;
         } else {

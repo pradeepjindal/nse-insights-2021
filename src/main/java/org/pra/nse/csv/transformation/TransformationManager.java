@@ -2,12 +2,9 @@ package org.pra.nse.csv.transformation;
 
 import org.pra.nse.ApCo;
 import org.pra.nse.Manager;
-import org.pra.nse.refdata.FoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
 
 
 @Component
@@ -38,12 +35,12 @@ public class TransformationManager implements Manager {
 
     @Override
     public void execute() {
-        LOGGER.info(".");
-        if(ApCo.MANAGER_TRANSFORM_DISABLED) {
+//        LOGGER.info(".");
+        if(ApCo.MANAGER_TRANSFORM_ENABLED) {
+            LOGGER.info("____________________ Transform Manager");
+        } else {
             LOGGER.info("____________________ Transform Manager - DISABLES");
             return;
-        } else {
-            LOGGER.info("____________________ Transform Manager");
         }
 
 

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -82,7 +83,7 @@ public class NseFoUploader {
         LocalDate processingDate = fromDate.minusDays(1);
         do {
             processingDate = processingDate.plusDays(1);
-            LOGGER.info("nx- | upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
+            LOGGER.info("fo- | upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
             if(DateUtils.isTradingOnHoliday(processingDate)) {
                 uploadForDate(processingDate);
             } else if (DateUtils.isWeekend(processingDate)) {
@@ -94,15 +95,26 @@ public class NseFoUploader {
     }
 
     public void uploadForDate(LocalDate forDate) {
+        //if(DateUtils.toInt(forDate) > 20211201) return;
+
         //TODO check that number of rows in file and number of rows in table matches for the given date
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("nx- | upload | already uploaded | for date:[{}]", forDate);
+            LOGGER.info("fo- | upload | already uploaded | for date:[{}]", forDate);
             return;
         } else {
 //            LOGGER.info("IDX-upload | uploading - for date:[{}]", forDate);
         }
 
-        String fromFile = Data_Dir + File.separator + filePrefix + forDate + fileExtension;
+        LocalDate fileDate;
+        // special condition: nse file is corrupt for 23-Sep-2021 hence uploading the 22-Sep-2021
+        if(forDate.toString().equals("2021-11-23")) {
+            LOGGER.warn("fo- | upload - special condition: nse file is corrupt for 23-Sep-2021 hence replacing it with 22-Sep-2021");
+            fileDate = LocalDate.of(2021, 11, 22);
+        } else {
+            fileDate = forDate;
+        }
+
+        String fromFile = Data_Dir + File.separator + filePrefix + fileDate + fileExtension;
         //LOGGER.info("IDX-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFilePresent(fromFile)) {
@@ -110,22 +122,38 @@ public class NseFoUploader {
             return;
         }
 
-        Map<String, Map<LocalDate, FoBean>> beanMap = csvReader.read(fromFile);
-        upload(forDate, beanMap);
+        List<FoBean> beanList = csvReader.read(fromFile);
+        if(beanList.size() == 0) {
+            String errorString = "fo | error - no data returned from csvReader forDate: " + forDate;
+            LOGGER.error(errorString);
+            throw new RuntimeException(errorString);
+        } else {
+            upload(forDate, beanList);
+        }
+
     }
 
 
-    private void upload(LocalDate forDate, Map<String, Map<LocalDate, FoBean>> beanMap) {
+    private void upload(LocalDate forDate, List<FoBean> beanList) {
         NseFoTab target = new NseFoTab();
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();
-        beanMap.values().forEach( source -> {
+        beanList.forEach( bean -> {
             target.reset();
-//            target.setSymbol(source.getSymbol());
-//            target.setTradeDate(source.getExpiryDate());
-
+            target.setSymbol(bean.getSymbol());
+            target.setTradeDate(forDate);
+            target.setExpiryDate(bean.getExpiryDate());
+            target.setInstrument(bean.getInstrument());
+            target.setTurnover(bean.getTurnover());
+            target.setQuantity(bean.getQuantity());
+            target.setContracts(bean.getContracts());
+            target.setLotSize(bean.getLotSize());
+            target.setFileDate(forDate);
             //
             target.setTdn(Integer.valueOf(forDate.toString().replace("-", "")));
+            target.setEdn(Integer.valueOf(bean.getExpiryDate().toString().replace("-", "")));
+            target.setFdn(Integer.valueOf(forDate.toString().replace("-", "")));
+
             try {
                 //TODO batch insert for efficiency
                 repository.save(target);

@@ -21,9 +21,9 @@ public class FoBean {
 
     private String instrument;
     private BigDecimal turnover;
-    private int quantity;
-    private int contracts;
-    private int lotSize;
+    private Integer quantity;
+    private Integer contracts;
+    private Integer lotSize;
 
 
     public String getSymbol() {
@@ -58,27 +58,27 @@ public class FoBean {
         this.turnover = turnover;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
-    public int getContracts() {
+    public Integer getContracts() {
         return contracts;
     }
 
-    public void setContracts(int contracts) {
+    public void setContracts(Integer contracts) {
         this.contracts = contracts;
     }
 
-    public int getLotSize() {
+    public Integer getLotSize() {
         return lotSize;
     }
 
-    public void setLotSize(int lotSize) {
+    public void setLotSize(Integer lotSize) {
         this.lotSize = lotSize;
     }
 

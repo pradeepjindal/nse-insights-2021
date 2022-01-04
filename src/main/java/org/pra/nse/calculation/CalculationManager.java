@@ -7,9 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import static org.pra.nse.calculation.CalcCons.AVG_FILE_PREFIX;
 import static org.pra.nse.calculation.CalcCons.MFI_FILE_PREFIX;
 import static org.pra.nse.calculation.CalcCons.RSI_FILE_PREFIX;
@@ -37,12 +34,12 @@ public class CalculationManager implements Manager {
 
     @Override
     public void execute() {
-        LOGGER.info(".");
-        if(ApCo.MANAGER_CALC_DISABLED) {
+//        LOGGER.info(".");
+        if(ApCo.MANAGER_CALC_ENABLED) {
+            LOGGER.info("____________________ Calculation Manager");
+        } else {
             LOGGER.info("____________________ Calculation Manager - DISABLES");
             return;
-        } else {
-            LOGGER.info("____________________ Calculation Manager");
         }
 
 //        rsiCalculator.calculateAndReturn(LocalDate.of(2021, 9, 14), 5, "HDFC");
