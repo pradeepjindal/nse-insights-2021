@@ -16,23 +16,25 @@ public class ApCo {
     public static final LocalDate NSE_CM_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2016, 1, 1);
     public static final LocalDate NSE_DM_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2016, 1, 1);
     public static final LocalDate NSE_FM_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2016, 1, 1);
-    public static final LocalDate NSE_IDX_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2020, 1, 1);
+    public static final LocalDate NSE_FO_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2016, 1, 1);
+    public static final LocalDate NSE_NX_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2020, 1, 1);
+    public static final LocalDate NSE_LS_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2019, 12, 31);
     //=============================================================================================================
     public static final LocalTime DAILY_DOWNLOAD_TIME = LocalTime.of(18,0,0,0);
 
     //public static final LocalDate DOWNLOAD_FROM_DATE    = LocalDate.of(2021,4,18);
-    public static final LocalDate DOWNLOAD_NSE_FROM_DATE = LocalDate.of(2021,12,30);
-    public static final LocalDate TRANSFORM_NSE_FROM_DATE  = LocalDate.of(2021,12,30);
-    public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2021,12,30);
+    public static final LocalDate DOWNLOAD_NSE_FROM_DATE = LocalDate.of(2021,12,29);
+    public static final LocalDate TRANSFORM_NSE_FROM_DATE  = LocalDate.of(2021,12,29);
+    public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2021,12,29);
     //
-    public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2021,12,30);
-    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,12,30);
+    public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2021,12,29);
+    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,12,29);
     //
-    public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2021,12,30);
-    public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2021,12,30);
+    public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2021,12,29);
+    public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2021,12,29);
 
     public static final boolean RE_UPLOAD_CALC_FLAG = false;
-    public static final LocalDate RE_UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,12,30);
+    public static final LocalDate RE_UPLOAD_CALC_FROM_DATE = LocalDate.of(2021,12,29);
 
     public static final boolean EMAIL_ENABLED_FLAG = false;
     public static final boolean EMAIL_ENABLED_FOR_MANISH = true;
@@ -46,13 +48,15 @@ public class ApCo {
     //public static final String ROOT_DIR = System.getProperty("user.home");
     //public static final String ROOT_DIR = "d:" + File.separator + "nseHome";
     //public static final String ROOT_DIR = System.getProperty("user.home");
-    public static final String ROOT_DIR = "d:" +File.separator+ "nseEnv-2021" +File.separator+ "nse-data";
+    public static final String ROOT_DIR = "d:" + File.separator + "nseEnv-2021" + File.separator + "nse-data";
 
     public static final String CM_DIR_NAME = "pra-cm";
     public static final String DM_DIR_NAME = "pra-dm";
     public static final String FM_DIR_NAME = "pra-fm";
     public static final String AB_DIR_NAME = "pra-ab";
-    public static final String IDX_DIR_NAME = "pra-nx";
+    public static final String NX_DIR_NAME = "pra-nx";
+    public static final String FO_DIR_NAME = "pra-fo";
+    public static final String LS_DIR_NAME = "pra-ls";
 
     public static final String AVG_DIR_NAME = "calc-avg";
     public static final String RSI_DIR_NAME = "calc-rsi";
@@ -80,8 +84,9 @@ public class ApCo {
     public static final String PRA_FM_FILE_PREFIX = "fm-";
     public static final String PRA_DM_FILE_PREFIX = "dm-";
     public static final String PRA_BP_FILE_PREFIX = "bp-";
-    public static final String PRA_IDX_FILE_PREFIX = "nx-";
-
+    public static final String PRA_NX_FILE_PREFIX = "nx-";
+    public static final String PRA_LS_FILE_PREFIX = "ls-";
+    public static final String PRA_FO_FILE_PREFIX = "fo-";
 
     public static final String DATE_REGEX_yyyyMMdd = "\\d{4}-\\d{2}-\\d{2}";
     public static final String DATA_FILE_NAME_DATE_REGEX = "\\d{4}-\\d{2}-\\d{2}";
@@ -103,15 +108,17 @@ public class ApCo {
     public static final String PRA_CM_DATA_DATE_FORMAT = dd_D_MMM_D_yyyy_DATE_FORMAT;
     public static final String PRA_FM_DATA_DATE_FORMAT = dd_D_MMM_D_yyyy_DATE_FORMAT;
     public static final String PRA_DM_DATA_DATE_FORMAT = yyyy_D_MM_D_dd_DATE_FORMAT;
-    public static final String PRA_IDX_DATA_DATE_FORMAT = dd_D_MM_D_yyyy_DATE_FORMAT;
+    public static final String PRA_NX_DATA_DATE_FORMAT = dd_D_MM_D_yyyy_DATE_FORMAT;
     public static final String AB_DATA_DATE_FORMAT = yyyyMMdd_DATE_FORMAT;
     public static final String REPORTS_DATE_FORMAT = dd_D_MMM_D_yyyy_DATE_FORMAT;
     public static final String FIX_HOLIDAYS_DATE_FORMAT = "dd-MMM";
 
 
-    public static final String DEFAULT_FILE_EXT = ".csv";
-    public static final String DATA_FILE_EXT = DEFAULT_FILE_EXT;
-    public static final String REPORTS_FILE_EXT = DEFAULT_FILE_EXT;
+    public static final String CSV_FILE_EXT = ".csv";
+    public static final String ZIP_FILE_EXT = ".zip";
+    public static final String DEFAULT_FILE_EXT = CSV_FILE_EXT;
+    public static final String DATA_FILE_EXT = CSV_FILE_EXT;
+    public static final String REPORTS_FILE_EXT = CSV_FILE_EXT;
 
 
     public static final String PRADEEP_FILE_NAME = "pradeepData";

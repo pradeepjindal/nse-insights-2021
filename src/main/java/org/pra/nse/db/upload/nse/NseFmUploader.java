@@ -3,7 +3,7 @@ package org.pra.nse.db.upload.nse;
 import org.pra.nse.ApCo;
 import org.pra.nse.csv.bean.in.FmBean;
 import org.pra.nse.csv.read.FmCsvReader;
-import org.pra.nse.db.dao.FmDao;
+import org.pra.nse.db.dao.NseFmDao;
 import org.pra.nse.db.model.NseFutureMarketTab;
 import org.pra.nse.db.repository.NseFmRepo;
 import org.pra.nse.refdata.LotSizeService;
@@ -25,7 +25,7 @@ public class NseFmUploader {
     private static final Logger LOGGER = LoggerFactory.getLogger(NseFmUploader.class);
 
     private final NseFmRepo futureMarketRepository;
-    private final FmDao dao;
+    private final NseFmDao dao;
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
     private final FmCsvReader csvReader;
@@ -37,7 +37,7 @@ public class NseFmUploader {
     private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.FM_DIR_NAME;
 
     public NseFmUploader(NseFmRepo repository,
-                         FmDao dao,
+                         NseFmDao dao,
                          NseFileUtils nseFileUtils,
                          PraFileUtils praFileUtils,
                          FmCsvReader fmCsvReader) {

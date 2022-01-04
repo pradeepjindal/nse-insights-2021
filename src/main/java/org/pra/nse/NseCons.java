@@ -39,13 +39,15 @@ public class NseCons {
     public static final String DM_DATA_NAME = "dm";
     public static final String FM_DATA_NAME = "fm";
     public static final String EQ_DATA_NAME = "eq";
-    public static final String IDX_DATA_NAME = "nx";
+    public static final String NX_DATA_NAME = "nx";
+    public static final String FO_DATA_NAME = "fo";
 
     public static final String CM_DIR_NAME = NSE_DIR_PREFIX + CM_DATA_NAME;
     public static final String DM_DIR_NAME = NSE_DIR_PREFIX + DM_DATA_NAME;
     public static final String FM_DIR_NAME = NSE_DIR_PREFIX + FM_DATA_NAME;
     public static final String EQ_DIR_NAME = NSE_DIR_PREFIX + EQ_DATA_NAME;
-    public static final String IDX_DIR_NAME = NSE_DIR_PREFIX + IDX_DATA_NAME;
+    public static final String NX_DIR_NAME = NSE_DIR_PREFIX + NX_DATA_NAME;
+    public static final String FO_DIR_NAME = NSE_DIR_PREFIX + FO_DATA_NAME;
 
     public static final String CM_FILE_PREFIX = CM_DATA_NAME + "-";
     public static final String DM_FILE_PREFIX = DM_DATA_NAME + "-";
@@ -54,7 +56,7 @@ public class NseCons {
     public static final String CM_FILES_PATH = ApCo.ROOT_DIR + File.separator + CM_DIR_NAME;
     public static final String DM_FILES_PATH = ApCo.ROOT_DIR + File.separator + DM_DIR_NAME;
     public static final String FM_FILES_PATH = ApCo.ROOT_DIR + File.separator + FM_DIR_NAME;
-    public static final String IDX_FILES_PATH = ApCo.ROOT_DIR + File.separator + IDX_DIR_NAME;
+    public static final String NX_FILES_PATH = ApCo.ROOT_DIR + File.separator + NX_DIR_NAME;
 
     public static final String BP_DIR_NAME = "nse-bp";
     public static final String AB_DIR_NAME = "nse-ab"; //amiBroker
@@ -76,7 +78,8 @@ public class NseCons {
     public static final String NSE_DM_FILE_NAME_DATE_REGEX = ddMMyyyy_DATE_REGEX;
     public static final String NSE_BP_FILE_NAME_DATE_REGEX = ddMMyyyy_DATE_REGEX;
     public static final String NSE_DBC_FILE_NAME_DATE_REGEX = ddMMyyyy_DATE_REGEX;
-    public static final String NSE_IDX_FILE_NAME_DATE_REGEX = ddMMyyyy_DATE_REGEX;
+    public static final String NSE_NX_FILE_NAME_DATE_REGEX = ddMMyyyy_DATE_REGEX;
+    public static final String NSE_FO_FILE_NAME_DATE_REGEX = ddMMyyyy_DATE_REGEX;
 
     public static final String AB_FILE_NAME_DATE_REGEX = ddMMMyyyy_CAPITAL_CASE_DATE_REGEX;
 
@@ -86,7 +89,8 @@ public class NseCons {
     public static final String NSE_DM_FILE_NAME_DATE_FORMAT = ApCo.ddMMyyyy_DATE_FORMAT;
     public static final String NSE_BP_FILE_NAME_DATE_FORMAT = ApCo.ddMMyyyy_DATE_FORMAT;
     public static final String NSE_DBC_FILE_NAME_DATE_FORMAT = ApCo.ddMMyyyy_DATE_FORMAT;
-    public static final String NSE_IDX_FILE_NAME_DATE_FORMAT = ApCo.ddMMyyyy_DATE_FORMAT;
+    public static final String NSE_NX_FILE_NAME_DATE_FORMAT = ApCo.ddMMyyyy_DATE_FORMAT;
+    public static final String NSE_FO_FILE_NAME_DATE_FORMAT = ApCo.ddMMyyyy_DATE_FORMAT;
 
     public static final String AB_FILE_NAME_DATE_FORMAT = ApCo.ddMMMyyyy_DATE_FORMAT;
 
@@ -96,7 +100,8 @@ public class NseCons {
     public static final String NSE_DM_FILE_PREFIX = "MTO_";
     public static final String NSE_BP_FILE_PREFIX = "fao_participant_vol_";
     public static final String NSE_DBC_FILE_PREFIX = "sec_bhavdata_full_";
-    public static final String NSE_IDX_FILE_PREFIX = "ind_close_all_";
+    public static final String NSE_NX_FILE_PREFIX = "ind_close_all_";
+    public static final String NSE_FO_FILE_PREFIX = "fo";
 
     public static final String NSE_CM_FILE_SUFFIX = "bhav.csv";
     public static final String NSE_FM_FILE_SUFFIX = "bhav.csv";
@@ -111,7 +116,7 @@ public class NseCons {
     public static final String NSE_BP_FILE_EXT = ".csv";
     public static final String NSE_DBC_FILE_EXT = ".csv";
     public static final String AB_FILE_EXT = ".txt";
-    public static final String NSE_IDX_FILE_EXT = ".csv";
+    public static final String NSE_NX_FILE_EXT = ".csv";
 
     public static final DateTimeFormatter CM_FILE_NAME_DTF = DateTimeFormatter.ofPattern(NSE_CM_FILE_NAME_DATE_FORMAT);
     public static final DateTimeFormatter FM_FILE_NAME_DTF = DateTimeFormatter.ofPattern(NSE_FM_FILE_NAME_DATE_FORMAT);

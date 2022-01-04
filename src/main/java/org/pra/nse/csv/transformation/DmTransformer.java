@@ -26,8 +26,18 @@ import java.util.stream.Stream;
 public class DmTransformer extends BaseTransformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DmTransformer.class);
 
-    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + NseCons.DM_DIR_NAME;
-    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + "pra-dm";
+    private final String sourceDirName = NseCons.DM_DIR_NAME;
+    private final String sourceFilePrefix = NseCons.NSE_DM_FILE_PREFIX;
+    private final String sourceFileExtension = NseCons.NSE_DM_FILE_EXT;
+
+    private final String targetDirName = ApCo.DM_DIR_NAME;
+    private final String targetFilePrefix = ApCo.PRA_DM_FILE_PREFIX;
+    private final String targetFileExtension = ApCo.CSV_FILE_EXT;
+
+    private final LocalDate defaultDate = ApCo.TRANSFORM_NSE_FROM_DATE;
+
+    private final String Source_Data_Dir = ApCo.ROOT_DIR + File.separator + sourceDirName;
+    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + targetDirName;
 
 
     public DmTransformer(TransformationHelper transformationHelper, NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
@@ -36,7 +46,7 @@ public class DmTransformer extends BaseTransformer {
 
 
     public void transformFromDefaultDate() {
-        transformFromDate(ApCo.TRANSFORM_NSE_FROM_DATE);
+        transformFromDate(defaultDate);
     }
     public void transformFromDate(LocalDate fromDate) {
         Map<String, String> filePairMap = prepare(fromDate);
@@ -44,19 +54,26 @@ public class DmTransformer extends BaseTransformer {
     }
 
     public void transformFromLatestDate() {
-        String str = praFileUtils.getLatestFileNameFor(Target_Data_Dir, ApCo.PRA_DM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
-        LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str);
-        Map<String, String> filePairMap = prepare(dateOfLatestFile);
+        LocalDate dateOfLatestFile;
+        Map<String, String> filePairMap;
+        String latestFileName = praFileUtils.getLatestFileNameFor(Target_Data_Dir, targetFilePrefix, targetFileExtension, 1);
+        if(latestFileName == null)
+            dateOfLatestFile = defaultDate;
+        else
+            dateOfLatestFile = DateUtils.getLocalDateFromPath(latestFileName);
+        filePairMap = prepare(dateOfLatestFile);
+        //TODO filter the existing files
         looper(filePairMap);
     }
+
 
 
     private Map<String, String> prepare(LocalDate fromDate) {
         List<String> sourceFileNames = nseFileUtils.constructFileNames(
                 fromDate,
                 NseCons.NSE_DM_FILE_NAME_DATE_FORMAT,
-                NseCons.NSE_DM_FILE_PREFIX,
-                NseCons.NSE_DM_FILE_EXT);
+                sourceFilePrefix,
+                sourceFileExtension);
         //filesToBeDownloaded.removeAll(nseFileUtils.fetchFileNames(dataDir, null, null));
         //
         Map<String, String> filePairMap = new LinkedHashMap<>();
@@ -69,7 +86,7 @@ public class DmTransformer extends BaseTransformer {
 //        });
         filePairMap = TransformationHelper.prepareFileNames(sourceFileNames,
                 NseCons.NSE_DM_FILE_NAME_DATE_REGEX, NseCons.NSE_DM_FILE_NAME_DATE_FORMAT,
-                ApCo.PRA_DM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, ApCo.DATA_FILE_NAME_DTF);
+                targetFilePrefix, targetFileExtension, ApCo.DATA_FILE_NAME_DTF);
         return filePairMap;
     }
 
@@ -78,13 +95,13 @@ public class DmTransformer extends BaseTransformer {
     }
 
     private void transform(String nseFileName, String praFileName) {
-        String source = Data_Dir + File.separator + nseFileName;
-        String target = Data_Dir + File.separator + praFileName;
+        String source = Source_Data_Dir + File.separator + nseFileName;
+        String target = Target_Data_Dir + File.separator + praFileName;
         if(nseFileUtils.isFilePresent(target)) {
             LOGGER.info("DM | already transformed - {}", target);
         } else if (nseFileUtils.isFilePresent(source)) {
             try {
-                int outputRowsCount = transformToDmCsv(source, Data_Dir);
+                int outputRowsCount = transformToDmCsv(source, target);
                 LOGGER.info("DM | source transformed - {}, output rows {}", target, outputRowsCount);
             } catch (Exception e) {
                 LOGGER.warn("DM | Error while transforming file: {} {}", source, e);
@@ -93,9 +110,9 @@ public class DmTransformer extends BaseTransformer {
             LOGGER.info("DM | source not found - {}", source);
         }
     }
-    private void validateAndTransform(String nseFileName, String praFileName) {
-        String source = Data_Dir + File.separator + nseFileName;
-        String target = Target_Data_Dir + File.separator + praFileName;
+    private void validateAndTransform(String sourceFileName, String targetFileName) {
+        String source = Source_Data_Dir + File.separator + sourceFileName;
+        String target = Target_Data_Dir + File.separator + targetFileName;
 
         if(nseFileUtils.isFilePresent(target)) {
             LOGGER.info("DM | already transformed - {}", target);
@@ -111,37 +128,33 @@ public class DmTransformer extends BaseTransformer {
         try {
             bytes = Files.size(Paths.get(source));
         } catch (IOException e) {
-            LOGGER.error("MAT - error reading file - {}", source);
+            LOGGER.error("MAT | error reading file - {}", source);
         }
 
         if (bytes == 0) {
-            LOGGER.warn("MAT file size is ZERO (may be holiday file) - {}", source);
+            LOGGER.warn("MAT | file size is ZERO (may be holiday file) - {}", source);
             return;
         }
 
         try {
-            int outputRowsCount = transformToDmCsv(source, Target_Data_Dir);
+            int outputRowsCount = transformToDmCsv(source, target);
             LOGGER.info("DM | transformed - {}, output rows {}", target, outputRowsCount);
         } catch (Exception e) {
             LOGGER.warn("DM | Error while transforming file: {} {}", source, e);
         }
 
     }
-    private int transformToDmCsv(String downloadedDirAndFileName, String tgtDataDir) {
-        int firstIndex = downloadedDirAndFileName.lastIndexOf("_");
-        String tradeDate = DateUtils.transformDate(downloadedDirAndFileName.substring(firstIndex+1, firstIndex+9));
-        String csvFileName =
-                ApCo.PRA_DM_FILE_PREFIX
-                + tradeDate
-                + ApCo.REPORTS_FILE_EXT;
-        //String toFile = ApCo.ROOT_DIR + File.separator + NseCons.DM_DIR_NAME + File.separator + csvFileName;
-        String toFile = tgtDataDir + File.separator + csvFileName;
+    private int transformToDmCsv(String source, String target) {
+        int firstIndex = source.lastIndexOf("_");
+        String tradeDate = DateUtils.transformDate(source.substring(firstIndex+1, firstIndex+9));
+        String csvFileName = targetFilePrefix + tradeDate + targetFileExtension;
+
         AtomicInteger atomicInteger = new AtomicInteger();
         AtomicInteger outGoingRows = new AtomicInteger();
 
-        File csvOutputFile = new File(toFile);
+        File csvOutputFile = new File(target);
         try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
-            try (Stream<String> stream = Files.lines(Paths.get(downloadedDirAndFileName))) {
+            try (Stream<String> stream = Files.lines(Paths.get(source))) {
                 stream.filter(line-> atomicInteger.incrementAndGet() > 3)
                         .map(row -> {
                             if(atomicInteger.get() == 4) {

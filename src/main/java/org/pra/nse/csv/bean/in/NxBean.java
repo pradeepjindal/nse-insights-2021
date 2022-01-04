@@ -3,7 +3,7 @@ package org.pra.nse.csv.bean.in;
 import java.util.Date;
 import java.util.Objects;
 
-public class IdxBean {
+public class NxBean {
     private String symbol;
     private String idxName;
     private Date tradeDate;
@@ -24,7 +24,7 @@ public class IdxBean {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        IdxBean idxBean = (IdxBean) o;
+        NxBean idxBean = (NxBean) o;
         return Objects.equals(idxName, idxBean.idxName) && Objects.equals(tradeDate, idxBean.tradeDate);
     }
 

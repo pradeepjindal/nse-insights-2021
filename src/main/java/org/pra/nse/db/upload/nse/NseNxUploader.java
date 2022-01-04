@@ -1,11 +1,11 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.csv.bean.in.IdxBean;
-import org.pra.nse.csv.read.IdxCsvReader;
-import org.pra.nse.db.dao.IdxDao;
-import org.pra.nse.db.model.NseIndexMarketTab;
-import org.pra.nse.db.repository.NseIdxRepo;
+import org.pra.nse.csv.bean.in.NxBean;
+import org.pra.nse.csv.read.NxCsvReader;
+import org.pra.nse.db.dao.NseNxDao;
+import org.pra.nse.db.model.NseIndexTab;
+import org.pra.nse.db.repository.NseNxRepo;
 import org.pra.nse.util.DateUtils;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
@@ -20,27 +20,27 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class NseIdxUploader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NseIdxUploader.class);
+public class NseNxUploader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NseNxUploader.class);
 
     private final LocalDate NSE_IDX_FILE_AVAILABLE_FROM_DATE = LocalDate.of(2020, 1, 1);
-    private final NseIdxRepo repository;
-    private final IdxDao dao;
+    private final NseNxRepo repository;
+    private final NseNxDao dao;
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
-    private final IdxCsvReader csvReader;
+    private final NxCsvReader csvReader;
 
-    private String fileDirName = ApCo.IDX_DIR_NAME;
-    private String filePrefix = ApCo.PRA_IDX_FILE_PREFIX;
+    private String fileDirName = ApCo.NX_DIR_NAME;
+    private String filePrefix = ApCo.PRA_NX_FILE_PREFIX;
     private LocalDate defaultDate = ApCo.UPLOAD_NSE_FROM_DATE;
 
-    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.IDX_DIR_NAME;
+    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.NX_DIR_NAME;
 
-    public NseIdxUploader(NseIdxRepo repository,
-                          IdxDao dao,
-                          NseFileUtils nseFileUtils,
-                          PraFileUtils praFileUtils,
-                          IdxCsvReader csvReader ) {
+    public NseNxUploader(NseNxRepo repository,
+                         NseNxDao dao,
+                         NseFileUtils nseFileUtils,
+                         PraFileUtils praFileUtils,
+                         NxCsvReader csvReader ) {
         this.repository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;
@@ -49,7 +49,7 @@ public class NseIdxUploader {
     }
 
     public void uploadAll() {
-        uploadFromDate(ApCo.NSE_IDX_FILE_AVAILABLE_FROM_DATE);
+        uploadFromDate(ApCo.NSE_NX_FILE_AVAILABLE_FROM_DATE);
     }
     public void upload2021() {
         uploadFromDate(LocalDate.of(2021, 1, 1));
@@ -99,7 +99,7 @@ public class NseIdxUploader {
 //            LOGGER.info("IDX-upload | uploading - for date:[{}]", forDate);
         }
 
-        String fromFile = Data_Dir + File.separator+ ApCo.PRA_IDX_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
+        String fromFile = Data_Dir + File.separator+ ApCo.PRA_NX_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
         //LOGGER.info("IDX-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFilePresent(fromFile)) {
@@ -107,13 +107,13 @@ public class NseIdxUploader {
             return;
         }
 
-        Map<String, IdxBean> latestBeanMap = csvReader.read(fromFile);
+        Map<String, NxBean> latestBeanMap = csvReader.read(fromFile);
         upload(forDate, latestBeanMap);
     }
 
 
-    private void upload(LocalDate forDate, Map<String, IdxBean> latestBeanMap) {
-        NseIndexMarketTab target = new NseIndexMarketTab();
+    private void upload(LocalDate forDate, Map<String, NxBean> latestBeanMap) {
+        NseIndexTab target = new NseIndexTab();
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();
         latestBeanMap.values().forEach( source -> {
@@ -145,7 +145,7 @@ public class NseIdxUploader {
             }
         });
         LOGGER.info("nx- | upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
-        if (recordFailed.get() > 0) throw new RuntimeException("IDX-upload | some record could not be persisted");
+        if (recordFailed.get() > 0) throw new RuntimeException("FO-upload | some record could not be persisted");
     }
 
 }

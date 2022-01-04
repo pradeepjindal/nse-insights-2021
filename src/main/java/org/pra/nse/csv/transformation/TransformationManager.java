@@ -1,9 +1,12 @@
 package org.pra.nse.csv.transformation;
 
 import org.pra.nse.Manager;
+import org.pra.nse.refdata.FoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 
 
 @Component
@@ -14,18 +17,21 @@ public class TransformationManager implements Manager {
     private final FmTransformer fmTransformer;
     private final DmTransformer dmTransformer;
     private final AbTransformer abTransformer;
-    private final IdxTransformer idxTransformer;
+    private final NxTransformer nxTransformer;
+    private final FoTransformer foTransformer;
 
     public TransformationManager(CmTransformer cmTransformer,
                                  FmTransformer fmTransformer,
                                  DmTransformer dmTransformer,
                                  AbTransformer abTransformer,
-                                 IdxTransformer idxTransformer) {
+                                 NxTransformer nxTransformer,
+                                 FoTransformer foTransformer) {
         this.cmTransformer = cmTransformer;
         this.fmTransformer = fmTransformer;
         this.dmTransformer = dmTransformer;
         this.abTransformer = abTransformer;
-        this.idxTransformer = idxTransformer;
+        this.nxTransformer = nxTransformer;
+        this.foTransformer = foTransformer;
     }
 
 
@@ -34,7 +40,7 @@ public class TransformationManager implements Manager {
         LOGGER.info(".");
         LOGGER.info("____________________ Transform Manager");
 
-//        idxTransformer.transformAll();
+//        FoService.getLotSize("SBIN", LocalDate.of(2021,12,29), LocalDate.of(2021,12,30));
 
 
         LOGGER.info("----------");
@@ -44,9 +50,11 @@ public class TransformationManager implements Manager {
         LOGGER.info("----------");
         fmTransformer.transformFromDefaultDate();
         LOGGER.info("----------");
-        idxTransformer.transformFromDefaultDate();
+        nxTransformer.transformFromDefaultDate();
         LOGGER.info("----------");
         abTransformer.transformFromDefaultDate();
+        LOGGER.info("----------");
+        foTransformer.transformFromDefaultDate();
 
 //        cmTransformer.transformFromLatestDate();
 //        LOGGER.info("----------");
@@ -54,16 +62,19 @@ public class TransformationManager implements Manager {
 //        LOGGER.info("----------");
 //        fmTransformer.transformFromLatestDate();
 //        LOGGER.info("----------");
-//        idxTransformer.transformFromLatestDate();
+//        nxTransformer.transformFromLatestDate();
 //        LOGGER.info("----------");
 //        dmTransformer.transformFromLatestDate();
+//        LOGGER.info("----------");
+//        foTransformer.transformFromLatestDate();
 
 //        cmTransformer.transformFromDate(LocalDate.of(2016,1,1));
 //        LOGGER.info("----------");
 //        dmTransformer.transformFromDate(LocalDate.of(2016,1,1));
 //        LOGGER.info("----------");
-//        idxTransformer.transformFromDate(LocalDate.of(2020,1,1));
+//        nxTransformer.transformFromDate(LocalDate.of(2020,1,1));
 
         LOGGER.info("======================================== Transform Manager");
     }
+
 }

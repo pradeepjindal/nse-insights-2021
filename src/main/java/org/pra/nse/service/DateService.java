@@ -23,7 +23,8 @@ public class DateService {
 
     private LocalDate latestDbDate;
     private List<LocalDate> dbDatesListDesc;
-    private Map<LocalDate, Long> dbDatesMap;
+    private List<LocalDate> dbDatesListAsc;
+    private Map<LocalDate, Integer> dbDatesMap;
 
     public DateService(GeneralDao generalDao, PraFileUtils praFileUtils) {
         this.generalDao = generalDao;
@@ -35,6 +36,20 @@ public class DateService {
         if (latestDbDate == null) prepareData();
         if (latestDbDate.isBefore(praFileUtils.getLatestNseDateCDF())) prepareData();
         return latestDbDate;
+    }
+
+    public LocalDate getBackTradeDate(LocalDate dt) {
+        int currentRank = dbDatesMap.get(dt);
+        int backRank = currentRank - 2;
+        if(backRank < 0) return null;
+        return dbDatesListAsc.get(backRank);
+    }
+
+    public LocalDate getNextTradeDate(LocalDate dt) {
+        int currentRank = dbDatesMap.get(dt);
+        int nextRank = currentRank;
+        if(nextRank > dbDatesListAsc.size()) return null;
+        return dbDatesListAsc.get(nextRank);
     }
 
     public boolean validateTradeDate(LocalDate forDate) {
@@ -52,7 +67,7 @@ public class DateService {
         if (toIndexDesc >= dbDatesListDesc.size()) return Collections.emptyList();
 
         List<LocalDate> localList = new ArrayList<>();
-        for(int i=fromIndex; i<=toIndexDesc; i++) {
+        for(int i = fromIndex; i <= toIndexDesc; i++) {
             localList.add(dbDatesListDesc.get(i));
         }
         return localList;
@@ -76,9 +91,15 @@ public class DateService {
         List<CmTdrDto> dbResults = generalDao.getCmTradeDateDesc();
         dbDatesListDesc = dbResults.stream().map( dto->dto.getTradeDate() ).collect(Collectors.toList());
         latestDbDate = dbDatesListDesc.get(0);
+
+        dbDatesListAsc = new ArrayList<>();
+        for(int i = dbResults.size(); i > 0; i--) {
+            dbDatesListAsc.add(dbResults.get(i-1).getTradeDate());
+        }
+
         dbDatesMap = dbResults.stream().collect(
                 Collectors.toMap(
-                    cmTdrDto -> cmTdrDto.getTradeDate(), cmTdrDto -> cmTdrDto.getRank()
+                    cmTdrDto -> cmTdrDto.getTradeDate(), cmTdrDto -> Math.toIntExact(cmTdrDto.getRank())
                 )
         );
     }

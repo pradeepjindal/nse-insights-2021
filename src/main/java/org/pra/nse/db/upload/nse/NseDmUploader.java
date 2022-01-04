@@ -1,11 +1,9 @@
 package org.pra.nse.db.upload.nse;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.csv.bean.in.CmBean;
 import org.pra.nse.csv.bean.in.DmBean;
 import org.pra.nse.csv.read.DmCsvReader;
-import org.pra.nse.db.dao.DmDao;
-import org.pra.nse.db.model.NseCashMarketTab;
+import org.pra.nse.db.dao.NseDmDao;
 import org.pra.nse.db.model.NseDeliveryMarketTab;
 import org.pra.nse.db.repository.NseDmRepo;
 import org.pra.nse.util.DateUtils;
@@ -26,7 +24,7 @@ public class NseDmUploader {
     private static final Logger LOGGER = LoggerFactory.getLogger(NseDmUploader.class);
 
     private final NseDmRepo repository;
-    private final DmDao dao;
+    private final NseDmDao dao;
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
     private final DmCsvReader csvReader;
@@ -38,7 +36,7 @@ public class NseDmUploader {
     private final String Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.DM_DIR_NAME;
 
     public NseDmUploader(NseDmRepo repository,
-                         DmDao dao,
+                         NseDmDao dao,
                          NseFileUtils nseFileUtils,
                          PraFileUtils praFileUtils,
                          DmCsvReader csvReader) {

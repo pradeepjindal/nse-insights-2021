@@ -1,6 +1,6 @@
 package org.pra.nse.service;
 
-import org.pra.nse.db.dao.OmDao;
+import org.pra.nse.db.dao.NseOmDao;
 import org.pra.nse.db.dto.LotSizeDto;
 import org.pra.nse.refdata.LotSizeBean;
 import org.slf4j.Logger;
@@ -24,9 +24,9 @@ public class FuOpLotService {
     // symbol, expiry_date, trade_month, lot_size
     private static Map<String, Map<String, Map<String, Long>>> lotSizeMap = new HashMap<>();
 
-    private OmDao omDao;
+    private NseOmDao omDao;
 
-    public FuOpLotService(OmDao omDao) {
+    public FuOpLotService(NseOmDao omDao) {
         this.omDao = omDao;
     }
 

@@ -7,19 +7,24 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Component
 @PropertySource(value = "classpath:upload-queries.yaml", factory = YamlPropertyLoaderFactory.class)
-public class IdxDao {
+@PropertySource(value = "classpath:future-queries.yaml", factory = YamlPropertyLoaderFactory.class)
+public class NseFmDao {
     private final JdbcTemplate jdbcTemplate;
 
-    @Value("${nxDataCountForDateSql}")
+    @Value("${fmDataCountForDateSql}")
     private String rowsCountForTradeDateSql;
 
-    @Value("${nxDeleteForDateSql}")
+    @Value("${fmDeleteForDateSql}")
     private String rowsDeleteForTradeDateSql;
 
-    IdxDao(JdbcTemplate jdbcTemplate) {
+    @Value("${activeFutureScriptsForGivenDateSql}")
+    private String activeFutureScriptsForGivenDateSql;
+
+    NseFmDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -28,8 +33,12 @@ public class IdxDao {
         return jdbcTemplate.queryForObject(
                 rowsCountForTradeDateSql,
                 Integer.class,
-                tradeDate.toString()
-                );
+                tradeDate.toString());
+    }
+
+    public List<String> activeScripts(LocalDate tradeDate) {
+        Object[] args = new Object[] {tradeDate.toString()};
+        return jdbcTemplate.queryForList(activeFutureScriptsForGivenDateSql, args, String.class);
     }
 
     public int dataDelete(LocalDate tradeDate) {

@@ -22,8 +22,19 @@ import java.util.Map;
 public class FmTransformer extends BaseTransformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(FmTransformer.class);
 
-    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + NseCons.FM_DIR_NAME;
-    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + "pra-fm";
+    private final String sourceDirName = NseCons.FM_DIR_NAME;
+    private final String sourceFilePrefix = NseCons.NSE_FM_FILE_PREFIX;
+    private final String sourceFileSuffix = NseCons.NSE_FM_FILE_SUFFIX;
+    private final String sourceFileExtension = ApCo.ZIP_FILE_EXT;
+
+    private final String targetDirName = ApCo.FM_DIR_NAME;
+    private final String targetFilePrefix = ApCo.PRA_FM_FILE_PREFIX;
+    private final String targetFileExtension = ApCo.CSV_FILE_EXT;
+
+    private final LocalDate defaultDate = ApCo.TRANSFORM_NSE_FROM_DATE;
+
+    private final String Source_Data_Dir = ApCo.ROOT_DIR + File.separator + sourceDirName;
+    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + targetDirName;
 
 
     public FmTransformer(TransformationHelper transformationHelper, NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
@@ -32,7 +43,7 @@ public class FmTransformer extends BaseTransformer {
 
 
     public void transformFromDefaultDate() {
-        transformFromDate(ApCo.TRANSFORM_NSE_FROM_DATE);
+        transformFromDate(defaultDate);
     }
     public void transformFromDate(LocalDate fromDate) {
         Map<String, String> filePairMap = prepare(fromDate);
@@ -40,19 +51,21 @@ public class FmTransformer extends BaseTransformer {
     }
 
     public void transformFromLatestDate() {
-        String str = praFileUtils.getLatestFileNameFor(Target_Data_Dir, ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
-        LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str);
-        Map<String, String> filePairMap = prepare(dateOfLatestFile);
+        LocalDate dateOfLatestFile;
+        Map<String, String> filePairMap;
+        String latestFileName = praFileUtils.getLatestFileNameFor(Target_Data_Dir, targetFilePrefix, targetFileExtension, 1);
+        if(latestFileName == null)
+            dateOfLatestFile = defaultDate;
+        else
+            dateOfLatestFile = DateUtils.getLocalDateFromPath(latestFileName);
+        filePairMap = prepare(dateOfLatestFile);
+        //TODO filter the existing files
         looper(filePairMap);
     }
 
-
     private Map<String, String> prepare(LocalDate fromDate) {
         List<String> sourceFileNames = nseFileUtils.constructFileNames(
-                            fromDate,
-                            NseCons.NSE_FM_FILE_NAME_DATE_FORMAT,
-                            NseCons.NSE_FM_FILE_PREFIX,
-                    NseCons.NSE_FM_FILE_SUFFIX + NseCons.NSE_FM_FILE_EXT);
+                            fromDate, NseCons.NSE_FM_FILE_NAME_DATE_FORMAT, sourceFilePrefix, sourceFileSuffix + sourceFileExtension);
         //filesToBeDownloaded.removeAll(nseFileUtils.fetchFileNames(dataDir, null, null));
         //
         Map<String, String> filePairMap = new LinkedHashMap<>();
@@ -65,7 +78,7 @@ public class FmTransformer extends BaseTransformer {
 //        });
         filePairMap = TransformationHelper.prepareFileNames(sourceFileNames,
                 NseCons.NSE_FM_FILE_NAME_DATE_REGEX, NseCons.NSE_FM_FILE_NAME_DATE_FORMAT,
-                ApCo.PRA_FM_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, ApCo.DATA_FILE_NAME_DTF);
+                targetFilePrefix, targetFileExtension, ApCo.DATA_FILE_NAME_DTF);
         return filePairMap;
     }
 
@@ -74,9 +87,9 @@ public class FmTransformer extends BaseTransformer {
         filePairMap.forEach(this::validateAndTransform);
     }
 
-    private void validateAndTransform(String nseFileName, String praFileName) {
-        String source = Data_Dir + File.separator + nseFileName;
-        String target = Target_Data_Dir + File.separator + praFileName;
+    private void validateAndTransform(String sourceFileName, String targetFileName) {
+        String source = Source_Data_Dir + File.separator + sourceFileName;
+        String target = Target_Data_Dir + File.separator + targetFileName;
 
         if(nseFileUtils.isFilePresent(target)) {
             LOGGER.info("FM | already transformed - {}", target);
@@ -92,16 +105,16 @@ public class FmTransformer extends BaseTransformer {
         try {
             bytes = Files.size(Paths.get(source));
         } catch (IOException e) {
-            LOGGER.error("FM - error reading file - {}", source);
+            LOGGER.error("FM | error reading file - {}", source);
         }
 
         if (bytes == 0) {
-            LOGGER.warn("FM file size is ZERO (may be holiday file) - {}", source);
+            LOGGER.warn("FM | file size is ZERO (may be holiday file) - {}", source);
             return;
         }
 
         try {
-            transformationHelper.transform(Data_Dir, Target_Data_Dir, ApCo.PRA_FM_FILE_PREFIX, nseFileName, praFileName);
+            transformationHelper.transform(Source_Data_Dir, Target_Data_Dir, ApCo.PRA_FM_FILE_PREFIX, sourceFileName, targetFileName);
             LOGGER.info("FM | transformed");
         } catch (Exception e) {
             LOGGER.warn("FM | Error while transforming file: {} {}", source, e);

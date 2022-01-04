@@ -5,16 +5,16 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "Nse_Index_Market_Tab")
-public class NseIndexMarketTab implements Serializable {
+@Table(name = "Nse_Index_Tab")
+public class NseIndexTab implements Serializable {
     private static final long serialVersionUID = 1;
 
     @Id
     //@GeneratedValue(strategy = GenerationType.AUTO)
 //    @GeneratedValue(strategy = GenerationType.AUTO, generator = "auto_gen")
 //    @SequenceGenerator(name = "auto_gen", sequenceName = "A")
-    @SequenceGenerator(name = "nse_index_market_seq_id", sequenceName = "nse_index_market_seq_id", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "nse_index_market_seq_id")
+    @SequenceGenerator(name = "nse_index_seq_id", sequenceName = "nse_index_seq_id", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "nse_index_seq_id")
     private Long id;
 
     private String symbol;

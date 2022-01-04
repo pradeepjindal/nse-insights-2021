@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 
 @Component
 public class NseUploadManager implements Manager {
@@ -15,18 +17,21 @@ public class NseUploadManager implements Manager {
     private final NseFmUploader nseFmUploader;
     private final NseOmUploader nseOmUploader;
     private final NseDmUploader nseDmUploader;
-    private final NseIdxUploader nseIdxUploader;
+    private final NseNxUploader nseNxUploader;
+    private final NseLsUploader nseLsUploader;
 
     public NseUploadManager(NseCmUploader nseCmUploader,
                             NseFmUploader nseFmUploader,
                             NseOmUploader nseOmUploader,
                             NseDmUploader nseDmUploader,
-                            NseIdxUploader nseIdxUploader) {
+                            NseNxUploader nseNxUploader,
+                            NseLsUploader nseLsUploader) {
         this.nseCmUploader = nseCmUploader;
         this.nseFmUploader = nseFmUploader;
         this.nseOmUploader = nseOmUploader;
         this.nseDmUploader = nseDmUploader;
-        this.nseIdxUploader = nseIdxUploader;
+        this.nseNxUploader = nseNxUploader;
+        this.nseLsUploader = nseLsUploader;
     }
 
 
@@ -44,7 +49,7 @@ public class NseUploadManager implements Manager {
 //        LOGGER.info("----------");
 //        nseOmUploader.upload2021();
 //        LOGGER.info("----------");
-//        nseIdxUploader.upload2021();
+//        nseNxUploader.upload2021();
 
 
         nseCmUploader.uploadFromDefaultDate();
@@ -55,7 +60,9 @@ public class NseUploadManager implements Manager {
         LOGGER.info("----------");
         nseOmUploader.uploadFromDefaultDate();
         LOGGER.info("----------");
-        nseIdxUploader.uploadFromDefaultDate();
+        nseNxUploader.uploadFromDefaultDate();
+//        LOGGER.info("----------");
+//        nseLsUploader.uploadFromDefaultDate();
 
 //        nseCmUploader.uploadFromLatestDate();
 //        LOGGER.info("----------");
@@ -63,13 +70,17 @@ public class NseUploadManager implements Manager {
 //        LOGGER.info("----------");
 //        nseFmUploader.uploadFromLatestDate();
 //        LOGGER.info("----------");
-//        nseIdxUploader.uploadFromLatestDate();
+//        nseNxUploader.uploadFromLatestDate();
+//        LOGGER.info("----------");
+//        nseLsUploader.uploadFromLatestDate();
 
 //        LOGGER.info("----------");
 //        nseDmUploader.uploadFromDate(LocalDate.of(2017,1,1));
 //        LOGGER.info("----------");
-//        nseIdxUploader.uploadFromDate(LocalDate.of(2020,1,1));
+//        nseNxUploader.uploadFromDate(LocalDate.of(2020,1,1));
 
+//        LOGGER.info("----------");
+//        nseLsUploader.uploadFromDate(LocalDate.of(2019,12,31));
 
         //        LOGGER.info("----------");
 //        nseCmUploader.uploadForDate(LocalDate.of(2017,7,10));

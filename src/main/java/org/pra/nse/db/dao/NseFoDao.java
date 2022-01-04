@@ -10,35 +10,23 @@ import java.time.LocalDate;
 
 @Component
 @PropertySource(value = "classpath:upload-queries.yaml", factory = YamlPropertyLoaderFactory.class)
-public class DmDao {
+public class NseFoDao {
     private final JdbcTemplate jdbcTemplate;
 
-    @Value("${dmDataCountForDateSql}")
+    @Value("${foDataCountForDateSql}")
     private String rowsCountForTradeDateSql;
 
-    @Value("${dmDeleteForDateSql}")
-    private String rowsDeleteForTradeDateSql;
 
-    DmDao(JdbcTemplate jdbcTemplate) {
+    NseFoDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
 
     public int dataCount(LocalDate tradeDate) {
-//        Object[] args = new Object[] {tradeDate.toString()};
-//        return jdbcTemplate.queryForObject(dmDataCountForDateSql, args, Integer.class);
         return jdbcTemplate.queryForObject(
                 rowsCountForTradeDateSql,
                 Integer.class,
                 tradeDate.toString());
-    }
-
-    public int dataDelete(LocalDate tradeDate) {
-        return jdbcTemplate.update(
-                rowsDeleteForTradeDateSql,
-                Integer.class,
-                tradeDate.toString()
-        );
     }
 
 }

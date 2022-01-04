@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,43 +19,59 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 @Component
-public class IdxTransformer extends BaseTransformer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IdxTransformer.class);
+public class NxTransformer extends BaseTransformer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NxTransformer.class);
 
-    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + NseCons.IDX_DIR_NAME;
-    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + "pra-nx";
+    private final String sourceDirName = NseCons.NX_DIR_NAME;
+    private final String sourceFilePrefix = NseCons.NSE_NX_FILE_PREFIX;
+    private final String sourceFileExtension = NseCons.NSE_NX_FILE_EXT;
+
+    private final String targetDirName = ApCo.NX_DIR_NAME;
+    private final String targetFilePrefix = ApCo.PRA_NX_FILE_PREFIX;
+    private final String targetFileExtension = ApCo.CSV_FILE_EXT;
+
+    private final LocalDate defaultDate = ApCo.TRANSFORM_NSE_FROM_DATE;
+
+    private final String Source_Data_Dir = ApCo.ROOT_DIR + File.separator + sourceDirName;
+    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + targetDirName;
 
 
-    public IdxTransformer(TransformationHelper transformationHelper, NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
+    public NxTransformer(TransformationHelper transformationHelper, NseFileUtils nseFileUtils, PraFileUtils praFileUtils) {
         super(transformationHelper, nseFileUtils, praFileUtils);
         //DirUtils.ensureFolder("pra-nx");
     }
 
 
     public void transformAll() {
-        transformFromDate(ApCo.NSE_IDX_FILE_AVAILABLE_FROM_DATE);
+        transformFromDate(ApCo.NSE_NX_FILE_AVAILABLE_FROM_DATE);
     }
     public void transformFromDefaultDate() {
-        transformFromDate(ApCo.TRANSFORM_NSE_FROM_DATE);
+        transformFromDate(defaultDate);
     }
     public void transformFromDate(LocalDate fromDate) {
         Map<String, String> filePairMap = prepare(fromDate);
         looper(filePairMap);
     }
+
     public void transformFromLatestDate() {
-        String str = praFileUtils.getLatestFileNameFor(Target_Data_Dir, ApCo.PRA_IDX_FILE_PREFIX, ApCo.REPORTS_FILE_EXT, 1);
-        LocalDate dateOfLatestFile = DateUtils.getLocalDateFromPath(str);
-        Map<String, String> filePairMap = prepare(dateOfLatestFile);
+        LocalDate dateOfLatestFile;
+        Map<String, String> filePairMap;
+        String latestFileName = praFileUtils.getLatestFileNameFor(Target_Data_Dir, targetFilePrefix, targetFileExtension, 1);
+        if(latestFileName == null)
+            dateOfLatestFile = defaultDate;
+        else
+            dateOfLatestFile = DateUtils.getLocalDateFromPath(latestFileName);
+        filePairMap = prepare(dateOfLatestFile);
+        //TODO filter the existing files
         looper(filePairMap);
     }
-
 
     private Map<String, String> prepare(LocalDate fromDate) {
         List<String> sourceFileNames = nseFileUtils.constructFileNames(
                 fromDate,
-                NseCons.NSE_IDX_FILE_NAME_DATE_FORMAT,
-                NseCons.NSE_IDX_FILE_PREFIX,
-                NseCons.NSE_IDX_FILE_EXT);
+                NseCons.NSE_NX_FILE_NAME_DATE_FORMAT,
+                sourceFilePrefix,
+                sourceFileExtension);
         //filesToBeDownloaded.removeAll(nseFileUtils.fetchFileNames(dataDir, null, null));
         //
         Map<String, String> filePairMap = new LinkedHashMap<>();
@@ -68,8 +83,8 @@ public class IdxTransformer extends BaseTransformer {
 //            filePairMap.put(sourceFileName, targetFileName);
 //        });
         filePairMap = TransformationHelper.prepareFileNames(sourceFileNames,
-                NseCons.NSE_IDX_FILE_NAME_DATE_REGEX, NseCons.NSE_IDX_FILE_NAME_DATE_FORMAT,
-                ApCo.PRA_IDX_FILE_PREFIX, ApCo.DEFAULT_FILE_EXT, ApCo.DATA_FILE_NAME_DTF);
+                NseCons.NSE_NX_FILE_NAME_DATE_REGEX, NseCons.NSE_NX_FILE_NAME_DATE_FORMAT,
+                targetFilePrefix, targetFileExtension, ApCo.DATA_FILE_NAME_DTF);
         return filePairMap;
     }
 
@@ -78,38 +93,39 @@ public class IdxTransformer extends BaseTransformer {
     }
 
     private void transform(String nseFileName, String praFileName) {
-        String source = Data_Dir + File.separator + nseFileName;
+        String source = Source_Data_Dir + File.separator + nseFileName;
         String target = Target_Data_Dir + File.separator + praFileName;
+
         if(nseFileUtils.isFilePresent(target)) {
-            LOGGER.info("IDX | already transformed - {}", target);
+            LOGGER.info("NX | already transformed - {}", target);
         } else if (nseFileUtils.isFilePresent(source)) {
             try {
-                Map.Entry<Integer, Integer> incoming_And_Outgoing_Rows = transformToIdxCsv(source, Target_Data_Dir);
+                Map.Entry<Integer, Integer> incoming_And_Outgoing_Rows = transformToNxCsv(source, Target_Data_Dir);
                 if(incoming_And_Outgoing_Rows.getKey() == incoming_And_Outgoing_Rows.getValue())
-                    LOGGER.info("IDX | transformed - {}, input rows: {}, output rows {}",
+                    LOGGER.info("NX | transformed - {}, input rows: {}, output rows {}",
                             target, incoming_And_Outgoing_Rows.getKey(), incoming_And_Outgoing_Rows.getValue());
                 else
-                    LOGGER.error("IDX | transformed - {}, input rows: {}, output rows {}",
+                    LOGGER.error("NX | transformed - {}, input rows: {}, output rows {}",
                             target, incoming_And_Outgoing_Rows.getKey(), incoming_And_Outgoing_Rows.getValue());
             } catch (Exception e) {
-                LOGGER.warn("IDX | Error while transforming file: {} {}", source, e);
+                LOGGER.warn("NX | Error while transforming file: {} {}", source, e);
             }
         } else {
-            LOGGER.info("IDX | source not found - {}", source);
+            LOGGER.info("NX | source not found - {}", source);
         }
     }
 
-    private void validateAndTransform(String nseFileName, String praFileName) {
-        String source = Data_Dir + File.separator + nseFileName;
-        String target = Target_Data_Dir + File.separator + praFileName;
+    private void validateAndTransform(String sourceFileName, String targetFileName) {
+        String source = Source_Data_Dir + File.separator + sourceFileName;
+        String target = Target_Data_Dir + File.separator + targetFileName;
 
         if(nseFileUtils.isFilePresent(target)) {
-            LOGGER.info("IDX | already transformed - {}", target);
+            LOGGER.info("NX | already transformed - {}", target);
             return;
         }
 
         if (nseFileUtils.isFileAbsent(source)) {
-            LOGGER.info("IDX | source not found - {}", source);
+            LOGGER.info("NX | source not found - {}", source);
             return;
         }
 
@@ -117,38 +133,35 @@ public class IdxTransformer extends BaseTransformer {
         try {
             bytes = Files.size(Paths.get(source));
         } catch (IOException e) {
-            LOGGER.error("IDX - error reading file - {}", source);
+            LOGGER.error("NX | error reading file - {}", source);
         }
 
         if (bytes == 0) {
-            LOGGER.warn("IDX file size is ZERO (may be holiday file) - {}", source);
+            LOGGER.warn("NX | file size is ZERO (may be holiday file) - {}", source);
             return;
         }
 
         try {
-            Map.Entry<Integer, Integer> incoming_And_Outgoing_Rows = transformToIdxCsv(source, Target_Data_Dir);
+            Map.Entry<Integer, Integer> incoming_And_Outgoing_Rows = transformToNxCsv(source, Target_Data_Dir);
             if(incoming_And_Outgoing_Rows.getKey() == incoming_And_Outgoing_Rows.getValue())
-                LOGGER.info("IDX | transformed - {}, input rows: {}, output rows {}",
+                LOGGER.info("NX | transformed - {}, input rows: {}, output rows {}",
                         target, incoming_And_Outgoing_Rows.getKey(), incoming_And_Outgoing_Rows.getValue());
             else
-                LOGGER.error("IDX | transformed - {}, input rows: {}, output rows {}",
+                LOGGER.error("NX | transformed - {}, input rows: {}, output rows {}",
                         target, incoming_And_Outgoing_Rows.getKey(), incoming_And_Outgoing_Rows.getValue());
 
         } catch (Exception e) {
-            LOGGER.warn("IDX | Error while transforming file: {} {}", source, e);
+            LOGGER.warn("NX | Error while transforming file: {} {}", source, e);
         }
 
     }
 
-    private Map.Entry<Integer, Integer> transformToIdxCsv(String downloadedDirAndFileName, String tgtDataDir) {
+    private Map.Entry<Integer, Integer> transformToNxCsv(String downloadedDirAndFileName, String targetDataDir) {
         int firstIndex = downloadedDirAndFileName.lastIndexOf("_");
         String tradeDate = DateUtils.transformDate(downloadedDirAndFileName.substring(firstIndex+1, firstIndex+9));
-        String csvFileName =
-                ApCo.PRA_IDX_FILE_PREFIX
-                        + tradeDate
-                        + ApCo.DEFAULT_FILE_EXT;
+        String csvFileName = targetFilePrefix + tradeDate + ApCo.DEFAULT_FILE_EXT;
         //String toFile = ApCo.ROOT_DIR + File.separator + NseCons.IDX_DIR_NAME + File.separator + csvFileName;
-        String toFile = tgtDataDir + File.separator + csvFileName;
+        String toFile = targetDataDir + File.separator + csvFileName;
         AtomicInteger inComingRows = new AtomicInteger();
         AtomicInteger outGoingRows = new AtomicInteger();
         Map.Entry<Integer, Integer> incomingAndOutgoingRows = new AbstractMap.SimpleEntry<>(inComingRows.get(), outGoingRows.get());
@@ -171,10 +184,10 @@ public class IdxTransformer extends BaseTransformer {
                             }
                         }).forEach(pw::println);
             } catch (IOException e) {
-                LOGGER.warn("Error in IDX entry:", e);
+                LOGGER.warn("NX | Error in NX entry:", e);
             }
         } catch (FileNotFoundException e) {
-            LOGGER.warn("Error:", e);
+            LOGGER.warn("NX | Error:", e);
         }
         incomingAndOutgoingRows = new AbstractMap.SimpleEntry<>(inComingRows.get(), outGoingRows.get());
         return incomingAndOutgoingRows;
@@ -199,14 +212,8 @@ public class IdxTransformer extends BaseTransformer {
         if(csvLine.contains("NIFTY100 ESG")) return false;
         if(csvLine.contains("NIFTY100 Enhanced ESG")) return false;
         if(csvLine.contains("NIFTY500 Value 50")) return false;
-        if(csvLine.contains("Tata")) return false;
-        if(csvLine.contains("Tata")) return false;
-        if(csvLine.contains("Tata")) return false;
-
-
 
         if(csvLine.contains("Mahindra")) return false;
-
         if(csvLine.contains("Tata")) return false;
         if(csvLine.contains("Nifty Consumer Durables")) return false;
         if(csvLine.contains("Aditya Birla")) return false;

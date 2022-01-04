@@ -1,10 +1,7 @@
 package org.pra.nse.csv.read;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.NseCons;
 import org.pra.nse.csv.bean.in.DmBean;
-import org.pra.nse.refdata.IdxCategoryEnum;
-import org.pra.nse.refdata.IdxFiveHundredService;
 import org.pra.nse.util.NseFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,8 +68,7 @@ public class DmCsvReader {
                 if(not_EQ_or_BE_series)
                     continue;
                 if(beanMap.containsKey(bean.getSymbol())) {
-                    LOGGER.warn("Symbol already present in map: old value = [{}], new value = [{}]",
-                            beanMap.get(bean.getSymbol()), bean);
+                    LOGGER.warn("Symbol already present in map: old value = [{}], new value = [{}]", beanMap.get(bean.getSymbol()), bean);
                 }
                 beanMap.put(bean.getSymbol(), bean);
             }

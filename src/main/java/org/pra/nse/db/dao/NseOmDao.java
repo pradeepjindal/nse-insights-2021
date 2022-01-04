@@ -1,8 +1,10 @@
 package org.pra.nse.db.dao;
 
 import org.pra.nse.config.YamlPropertyLoaderFactory;
+import org.pra.nse.db.dto.LotSizeDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -11,20 +13,24 @@ import java.util.List;
 
 @Component
 @PropertySource(value = "classpath:upload-queries.yaml", factory = YamlPropertyLoaderFactory.class)
-@PropertySource(value = "classpath:future-queries.yaml", factory = YamlPropertyLoaderFactory.class)
-public class FmDao {
+@PropertySource(value = "classpath:option-queries.yaml", factory = YamlPropertyLoaderFactory.class)
+public class NseOmDao {
     private final JdbcTemplate jdbcTemplate;
 
-    @Value("${fmDataCountForDateSql}")
+    @Value("${omDataCountForDateSql}")
     private String rowsCountForTradeDateSql;
 
-    @Value("${fmDeleteForDateSql}")
+    @Value("${omDeleteForDateSql}")
     private String rowsDeleteForTradeDateSql;
 
-    @Value("${activeFutureScriptsForGivenDateSql}")
+    @Value("${activeOptionScriptsForGivenDateSql}")
     private String activeFutureScriptsForGivenDateSql;
 
-    FmDao(JdbcTemplate jdbcTemplate) {
+    @Value("${lotSizeSql}")
+    private String lotSizeSql;
+
+
+    NseOmDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -47,6 +53,11 @@ public class FmDao {
                 Integer.class,
                 tradeDate.toString()
         );
+    }
+
+    public List<LotSizeDto> getLotSizeList() {
+        List<LotSizeDto> result = jdbcTemplate.query(lotSizeSql, new BeanPropertyRowMapper<LotSizeDto>(LotSizeDto.class));
+        return result;
     }
 
 }

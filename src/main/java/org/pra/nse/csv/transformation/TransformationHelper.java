@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @Component
 public class TransformationHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransformationHelper.class);
@@ -39,15 +40,15 @@ public class TransformationHelper {
         return filePairMap;
     }
 
-    void transform(String srcDataDir, String tgtDataDir, String filePrefix, String nseFileName, String praFileName) {
-        String source = srcDataDir + File.separator + nseFileName;
-        String target = tgtDataDir + File.separator + praFileName;
+    void transform(String sourceDataDir, String targetDataDir, String filePrefix, String sourceFileName, String targetFileName) {
+        String source = sourceDataDir + File.separator + sourceFileName;
+        String target = targetDataDir + File.separator + targetFileName;
         if(nseFileUtils.isFilePresent(target)) {
             LOGGER.info("{} already transformed - {}", filePrefix, target);
         } else if (nseFileUtils.isFilePresent(source)) {
             try {
                 //TODO pass on the target file name
-                nseFileUtils.unzip2(source, tgtDataDir, filePrefix);
+                nseFileUtils.unzip2(source, targetDataDir, filePrefix);
                 LOGGER.info("{} transformed - {}", filePrefix, target);
             } catch (FileNotFoundException fnfe) {
                 LOGGER.info("{} file not found - {}", filePrefix, source);

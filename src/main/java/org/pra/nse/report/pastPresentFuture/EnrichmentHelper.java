@@ -129,6 +129,8 @@ public class EnrichmentHelper {
     public static void enrichDeliveryDiversionForEachSymbol(List<DeliverySpikeDto> DeliverySpikeDtoList) {
         for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
 
+            if(dto.getBackDto() == null) continue;
+
             float atpChg = dto.getAtpChgPrcnt().floatValue();
             float atpMinusClose = dto.getAtpMinusClosePrcnt().floatValue();
             float delChg = dto.getDeliveryChgPrcnt().floatValue();
@@ -166,12 +168,12 @@ public class EnrichmentHelper {
 
             if(dto.getSymbol().equals("METROPOLIS"))
                 System.out.println("");
-            if(dto.getSymbol().equals("TORNTPOWER"))
-                System.out.println("");
 
             dto.setLongShortBuildup("");
             dto.setLongBuildup("");
             dto.setShortBuildup("");
+
+            if(dto.getBackDto() == null) continue;
 
             float atpChg = dto.getAtpChgPrcnt().floatValue();
             float atpMinusClose = dto.getAtpMinusClosePrcnt().floatValue();
@@ -214,13 +216,16 @@ public class EnrichmentHelper {
         int i = 0;
         for(DeliverySpikeDto dto: DeliverySpikeDtoList) {
             try {
-                if(dto.getBackDto() == null) {
-                    LOGGER.info("enrichTrend - {}, skipping, no back data (seems new entry in FnO)", Du.symbol(dto.getSymbol()));
-                    break;
-                } else {
-                    //enable for debugging logs
-//                    LOGGER.info("enrichTrend - {}, trdDt: {}, oi: {}", Du.symbol(dto.getSymbol()), dto.getTradeDate(), dto.getFuOi());
-                }
+//                if(dto.getBackDto() == null) {
+//                    LOGGER.info("enrichTrend - {}, skipping, no back data (seems new entry in FnO)", Du.symbol(dto.getSymbol()));
+//                    break;
+//                } else {
+//                    //enable for debugging logs
+////                    LOGGER.info("enrichTrend - {}, trdDt: {}, oi: {}", Du.symbol(dto.getSymbol()), dto.getTradeDate(), dto.getFuOi());
+//                }
+
+                if(dto.getBackDto() == null) continue;
+
                 float fuOi = dto.getFuOi().floatValue();
                 if(fuOi == 0) {
                     LOGGER.warn("enrichTrend - {}, oi: {}, fuTrdVal: {}", Du.symbol(dto.getSymbol()), dto.getFuOi(), dto.getFuTotTrdVal());

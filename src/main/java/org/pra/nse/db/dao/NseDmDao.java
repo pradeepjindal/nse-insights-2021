@@ -1,50 +1,36 @@
 package org.pra.nse.db.dao;
 
 import org.pra.nse.config.YamlPropertyLoaderFactory;
-import org.pra.nse.db.dto.LotSizeDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Component
 @PropertySource(value = "classpath:upload-queries.yaml", factory = YamlPropertyLoaderFactory.class)
-@PropertySource(value = "classpath:option-queries.yaml", factory = YamlPropertyLoaderFactory.class)
-public class OmDao {
+public class NseDmDao {
     private final JdbcTemplate jdbcTemplate;
 
-    @Value("${omDataCountForDateSql}")
+    @Value("${dmDataCountForDateSql}")
     private String rowsCountForTradeDateSql;
 
-    @Value("${omDeleteForDateSql}")
+    @Value("${dmDeleteForDateSql}")
     private String rowsDeleteForTradeDateSql;
 
-    @Value("${activeOptionScriptsForGivenDateSql}")
-    private String activeFutureScriptsForGivenDateSql;
-
-    @Value("${lotSizeSql}")
-    private String lotSizeSql;
-
-
-    OmDao(JdbcTemplate jdbcTemplate) {
+    NseDmDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
 
     public int dataCount(LocalDate tradeDate) {
+//        Object[] args = new Object[] {tradeDate.toString()};
+//        return jdbcTemplate.queryForObject(dmDataCountForDateSql, args, Integer.class);
         return jdbcTemplate.queryForObject(
                 rowsCountForTradeDateSql,
                 Integer.class,
                 tradeDate.toString());
-    }
-
-    public List<String> activeScripts(LocalDate tradeDate) {
-        Object[] args = new Object[] {tradeDate.toString()};
-        return jdbcTemplate.queryForList(activeFutureScriptsForGivenDateSql, args, String.class);
     }
 
     public int dataDelete(LocalDate tradeDate) {
@@ -53,11 +39,6 @@ public class OmDao {
                 Integer.class,
                 tradeDate.toString()
         );
-    }
-
-    public List<LotSizeDto> getLotSizeList() {
-        List<LotSizeDto> result = jdbcTemplate.query(lotSizeSql, new BeanPropertyRowMapper<LotSizeDto>(LotSizeDto.class));
-        return result;
     }
 
 }

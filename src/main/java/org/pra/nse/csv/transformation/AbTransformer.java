@@ -32,8 +32,8 @@ import java.util.stream.Stream;
 public class AbTransformer extends BaseTransformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbTransformer.class);
 
-    private final String Data_Dir = ApCo.ROOT_DIR + File.separator + NseCons.AB_DIR_NAME;
-    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + "pra-ab";
+    private final String Source_Data_Dir = ApCo.ROOT_DIR + File.separator + NseCons.AB_DIR_NAME;
+    private final String Target_Data_Dir = ApCo.ROOT_DIR + File.separator + ApCo.AB_DIR_NAME;
 
 
     private final EmailService emailService;

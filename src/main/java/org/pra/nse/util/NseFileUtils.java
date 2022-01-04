@@ -6,8 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -28,6 +27,23 @@ public class NseFileUtils {
 
     public boolean isFilePresent(String filePathAndName) {
         return new File(filePathAndName).exists();
+    }
+
+    public void extractFileFromZipUsingNewIo(String sourceDataDir,
+                                             String sourceFileName,
+                                             String fileNameToBeExtracted,
+                                             String targetDataDir,
+                                             String targetFileName) throws IOException {
+        String source = sourceDataDir + File.separator + sourceFileName;
+        String target = targetDataDir + File.separator + targetFileName;
+
+        Path inFile = Paths.get(source);
+        Path outFile = Paths.get(target);
+        try (FileSystem fileSystem = FileSystems.newFileSystem(inFile)) {
+            Path fileToExtract = fileSystem.getPath(fileNameToBeExtracted);
+            Files.copy(fileToExtract, outFile);
+        }
+
     }
 
     public void unzip(String outputDirAndFileName) throws IOException {
@@ -75,7 +91,7 @@ public class NseFileUtils {
         zis.closeEntry();
         zis.close();
     }
-    public void unzip2(String sourceDirAndFileName, String tgtDir, String filePrefix) throws IOException {
+    public void unzip2(String sourceDirAndFileName, String targetDirName, String filePrefix) throws IOException {
         //TODO remove the target file logic name, and get it via parameter
         int lastIndex = sourceDirAndFileName.lastIndexOf(File.separator);
         File destDir = new File(sourceDirAndFileName.substring(0, lastIndex));
@@ -85,7 +101,7 @@ public class NseFileUtils {
         ZipEntry zipEntry;
         zipEntry = zis.getNextEntry();
         while (zipEntry != null) {
-            String csvFilePathAndName = tgtDir + File.separator + filePrefix + DateUtils.extractDateString(zipEntry.getName()) + ApCo.DEFAULT_FILE_EXT;
+            String csvFilePathAndName = targetDirName + File.separator + filePrefix + DateUtils.extractDateString(zipEntry.getName()) + ApCo.DEFAULT_FILE_EXT;
             File csvFile = new File(csvFilePathAndName);
             FileOutputStream fos = new FileOutputStream(csvFile);
             int len;

@@ -1,7 +1,7 @@
 package org.pra.nse.csv.read;
 
 import org.pra.nse.ApCo;
-import org.pra.nse.csv.bean.in.IdxBean;
+import org.pra.nse.csv.bean.in.NxBean;
 import org.pra.nse.util.NseFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,27 +23,27 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Component
-public class IdxCsvReader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IdxCsvReader.class);
+public class NxCsvReader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NxCsvReader.class);
     private final NseFileUtils nseFileUtils;
 
-    IdxCsvReader(NseFileUtils nseFileUtils) {
+    NxCsvReader(NseFileUtils nseFileUtils) {
         this.nseFileUtils = nseFileUtils;
     }
 
-    public Map<String, IdxBean> read(String fromFile) {
+    public Map<String, NxBean> read(String fromFile) {
         if(nseFileUtils.isFilePresent(fromFile)) {
 //            LOGGER.info("IDX file exists: [{}]", fromFile);
         } else {
             LOGGER.error("IDX file does not exist: [{}]", fromFile);
         }
 
-        Map<String, IdxBean> beanMap = readCsv(fromFile);
+        Map<String, NxBean> beanMap = readCsv(fromFile);
         LOGGER.info("IDX Total Beans in Map: {}", beanMap.size());
         return beanMap;
     }
 
-    private Map<String, IdxBean> readCsv(String fileName) {
+    private Map<String, NxBean> readCsv(String fileName) {
         ICsvBeanReader beanReader = null;
         try {
             beanReader = new CsvBeanReader(new FileReader(fileName), CsvPreference.STANDARD_PREFERENCE);
@@ -52,16 +52,16 @@ public class IdxCsvReader {
         }
         final CellProcessor[] processors = getProcessors();
 
-        IdxBean bean;
+        NxBean bean;
         String[] header;
-        Map<String, IdxBean> beanMap = new LinkedHashMap<>();
+        Map<String, NxBean> beanMap = new LinkedHashMap<>();
         try {
             header = beanReader.getHeader(true);
             if (header == null) {
                 LOGGER.warn("IDX file has ZERO size");
                 return beanMap;
             }
-            while( (bean = beanReader.read(IdxBean.class, header, processors)) != null ) {
+            while( (bean = beanReader.read(NxBean.class, header, processors)) != null ) {
                 //LOGGER.info(String.format("lineNo=%s, rowNo=%s, customer=%s", beanReader.getLineNumber(), beanReader.getRowNumber()-1, bean));
                 bean.setSymbol(bean.getIdxName());
                 if(beanMap.containsKey(bean.getSymbol())) {
@@ -79,7 +79,7 @@ public class IdxCsvReader {
     private static CellProcessor[] getProcessors() {
         return new CellProcessor[] {
                 new NotNull(), //idxName
-                new ParseDate(ApCo.PRA_IDX_DATA_DATE_FORMAT), // tradeDate
+                new ParseDate(ApCo.PRA_NX_DATA_DATE_FORMAT), // tradeDate
                 new DMinMax(0L, DMinMax.MAX_DOUBLE), // open
                 new DMinMax(0L, DMinMax.MAX_DOUBLE), // high
                 new DMinMax(0L, DMinMax.MAX_DOUBLE), // low
