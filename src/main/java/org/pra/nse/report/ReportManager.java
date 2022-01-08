@@ -53,7 +53,7 @@ public class ReportManager implements Manager {
         if(ApCo.MANAGER_REPORT_ENABLED) {
             LOGGER.info("____________________ Report Manager");
         } else {
-            LOGGER.info("____________________ Report Manager - DISABLES");
+            LOGGER.info("____________________ Report Manager - DISABLED");
             return;
         }
 

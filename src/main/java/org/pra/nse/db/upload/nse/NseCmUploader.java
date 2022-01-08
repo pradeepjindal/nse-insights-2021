@@ -51,26 +51,29 @@ public class NseCmUploader {
     public void uploadAll() {
         uploadFromDate(ApCo.NSE_CM_FILE_AVAILABLE_FROM_DATE);
     }
+    public void upload2020() {
+        looper(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 31));
+    }
     public void upload2021() {
-        uploadFromDate(LocalDate.of(2021, 1, 1));
+        looper(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 12, 31));
     }
 
     public void uploadFromDefaultDate() {
         uploadFromDate(defaultDate);
     }
     public void uploadFromDate(LocalDate fromDate) {
-        looper(fromDate);
+        looper(fromDate, null);
     }
 
     public void uploadFromLatestDate() {
         //String dataDir = ApCo.ROOT_DIR + File.separator + fileDirName;
         String str = praFileUtils.getLatestFileNameFor(Data_Dir, filePrefix, ApCo.DATA_FILE_EXT, 1);
         LocalDate dt = str == null ? LocalDate.now() : DateUtils.getLocalDateFromPath(str);
-        looper(dt);
+        looper(dt, null);
     }
 
-    private void looper(LocalDate fromDate) {
-        LocalDate today = LocalDate.now();
+    private void looper(LocalDate fromDate, LocalDate toDate) {
+        if(toDate == null) toDate = LocalDate.now();
         LocalDate processingDate = fromDate.minusDays(1);
         do {
             processingDate = processingDate.plusDays(1);
@@ -82,7 +85,7 @@ public class NseCmUploader {
             } else {
                 uploadForDate(processingDate);
             }
-        } while(today.compareTo(processingDate) > 0);
+        } while(toDate.compareTo(processingDate) > 0);
     }
 
     public void uploadForDate(LocalDate forDate) {

@@ -37,7 +37,7 @@ public class DownloadManager implements Manager {
         if(ApCo.MANAGER_DOWNLOAD_ENABLED) {
             LOGGER.info("____________________ Download Manager");
         } else {
-            LOGGER.info("____________________ Download Manager - DISABLES");
+            LOGGER.info("____________________ Download Manager - DISABLED");
             return;
         }
 

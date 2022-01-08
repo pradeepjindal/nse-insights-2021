@@ -23,18 +23,18 @@ public class ApCo {
     public static final LocalTime DAILY_DOWNLOAD_TIME = LocalTime.of(18,0,0,0);
 
     //public static final LocalDate DOWNLOAD_FROM_DATE    = LocalDate.of(2021,4,18);
-    public static final LocalDate DOWNLOAD_NSE_FROM_DATE = LocalDate.of(2022,1,1);
-    public static final LocalDate TRANSFORM_NSE_FROM_DATE  = LocalDate.of(2022,1,1);
-    public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2022,1,1);
+    public static final LocalDate DOWNLOAD_NSE_FROM_DATE = LocalDate.of(2022,1,3);
+    public static final LocalDate TRANSFORM_NSE_FROM_DATE  = LocalDate.of(2022,1,3);
+    public static final LocalDate UPLOAD_NSE_FROM_DATE  = LocalDate.of(2022,1,3);
     //
-    public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2022,1,1);
-    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2022,1,1);
+    public static final LocalDate DO_CALC_FROM_DATE = LocalDate.of(2022,1,3);
+    public static final LocalDate UPLOAD_CALC_FROM_DATE = LocalDate.of(2022,1,3);
     //
-    public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2022,1,1);
-    public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2022,1,1);
+    public static final LocalDate REPORTS_FROM_DATE     = LocalDate.of(2022,1,3);
+    public static final LocalDate EMAIL_FROM_DATE       = LocalDate.of(2022,1,3);
 
     public static final boolean RE_UPLOAD_CALC_FLAG = false;
-    public static final LocalDate RE_UPLOAD_CALC_FROM_DATE = LocalDate.of(2022,1,1);
+    public static final LocalDate RE_UPLOAD_CALC_FROM_DATE = LocalDate.of(2022,1,3);
 
     public static final boolean EMAIL_ENABLED_FLAG = false;
     public static final boolean EMAIL_ENABLED_FOR_MANISH = true;
@@ -47,7 +47,7 @@ public class ApCo {
 
     public static final boolean MANAGER_DOWNLOAD_ENABLED = false;
     public static final boolean MANAGER_TRANSFORM_ENABLED = true;
-    public static final boolean MANAGER_NSE_UPLOAD_ENABLED = false;
+    public static final boolean MANAGER_NSE_UPLOAD_ENABLED = true;
     public static final boolean MANAGER_CALC_ENABLED = true;
     public static final boolean MANAGER_CALC_UPLOAD_ENABLED = true;
     public static final boolean MANAGER_REPORT_ENABLED = true;

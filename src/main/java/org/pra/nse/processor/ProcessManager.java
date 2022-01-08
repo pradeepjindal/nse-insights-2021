@@ -35,10 +35,10 @@ public class ProcessManager implements Manager {
     public void execute() {
         LOGGER.info(".");
         if(ApCo.MANAGER_PROCESS_ENABLED) {
-            LOGGER.info("____________________ Process Manager - DISABLES");
-            return;
-        } else {
             LOGGER.info("____________________ Process Manager");
+        } else {
+            LOGGER.info("____________________ Process Manager - DISABLED");
+            return;
         }
 
         //nseFileUtils.getDatesToBeComputed(()-> ApCo.PRADEEP_FILE_NAME)

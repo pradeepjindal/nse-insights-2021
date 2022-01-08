@@ -31,7 +31,7 @@ public class CalcUploadManager implements Manager {
         if(ApCo.MANAGER_CALC_UPLOAD_ENABLED) {
             LOGGER.info("____________________ CALC Upload Manager");
         } else {
-            LOGGER.info("____________________ CALC Upload Manager - DISABLES");
+            LOGGER.info("____________________ CALC Upload Manager - DISABLED");
             return;
         }
 

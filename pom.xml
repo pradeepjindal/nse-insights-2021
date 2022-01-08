@@ -32,7 +32,8 @@
 
 	<properties>
 		<java.version>11</java.version>
-		<jackson.version>2.10.2</jackson.version>
+<!--		<jackson.version>2.10.2</jackson.version>-->
+		<jackson.version>2.13.1</jackson.version>
 		<manifold.version>2020.1.41</manifold.version>
 	</properties>
 
@@ -112,6 +113,17 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-csv</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
 

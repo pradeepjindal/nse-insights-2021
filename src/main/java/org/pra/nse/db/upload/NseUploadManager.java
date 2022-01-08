@@ -43,7 +43,7 @@ public class NseUploadManager implements Manager {
         if(ApCo.MANAGER_NSE_UPLOAD_ENABLED) {
             LOGGER.info("____________________ NSE Upload Manager");
         } else {
-            LOGGER.info("____________________ NSE Upload Manager - DISABLES");
+            LOGGER.info("____________________ NSE Upload Manager - DISABLED");
             return;
         }
 

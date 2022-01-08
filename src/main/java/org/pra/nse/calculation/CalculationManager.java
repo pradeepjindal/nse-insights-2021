@@ -38,7 +38,7 @@ public class CalculationManager implements Manager {
         if(ApCo.MANAGER_CALC_ENABLED) {
             LOGGER.info("____________________ Calculation Manager");
         } else {
-            LOGGER.info("____________________ Calculation Manager - DISABLES");
+            LOGGER.info("____________________ Calculation Manager - DISABLED");
             return;
         }
 

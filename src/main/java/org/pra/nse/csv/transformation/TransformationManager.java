@@ -39,13 +39,9 @@ public class TransformationManager implements Manager {
         if(ApCo.MANAGER_TRANSFORM_ENABLED) {
             LOGGER.info("____________________ Transform Manager");
         } else {
-            LOGGER.info("____________________ Transform Manager - DISABLES");
+            LOGGER.info("____________________ Transform Manager - DISABLED");
             return;
         }
-
-
-//        FoService.getLotSize("SBIN", LocalDate.of(2021,12,29), LocalDate.of(2021,12,30));
-
 
         LOGGER.info("----------");
         cmTransformer.transformFromDefaultDate();
