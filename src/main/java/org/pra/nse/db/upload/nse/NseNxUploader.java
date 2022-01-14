@@ -80,7 +80,7 @@ public class NseNxUploader {
         LocalDate processingDate = fromDate.minusDays(1);
         do {
             processingDate = processingDate.plusDays(1);
-            LOGGER.info("nx- | upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
+            //LOGGER.info("nx | upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
             if(DateUtils.isTradingOnHoliday(processingDate)) {
                 uploadForDate(processingDate);
             } else if (DateUtils.isWeekend(processingDate)) {
@@ -94,17 +94,17 @@ public class NseNxUploader {
     public void uploadForDate(LocalDate forDate) {
         //TODO check that number of rows in file and number of rows in table matches for the given date
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("nx- | upload | already uploaded | for date:[{}]", forDate);
+            LOGGER.info("nx | already uploaded - for date:[{}]", forDate);
             return;
         } else {
-//            LOGGER.info("IDX-upload | uploading - for date:[{}]", forDate);
+            LOGGER.info("nx | uploading - for date:[{}]", forDate);
         }
 
         String fromFile = Data_Dir + File.separator+ PraCons.PRA_NX_FILE_PREFIX +forDate+ ApCo.DATA_FILE_EXT;
         //LOGGER.info("IDX-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFilePresent(fromFile)) {
-            LOGGER.warn("nx- | upload | file not found: [{}]", fromFile);
+            LOGGER.warn("nx | file not found: [{}]", fromFile);
             return;
         }
 
@@ -145,8 +145,8 @@ public class NseNxUploader {
                 recordFailed.incrementAndGet();
             }
         });
-        LOGGER.info("nx- | upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
-        if (recordFailed.get() > 0) throw new RuntimeException("FO-upload | some record could not be persisted");
+        LOGGER.info("nx | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
+        if (recordFailed.get() > 0) throw new RuntimeException("nx | some record could not be persisted");
     }
 
 }

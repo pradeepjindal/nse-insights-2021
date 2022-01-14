@@ -77,8 +77,9 @@ public class ReportConstants {
             + "open,high,low,close,bullDay,bearDay,"
             + "atp,atpChgPct,mvwap,fuOiLots,fuOiChgPct,fuLong,fuShort,"
             + "delDiversion,"
-            + "calcAtpFixGrowth,calcAtpFixGrowthChg,"
-            + "calcDelFixSpike,delChgPct,"
+            + "cAtpFixGrw,cAtpFixGrwChg,"
+            + "cDelFixSpike,delChgPct,"
+            + "sumDelGrw,sumDelDiff,"
             + "lotSize,"
             + "fuAtp,fuAtpMcmAtp_pct,"
             + "Hammer,NR4,NR7";

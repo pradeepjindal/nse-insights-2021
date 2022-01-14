@@ -144,14 +144,14 @@ public class DailyMarketScanReporter {
             symbolMap = dataService.getRichDataBySymbolForSymbolSet(forDate, forMinusDays, symbolSet);
         }
 
-        ReportHelper.enrichDayTrend(symbolMap);
-        ReportHelper.enrichGrowth(calcAvgMap, symbolMap);
-        ReportHelper.enrichAtpDelAndOiTrend(symbolMap);
-        ReportHelper.enrichNarrowRange(symbolMap);
-        ReportHelper.enrichHammer(symbolMap);
-        ReportHelper.enrichVwap(symbolMap);
-        ReportHelper.enrichDeliveryDiversion(symbolMap);
-        ReportHelper.enrichLongShortBuildup(symbolMap);
+//        ReportHelper.enrichDayTrend(symbolMap);
+//        ReportHelper.enrichGrowth(calcAvgMap, symbolMap);
+//        ReportHelper.enrichAtpDelAndOiTrend(symbolMap);
+//        ReportHelper.enrichNarrowRange(symbolMap);
+//        ReportHelper.enrichHammer(symbolMap);
+//        ReportHelper.enrichVwap(symbolMap);
+//        ReportHelper.enrichDeliveryDiversion(symbolMap);
+//        ReportHelper.enrichLongShortBuildup(symbolMap);
         //atpDelTrend
 
 

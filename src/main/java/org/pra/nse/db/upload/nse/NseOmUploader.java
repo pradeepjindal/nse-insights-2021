@@ -76,7 +76,7 @@ public class NseOmUploader {
         LocalDate processingDate = fromDate.minusDays(1);
         do {
             processingDate = processingDate.plusDays(1);
-            LOGGER.info("om- | upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
+            //LOGGER.info("om | upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
             if(DateUtils.isTradingOnHoliday(processingDate)) {
                 uploadForDate(processingDate);
             } else if (DateUtils.isWeekend(processingDate)) {
@@ -89,17 +89,17 @@ public class NseOmUploader {
 
     public void uploadForDate(LocalDate forDate) {
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("om- | upload | already uploaded | for date:[{}]", forDate);
+            LOGGER.info("om | already uploaded - for date:[{}]", forDate);
             return;
         } else {
-//            LOGGER.info("FM-upload | uploading - for date:[{}]", forDate);
+            LOGGER.info("om | uploading - for date:[{}]", forDate);
         }
 
         String fromFile = Data_Dir + File.separator + PraCons.PRA_FM_FILE_PREFIX + forDate + ApCo.DATA_FILE_EXT;
         //LOGGER.info("FM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(nseFileUtils.isFileAbsent(fromFile)) {
-            LOGGER.warn("om- | upload | file not found: [{}]", fromFile);
+            LOGGER.warn("om | file not found: [{}]", fromFile);
             return;
         }
 
@@ -164,8 +164,8 @@ public class NseOmUploader {
             }
 
         });
-        LOGGER.info("om- | upload | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
-        if (recordFailed.get() > 0) throw new RuntimeException("OM-upload | some record could not be persisted");
+        LOGGER.info("om | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
+        if (recordFailed.get() > 0) throw new RuntimeException("om | some record could not be persisted");
     }
 
     private void uploadBulk(LocalDate forDate, Map<FmBean, FmBean> foBeanMap) {
@@ -224,7 +224,7 @@ public class NseOmUploader {
 
         int batchSize = 1000;
         List<NseOptionMarketTab> batchList;
-        LOGGER.info("total records to be saved = {}", list.size());
+        LOGGER.info("om | total records to be saved = {}", list.size());
         for(int i = 0; i < list.size(); i = i + batchSize) {
             if(i + batchSize < list.size()) {
 //                LOGGER.info("from: {}, to: {}", i, i + batchSize -1);
@@ -236,8 +236,8 @@ public class NseOmUploader {
             optionMarketRepository.saveAll(batchList);
         }
 
-        LOGGER.info("om- | upload | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
-        if (recordFailed.get() > 0) throw new RuntimeException("OM-upload | some record could not be persisted");
+        LOGGER.info("om | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
+        if (recordFailed.get() > 0) throw new RuntimeException("om | some record could not be persisted");
     }
 
 }

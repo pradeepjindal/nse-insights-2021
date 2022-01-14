@@ -83,7 +83,7 @@ public class NseFoUploader {
         LocalDate processingDate = fromDate.minusDays(1);
         do {
             processingDate = processingDate.plusDays(1);
-            LOGGER.info("fo- | upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
+            //LOGGER.info("fo | upload processing date: [{}], {}", processingDate, processingDate.getDayOfWeek());
             if(DateUtils.isTradingOnHoliday(processingDate)) {
                 uploadForDate(processingDate);
             } else if (DateUtils.isWeekend(processingDate)) {
@@ -99,16 +99,16 @@ public class NseFoUploader {
 
         //TODO check that number of rows in file and number of rows in table matches for the given date
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("fo- | upload | already uploaded | for date:[{}]", forDate);
+            LOGGER.info("fo | already uploaded - for date:[{}]", forDate);
             return;
         } else {
-//            LOGGER.info("IDX-upload | uploading - for date:[{}]", forDate);
+            LOGGER.info("fo | uploading - for date:[{}]", forDate);
         }
 
         LocalDate fileDate;
         // special condition: nse file is corrupt for 23-Sep-2021 hence uploading the 22-Sep-2021
         if(forDate.toString().equals("2021-11-23")) {
-            LOGGER.warn("fo- | upload - special condition: nse file is corrupt for 23-Sep-2021 hence replacing it with 22-Sep-2021");
+            LOGGER.warn("fo | upload - special condition: nse file is corrupt for 23-Sep-2021 hence replacing it with 22-Sep-2021");
             fileDate = LocalDate.of(2021, 11, 22);
         } else {
             fileDate = forDate;
@@ -118,7 +118,7 @@ public class NseFoUploader {
         //LOGGER.info("IDX-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFilePresent(fromFile)) {
-            LOGGER.warn("fo- | upload | file not found: [{}]", fromFile);
+            LOGGER.warn("fo | file not found: [{}]", fromFile);
             return;
         }
 
@@ -162,8 +162,8 @@ public class NseFoUploader {
                 recordFailed.incrementAndGet();
             }
         });
-        LOGGER.info("fo- | upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
-        if (recordFailed.get() > 0) throw new RuntimeException("FO-upload | some record could not be persisted");
+        LOGGER.info("fo | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
+        if (recordFailed.get() > 0) throw new RuntimeException("fm | some record could not be persisted");
     }
 
 }

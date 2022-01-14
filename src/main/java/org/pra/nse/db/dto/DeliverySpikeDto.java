@@ -334,6 +334,9 @@ public class DeliverySpikeDto {
                 + delFixGrowth + ","
                 + deliveryChgPrcnt + ","
 
+                + delAccumulation + ","
+                + delDiff + ","
+
                 + lotSize + ","
 
                 + fuAtp + ","

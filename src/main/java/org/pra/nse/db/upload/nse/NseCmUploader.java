@@ -77,7 +77,7 @@ public class NseCmUploader {
         LocalDate processingDate = fromDate.minusDays(1);
         do {
             processingDate = processingDate.plusDays(1);
-            LOGGER.info("{} | upload processing date: [{}], {}", filePrefix, processingDate, processingDate.getDayOfWeek());
+            //LOGGER.info("{} | upload processing date: [{}], {}", filePrefix, processingDate, processingDate.getDayOfWeek());
             if(DateUtils.isTradingOnHoliday(processingDate)) {
                 uploadForDate(processingDate);
             } else if (DateUtils.isWeekend(processingDate)) {
@@ -91,17 +91,17 @@ public class NseCmUploader {
     public void uploadForDate(LocalDate forDate) {
         //TODO check that number of rows in file and number of rows in table matches for the given date
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("CM-upload | already uploaded | for date:[{}]", forDate);
+            LOGGER.info("cm | already uploaded - for date:[{}]", forDate);
             return;
         } else {
-            LOGGER.info("CM-upload | uploading - for date:[{}]", forDate);
+            LOGGER.info("cm | uploading - for date:[{}]", forDate);
         }
 
         String fromFile = Data_Dir + File.separator + PraCons.PRA_CM_FILE_PREFIX + forDate + ApCo.DATA_FILE_EXT;
         //LOGGER.info("CM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFilePresent(fromFile)) {
-            LOGGER.warn("CM-upload | file not found: [{}]", fromFile);
+            LOGGER.warn("cm | file not found: [{}]", fromFile);
             return;
         }
 
@@ -139,8 +139,8 @@ public class NseCmUploader {
                 recordFailed.incrementAndGet();
             }
         });
-        LOGGER.info("CM-upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
-        if (recordFailed.get() > 0) throw new RuntimeException("CM-upload | some record could not be persisted");
+        LOGGER.info("cm | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
+        if (recordFailed.get() > 0) throw new RuntimeException("cm | some record could not be persisted");
     }
 
 }

@@ -9,14 +9,15 @@ ALTER TABLE public.nse_delivery_market_seq_id OWNER TO postgres;
 
 
 CREATE TABLE public.nse_delivery_market_tab (
-                                                id bigint DEFAULT nextval('public.nse_delivery_market_seq_id'::regclass) NOT NULL,
-                                                symbol character varying(16) NOT NULL,
-                                                security_type character varying(16) NOT NULL,
-                                                traded_qty bigint,
-                                                deliverable_qty bigint,
-                                                delivery_to_trade_ratio numeric(18,2),
-                                                trade_date date NOT NULL,
-                                                tds character varying(10)
+    id bigint DEFAULT nextval('public.nse_delivery_market_seq_id'::regclass) NOT NULL,
+    symbol character(12) NOT NULL,
+    security_type character(4) NOT NULL,
+    traded_qty bigint NOT NULL,
+    deliverable_qty bigint NOT NULL,
+    delivery_to_trade_ratio numeric(18,2),
+    trade_date date NOT NULL,
+    tds character(10),
+    tdn integer
 );
 
 ALTER TABLE public.nse_delivery_market_tab OWNER TO postgres;

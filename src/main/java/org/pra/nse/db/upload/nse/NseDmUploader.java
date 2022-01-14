@@ -76,7 +76,7 @@ public class NseDmUploader {
         LocalDate processingDate = fromDate.minusDays(1);
         do {
             processingDate = processingDate.plusDays(1);
-            LOGGER.info("{} | upload processing date: [{}], {}", filePrefix, processingDate, processingDate.getDayOfWeek());
+            //LOGGER.info("{} | upload processing date: [{}], {}", filePrefix, processingDate, processingDate.getDayOfWeek());
             if(DateUtils.isTradingOnHoliday(processingDate)) {
                 uploadForDate(processingDate);
             } else if (DateUtils.isWeekend(processingDate)) {
@@ -89,17 +89,17 @@ public class NseDmUploader {
 
     public void uploadForDate(LocalDate forDate) {
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("DM-upload | already uploaded | for date:[{}]", forDate);
+            LOGGER.info("dm | already uploaded - for date:[{}]", forDate);
             return;
         } else {
-//            LOGGER.info("DM-upload | uploading - for date:[{}]", forDate);
+            LOGGER.info("dm | uploading - for date:[{}]", forDate);
         }
 
         String fromFile = Data_Dir + File.separator + PraCons.PRA_DM_FILE_PREFIX + forDate + ApCo.DATA_FILE_EXT;
         //LOGGER.info("DM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(!nseFileUtils.isFilePresent(fromFile)) {
-            LOGGER.warn("DM-upload | file not found: [{}]", fromFile);
+            LOGGER.warn("dm | file not found: [{}]", fromFile);
             return;
         }
 
@@ -130,7 +130,7 @@ public class NseDmUploader {
                 recordFailed.incrementAndGet();
             }
         });
-        LOGGER.info("DM-upload | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
-        if (recordFailed.get() > 0) throw new RuntimeException("DM-upload | some record could not be persisted");
+        LOGGER.info("dm | record - uploaded {}, failed: [{}]", recordSucceed.get(), recordFailed.get());
+        if (recordFailed.get() > 0) throw new RuntimeException("dm | some record could not be persisted");
     }
 }

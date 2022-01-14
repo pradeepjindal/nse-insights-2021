@@ -75,7 +75,7 @@ public class NseLsUploader {
         LocalDate processingDate = fromDate.minusDays(1);
         do {
             processingDate = processingDate.plusDays(1);
-            LOGGER.info("{} | upload processing date: [{}], {}", filePrefix, processingDate, processingDate.getDayOfWeek());
+            //LOGGER.info("{} | upload processing date: [{}], {}", filePrefix, processingDate, processingDate.getDayOfWeek());
             if(DateUtils.isTradingOnHoliday(processingDate)) {
                 uploadForDate(processingDate);
             } else if (DateUtils.isWeekend(processingDate)) {
@@ -88,10 +88,10 @@ public class NseLsUploader {
 
     public void uploadForDate(LocalDate forDate) {
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("LS-upload | already uploaded | for date:[{}]", forDate);
+            LOGGER.info("ls | already uploaded - for date:[{}]", forDate);
             return;
         } else {
-//            LOGGER.info("LS-upload | uploading - for date:[{}]", forDate);
+            LOGGER.info("ls | uploading - for date:[{}]", forDate);
         }
 
         LocalDate latestFileDate_forDate;
@@ -105,12 +105,12 @@ public class NseLsUploader {
         //LOGGER.info("LS-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(nseFileUtils.isFileAbsent(fromFile)) {
-            LOGGER.warn("LS-upload | file not found: [{}]", fromFile);
+            LOGGER.warn("ls | file not found: [{}]", fromFile);
             return;
         }
 
         LocalDate fix_expiry_date = LocalDate.of(latestFileDate_forDate.getYear(), latestFileDate_forDate.getMonthValue(), 1);
-        LOGGER.info("LS-upload | uploading - forDate [{}], fileDate: [{}]", forDate, latestFileDate_forDate);
+        LOGGER.info("ls | uploading - forDate [{}], fileDate: [{}]", forDate, latestFileDate_forDate);
 
         List<LsBean> beans = csvReader.read(fromFile);
         //LOGGER.info("{}", foBeanMap.size());
@@ -149,8 +149,8 @@ public class NseLsUploader {
             }
         }
 
-        LOGGER.info("LS-upload | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
-        if (recordFailed.get() > 0) throw new RuntimeException("LS-upload | some record could not be persisted");
+        LOGGER.info("ls | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
+        if (recordFailed.get() > 0) throw new RuntimeException("ls | some record could not be persisted");
     }
 
 }

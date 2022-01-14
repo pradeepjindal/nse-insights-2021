@@ -77,7 +77,7 @@ public class NseFmUploader {
         LocalDate processingDate = fromDate.minusDays(1);
         do {
             processingDate = processingDate.plusDays(1);
-            LOGGER.info("{} | upload processing date: [{}], {}", filePrefix, processingDate, processingDate.getDayOfWeek());
+            //LOGGER.info("{} | upload processing date: [{}], {}", filePrefix, processingDate, processingDate.getDayOfWeek());
             if(DateUtils.isTradingOnHoliday(processingDate)) {
                 uploadForDate(processingDate);
             } else if (DateUtils.isWeekend(processingDate)) {
@@ -90,17 +90,17 @@ public class NseFmUploader {
 
     public void uploadForDate(LocalDate forDate) {
         if(dao.dataCount(forDate) > 0) {
-            LOGGER.info("FM-upload | already uploaded | for date:[{}]", forDate);
+            LOGGER.info("fm | already uploaded - for date:[{}]", forDate);
             return;
         } else {
-//            LOGGER.info("FM-upload | uploading - for date:[{}]", forDate);
+            LOGGER.info("fm | uploading - for date:[{}]", forDate);
         }
 
         String fromFile = Data_Dir + File.separator + PraCons.PRA_FM_FILE_PREFIX + forDate + ApCo.DATA_FILE_EXT;
         //LOGGER.info("FM-upload | looking for file Name along with path:[{}]",fromFile);
 
         if(nseFileUtils.isFileAbsent(fromFile)) {
-            LOGGER.warn("FM-upload | file not found: [{}]", fromFile);
+            LOGGER.warn("fm | file not found: [{}]", fromFile);
             return;
         }
 
@@ -167,11 +167,11 @@ public class NseFmUploader {
 
         });
 
-        LOGGER.info("FM-upload | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
+        LOGGER.info("fm | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
 
         if(lotSizeNotFoundCounter.get() > 0)  throw new RuntimeException("lot size not found for some of FnO stocks: " + lotSizeNotFoundCounter.get());
 
-        if (recordFailed.get() > 0) throw new RuntimeException("FM-upload | some record could not be persisted");
+        if (recordFailed.get() > 0) throw new RuntimeException("fm | some record could not be persisted");
     }
 
 }

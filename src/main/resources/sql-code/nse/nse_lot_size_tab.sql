@@ -9,15 +9,16 @@ ALTER TABLE public.nse_lot_size_seq_id OWNER TO postgres;
 
 
 CREATE TABLE public.nse_lot_size_tab (
-                                            id bigint DEFAULT nextval('public.nse_lot_size_seq_id'::regclass) NOT NULL,
-                                            symbol character varying(32) NOT NULL,
-                                            trade_date date NOT NULL,
-                                            tdn integer,
-                                            expiry_date date NOT NULL,
-                                            edn integer,
-                                            lot_size integer NOT NULL,
-                                            file_date date NOT NULL,
-                                            fdn integer,
+    id bigint DEFAULT nextval('public.nse_lot_size_seq_id'::regclass) NOT NULL,
+    symbol character(12) NOT NULL,
+    trade_date date NOT NULL,
+    tdn integer,
+    expiry_date date NOT NULL,
+    edn integer,
+    lot_size integer NOT NULL,
+    file_date date NOT NULL,
+    fdn integer,
+    comment character varying(32)
 );
 
 ALTER TABLE public.nse_lot_size_tab OWNER TO postgres;
