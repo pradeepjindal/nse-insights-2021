@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,8 +44,7 @@ public class NseFoUploader {
                          NseFoRepo repository,
                          NseFoDao dao,
                          NseFileUtils nseFileUtils,
-                         PraFileUtils praFileUtils
-                          ) {
+                         PraFileUtils praFileUtils) {
         this.csvReader = csvReader;
         this.repository = repository;
         this.dao = dao;
@@ -140,7 +140,7 @@ public class NseFoUploader {
         AtomicInteger recordFailed = new AtomicInteger();
         beanList.forEach( bean -> {
             target.reset();
-            target.setSymbol(bean.getSymbol());
+            target.setSymbol(bean.getSymbol().trim());
             target.setTradeDate(forDate);
             target.setExpiryDate(bean.getExpiryDate());
             target.setInstrument(bean.getInstrument());

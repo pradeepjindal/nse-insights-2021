@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 
 @Component
 public class NseUploadManager implements Manager {
@@ -63,13 +65,14 @@ public class NseUploadManager implements Manager {
         LOGGER.info("----------");
         nseDmUploader.uploadFromDefaultDate();
         LOGGER.info("----------");
+        nseFoUploader.uploadFromDefaultDate();
+
+        LOGGER.info("----------");
         nseFmUploader.uploadFromDefaultDate();
         LOGGER.info("----------");
         nseOmUploader.uploadFromDefaultDate();
         LOGGER.info("----------");
         nseNxUploader.uploadFromDefaultDate();
-        LOGGER.info("----------");
-        nseFoUploader.uploadFromDefaultDate();
 
 
 //        nseCmUploader.uploadFromLatestDate();

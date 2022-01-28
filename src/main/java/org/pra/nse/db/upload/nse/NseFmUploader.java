@@ -7,8 +7,9 @@ import org.pra.nse.csv.read.FmCsvReader;
 import org.pra.nse.db.dao.NseFmDao;
 import org.pra.nse.db.model.NseFutureMarketTab;
 import org.pra.nse.db.repository.NseFmRepo;
-import org.pra.nse.refdata.LotSizeService;
+import org.pra.nse.db.repository.NseFoRepo;
 import org.pra.nse.util.DateUtils;
+import org.pra.nse.util.LotSizeUtil;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
@@ -30,6 +31,7 @@ public class NseFmUploader {
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
     private final FmCsvReader csvReader;
+    private final NseFoRepo nseFoRepo;
 
     private String fileDirName = PraCons.FM_DIR_NAME;
     private String filePrefix = PraCons.PRA_FM_FILE_PREFIX;
@@ -41,12 +43,14 @@ public class NseFmUploader {
                          NseFmDao dao,
                          NseFileUtils nseFileUtils,
                          PraFileUtils praFileUtils,
-                         FmCsvReader fmCsvReader) {
+                         FmCsvReader fmCsvReader,
+                         NseFoRepo nseFoRepo) {
         this.futureMarketRepository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;
         this.praFileUtils = praFileUtils;
         this.csvReader = fmCsvReader;
+        this.nseFoRepo = nseFoRepo;
     }
 
     public void uploadAll() {
@@ -111,6 +115,9 @@ public class NseFmUploader {
 
 
     private void upload(LocalDate forDate, Map<FmBean, FmBean> foBeanMap) {
+        Map<String, Map<LocalDate, Integer>> symbol_ed_ls_map = LotSizeUtil.transform(nseFoRepo, forDate);
+
+        //
         NseFutureMarketTab target = new NseFutureMarketTab();
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordSkipped = new AtomicInteger();
@@ -147,14 +154,13 @@ public class NseFmUploader {
                     LocalDate fix_expiry_date = LocalDate.of(edt.getYear(), edt.getMonthValue(), 25);
                     target.setFeds(fix_expiry_date.toString());
                     target.setFedn(Integer.valueOf(fix_expiry_date.toString().replace("-", "")));
-                    //
-                    long lotSize = LotSizeService.getLotSizeAsLong(source.getSymbol());
-                    if(lotSize==0) {
-                        lotSizeNotFoundCounter.incrementAndGet();
-                        LOGGER.info("{} not found - probably new entry in the FnO", source.getSymbol());
+
+                    if(symbol_ed_ls_map.containsKey(source.getSymbol()) && symbol_ed_ls_map.get(source.getSymbol()).containsKey(edt)) {
+                        Integer foLotSize = symbol_ed_ls_map.get(source.getSymbol()).get(edt);
+                        target.setLotSize(foLotSize);
+                    } else {
+                        LOGGER.warn("fo lotSize not found, symbol: {}, td: {}, ed: {}", source.getSymbol(), forDate, edt);
                     }
-                    else
-                        target.setLotSize(lotSize);
 
                     futureMarketRepository.save(target);
                     recordSucceed.incrementAndGet();

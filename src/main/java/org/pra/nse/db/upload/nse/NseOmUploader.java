@@ -6,9 +6,11 @@ import org.pra.nse.csv.bean.in.FmBean;
 import org.pra.nse.csv.read.OmCsvReader;
 import org.pra.nse.db.dao.NseOmDao;
 import org.pra.nse.db.model.NseOptionMarketTab;
+import org.pra.nse.db.repository.NseFoRepo;
 import org.pra.nse.db.repository.NseOmRepo;
 import org.pra.nse.refdata.LotSizeService;
 import org.pra.nse.util.DateUtils;
+import org.pra.nse.util.LotSizeUtil;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
@@ -18,9 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
@@ -32,6 +32,7 @@ public class NseOmUploader {
     private final NseFileUtils nseFileUtils;
     private final PraFileUtils praFileUtils;
     private final OmCsvReader csvReader;
+    private final NseFoRepo nseFoRepo;
 
     private String fileDirName = PraCons.FM_DIR_NAME;
     private String filePrefix = PraCons.PRA_FM_FILE_PREFIX;
@@ -43,12 +44,14 @@ public class NseOmUploader {
                          NseOmDao dao,
                          NseFileUtils nseFileUtils,
                          PraFileUtils praFileUtils,
-                         OmCsvReader omCsvReader) {
+                         OmCsvReader omCsvReader,
+                         NseFoRepo nseFoRepo) {
         this.optionMarketRepository = repository;
         this.dao = dao;
         this.nseFileUtils = nseFileUtils;
         this.praFileUtils = praFileUtils;
         this.csvReader = omCsvReader;
+        this.nseFoRepo = nseFoRepo;
     }
 
     public void uploadAll() {
@@ -109,66 +112,10 @@ public class NseOmUploader {
         uploadBulk(forDate, foBeanMap);
     }
 
-
-    private void upload(LocalDate forDate, Map<FmBean, FmBean> foBeanMap) {
-        NseOptionMarketTab target = new NseOptionMarketTab();
-        AtomicInteger recordSucceed = new AtomicInteger();
-        AtomicInteger recordSkipped = new AtomicInteger();
-        AtomicInteger recordFailed = new AtomicInteger();
-
-        foBeanMap.values().forEach( source -> {
-            try {
-                if("OPTIDX".equals(source.getInstrument()) || "OPTSTK".equals(source.getInstrument())) {
-                    target.reset();
-                    target.setInstrument(source.getInstrument());
-                    target.setSymbol(source.getSymbol());
-                    target.setExpiryDate(DateUtils.toLocalDate(source.getExpiry_Dt()));
-                    target.setStrikePrice(source.getStrike_Pr());
-                    target.setOptionType(source.getOption_Typ());
-                    target.setOpen(source.getOpen());
-                    target.setHigh(source.getHigh());
-                    target.setLow(source.getLow());
-                    target.setClose(source.getClose());
-                    target.setSettlePrice(source.getSettle_Pr());
-                    target.setContracts(source.getContracts());
-                    target.setValueInLakh(source.getVal_InLakh());
-                    target.setOpenInt(source.getOpen_Int());
-                    target.setChangeInOi(source.getChg_In_Oi());
-                    target.setTradeDate(DateUtils.toLocalDate(source.getTimestamp()));
-                    //
-                    target.setTds(forDate.toString());
-                    target.setTdn(Integer.valueOf(forDate.toString().replace("-", "")));
-
-                    LocalDate edt = DateUtils.toLocalDate(source.getExpiry_Dt());
-                    target.setEds(edt.toString());
-                    target.setEdn(Integer.valueOf(edt.toString().replace("-", "")));
-
-                    LocalDate fix_expiry_date = LocalDate.of(edt.getYear(), edt.getMonthValue(), 25);
-                    target.setFeds(fix_expiry_date.toString());
-                    target.setFedn(Integer.valueOf(fix_expiry_date.toString().replace("-", "")));
-                    //
-                    target.setLotSize(LotSizeService.getLotSizeAsLong(source.getSymbol()));
-//                    long lotSize = LotSizeService.getLotSizeAsLong(source.getSymbol());
-//                    if(lotSize==0)
-//                        LOGGER.info("{} not found - probably new entry in the FnO", source.getSymbol());
-//                    else
-//                        target.setLotSize(lotSize);
-
-                    optionMarketRepository.save(target);
-                    recordSucceed.incrementAndGet();
-                } else {
-                    recordSkipped.incrementAndGet();
-                }
-            }catch(DataIntegrityViolationException dive) {
-                recordFailed.incrementAndGet();
-            }
-
-        });
-        LOGGER.info("om | record - uploaded {}, skipped {}, failed: [{}]", recordSucceed.get(), recordSkipped.get(), recordFailed.get());
-        if (recordFailed.get() > 0) throw new RuntimeException("om | some record could not be persisted");
-    }
-
     private void uploadBulk(LocalDate forDate, Map<FmBean, FmBean> foBeanMap) {
+        Map<String, Map<LocalDate, Integer>> symbol_ed_ls_map = LotSizeUtil.transform(nseFoRepo, forDate);
+
+        //
         AtomicInteger recordSucceed = new AtomicInteger();
         AtomicInteger recordSkipped = new AtomicInteger();
         AtomicInteger recordFailed = new AtomicInteger();
@@ -204,13 +151,13 @@ public class NseOmUploader {
                     LocalDate fix_expiry_date = LocalDate.of(edt.getYear(), edt.getMonthValue(), 25);
                     target.setFeds(fix_expiry_date.toString());
                     target.setFedn(Integer.valueOf(fix_expiry_date.toString().replace("-", "")));
-                    //
-                    target.setLotSize(LotSizeService.getLotSizeAsLong(source.getSymbol()));
-//                    long lotSize = LotSizeService.getLotSizeAsLong(source.getSymbol());
-//                    if(lotSize==0)
-//                        LOGGER.info("{} not found - probably new entry in the FnO", source.getSymbol());
-//                    else
-//                        target.setLotSize(lotSize);
+
+                    if(symbol_ed_ls_map.containsKey(source.getSymbol()) && symbol_ed_ls_map.get(source.getSymbol()).containsKey(edt)) {
+                        Integer foLotSize = symbol_ed_ls_map.get(source.getSymbol()).get(edt);
+                        target.setLotSize(foLotSize);
+                    } else {
+                        LOGGER.warn("fo lotSize not found, symbol: {}, td: {}, ed: {}", source.getSymbol(), forDate, edt);
+                    }
 
                     list.add(target);
                     recordSucceed.incrementAndGet();
