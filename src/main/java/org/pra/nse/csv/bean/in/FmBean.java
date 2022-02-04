@@ -1,16 +1,26 @@
 package org.pra.nse.csv.bean.in;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 
 public class FmBean {
     private String instrument;
     private String symbol;
+
     @JsonFormat(pattern="dd-MMM-yyyy")
-    //@JsonDeserialize(using = CustomerDateAndTimeDeserialize.class)
-    private Date expiry_Dt;
+//    //@JsonDeserialize(using = CustomerDateAndTimeDeserialize.class)
+//    private Date expiry_Dt;
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    private LocalDate expiry_Dt;
+
     private double strike_Pr;
     private String option_Typ;
     private double open;
@@ -22,7 +32,10 @@ public class FmBean {
     private double val_InLakh;
     private long open_Int;
     private long chg_In_Oi;
+
     @JsonFormat(pattern="dd-MMM-yyyy")
+//    @JsonDeserialize(using = LocalDateDeserializer.class)
+//    @JsonSerialize(using = LocalDateSerializer.class)
     private Date timestamp;
 
 
@@ -81,11 +94,11 @@ public class FmBean {
         this.symbol = symbol;
     }
 
-    public Date getExpiry_Dt() {
+    public LocalDate getExpiry_Dt() {
         return expiry_Dt;
     }
 
-    public void setExpiry_Dt(Date expiry_Dt) {
+    public void setExpiry_Dt(LocalDate expiry_Dt) {
         this.expiry_Dt = expiry_Dt;
     }
 

@@ -49,6 +49,8 @@ public class NseUploadManager implements Manager {
             return;
         }
 
+//        nseFmUploader.uploadFromDate(LocalDate.of(2021, 1, 1));
+//        nseOmUploader.uploadFromDate(LocalDate.of(2021, 8, 1));
 //        nseCmUploader.upload2021();
 //        nseCmUploader.uploadForDate(LocalDate.of(2020, 11, 23));
 //        LOGGER.info("----------");

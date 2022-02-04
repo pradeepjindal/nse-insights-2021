@@ -93,6 +93,8 @@ public class NseFmUploader {
     }
 
     public void uploadForDate(LocalDate forDate) {
+        if(DateUtils.notTradingDay(forDate)) return;
+
         if(dao.dataCount(forDate) > 0) {
             LOGGER.info("fm | already uploaded - for date:[{}]", forDate);
             return;
@@ -130,7 +132,7 @@ public class NseFmUploader {
                     target.reset();
                     target.setInstrument(source.getInstrument());
                     target.setSymbol(source.getSymbol());
-                    target.setExpiryDate(DateUtils.toLocalDate(source.getExpiry_Dt()));
+                    target.setExpiryDate(source.getExpiry_Dt());
                     target.setStrikePrice(source.getStrike_Pr());
                     target.setOptionType(source.getOption_Typ());
                     target.setOpen(source.getOpen());
@@ -147,7 +149,7 @@ public class NseFmUploader {
                     target.setTds(forDate.toString());
                     target.setTdn(Integer.valueOf(forDate.toString().replace("-", "")));
 
-                    LocalDate edt = DateUtils.toLocalDate(source.getExpiry_Dt());
+                    LocalDate edt = source.getExpiry_Dt();
                     target.setEds(edt.toString());
                     target.setEdn(Integer.valueOf(edt.toString().replace("-", "")));
 

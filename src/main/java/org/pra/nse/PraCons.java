@@ -1,6 +1,7 @@
 package org.pra.nse;
 
 import java.io.File;
+import java.time.format.DateTimeFormatter;
 
 public class PraCons {
 
@@ -43,6 +44,7 @@ public class PraCons {
     public static final String IDX_FILES_PATH = ApCo.ROOT_DIR + File.separator + IDX_DIR_NAME;
 
     //-------------
-
-
+    public static final String yyyy_D_MM_D_dd_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String PRA_FILE_NAME_DATE_FORMAT = yyyy_D_MM_D_dd_DATE_FORMAT;
+    public static final DateTimeFormatter PRA_DTF = DateTimeFormatter.ofPattern(PRA_FILE_NAME_DATE_FORMAT);
 }

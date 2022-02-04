@@ -89,6 +89,8 @@ public class NseCmUploader {
     }
 
     public void uploadForDate(LocalDate forDate) {
+        if(DateUtils.notTradingDay(forDate)) return;
+
         //TODO check that number of rows in file and number of rows in table matches for the given date
         if(dao.dataCount(forDate) > 0) {
             LOGGER.info("cm | already uploaded - for date:[{}]", forDate);

@@ -4,6 +4,7 @@ import org.pra.nse.ApCo;
 import org.pra.nse.NseCons;
 import org.pra.nse.PraCons;
 import org.pra.nse.util.DateUtils;
+import org.pra.nse.util.FileUtils;
 import org.pra.nse.util.NseFileUtils;
 import org.pra.nse.util.PraFileUtils;
 import org.slf4j.Logger;
@@ -87,9 +88,24 @@ public class FoTransformer extends BaseTransformer {
         filePairMap.forEach(this::validateAndTransform);
     }
 
+    private void transformForDateWIP(LocalDate forDate) {
+        // special condition: nse file is corrupt for 23-Sep-2021 hence uploading the 22-Sep-2021
+        if(forDate.toString().equals("2021-11-23")) {
+            LOGGER.warn("FO | transform - special condition: nse file is corrupt for 23-Sep-2021 hence skipping");
+        }
+        String sourceFileName = FileUtils.constructFileName(forDate, NseCons.NSE_FO_FILE_NAME_DATE_FORMAT,
+                sourceFilePrefix, "", sourceFileExtension);
+        String targetFileName = FileUtils.constructFileName(forDate, PraCons.PRA_FILE_NAME_DATE_FORMAT,
+                targetFilePrefix, "", targetFileExtension);
+
+        String fileNameToBeExtractedFromZip = sourceFileName.split("\\.")[0] + ".csv";
+        String source = Source_Data_Dir + File.separator + sourceFileName;
+        String target = Target_Data_Dir+"-csv" + File.separator + targetFileName;
+
+    }
     private void validateAndTransform(String sourceFileName,
                                       String targetFileName) {
-        String fileNameToBeExtractedFromZip = sourceFileName.split("\\.")[0] + targetFileExtension;
+        String fileNameToBeExtractedFromZip = sourceFileName.split("\\.")[0] + ".csv";
         String source = Source_Data_Dir + File.separator + sourceFileName;
         String target = Target_Data_Dir+"-csv" + File.separator + targetFileName;
 

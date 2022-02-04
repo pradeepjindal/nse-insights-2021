@@ -24,13 +24,18 @@ public class DateUtils {
         return Integer.valueOf(dt.toString().replace("-", ""));
     }
 
-    public static LocalDate toLocalDate(Date utilDate) {
+    public static LocalDate toLocalDate(Date date) {
         //new java.sql.Date(date.getTime()).toLocalDate();
-        Instant.ofEpochMilli(utilDate.getTime())
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-        return utilDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//        Instant.ofEpochMilli(date.getTime())
+//                .atZone(ZoneId.systemDefault())
+//                .toLocalDate();
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
+
+    public static Date toDate(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
 
     public static Date toSqlDate(LocalDate localDate) {
         return java.sql.Date.valueOf(localDate);
@@ -61,6 +66,7 @@ public class DateUtils {
         LocalDate dateTime = LocalDate.parse(date, formatter);
         return LocalDate.parse(date, formatter);
     }
+
 
 //    public static LocalDate extractLocalDatefromUpperCaseDate(String inputString) {
 //        return extractLocalDatefromUpperCaseDate(inputString, ApCo.ddMMMyyyy_DATE_REGEX, ApCo.ddMMMyyyy_DATE_FORMAT);
@@ -151,4 +157,20 @@ public class DateUtils {
         }
         return matches;
     }
+
+    public static boolean notTradingDay(LocalDate date) {
+        return !isTradingDay(date);
+    }
+    public static boolean isTradingDay(LocalDate date) {
+        if (DateUtils.isTradingOnHoliday(date)) {
+            return true;
+        } else if (DateUtils.isFixHoliday(date)) {
+            return false;
+        } else if (DateUtils.isWeekend(date)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 }

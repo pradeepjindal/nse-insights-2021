@@ -87,6 +87,8 @@ public class NseLsUploader {
     }
 
     public void uploadForDate(LocalDate forDate) {
+        if(DateUtils.notTradingDay(forDate)) return;
+
         if(dao.dataCount(forDate) > 0) {
             LOGGER.info("ls | already uploaded - for date:[{}]", forDate);
             return;

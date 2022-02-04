@@ -62,13 +62,13 @@ public class FmMerger {
             PraBean praBean = new PraBean();
             //
             if("FUTSTK".equals(todayBean.getInstrument())) {
-                foMonthlyExpiryDates.add(DateUtils.toLocalDate(todayBean.getExpiry_Dt()));
+                foMonthlyExpiryDates.add(todayBean.getExpiry_Dt());
             }
 
             praBean.setInstrument(todayBean.getInstrument());
             praBean.setSymbol(todayBean.getSymbol());
-            praBean.setExpiryLocalDate(DateUtils.toLocalDate(todayBean.getExpiry_Dt()));
-            praBean.setExpiryDate(todayBean.getExpiry_Dt());
+            praBean.setExpiryLocalDate(todayBean.getExpiry_Dt());
+            praBean.setExpiryDate(DateUtils.toDate(todayBean.getExpiry_Dt()));
             praBean.setStrikePrice(todayBean.getStrike_Pr());
             praBean.setOptionType(todayBean.getOption_Typ());
             //
@@ -82,7 +82,7 @@ public class FmMerger {
             //
             praBean.setFoPrevsClose(previousBean.getClose());
             praBean.setPrevsOI(previousBean.getOpen_Int());
-            praBean.setPrevsLocalDate(previousBean.getTimestamp().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            praBean.setPrevsLocalDate(DateUtils.toLocalDate(previousBean.getTimestamp()));
             praBean.setPrevsDate(previousBean.getTimestamp());
             //
             // calc fields

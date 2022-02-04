@@ -88,6 +88,8 @@ public class NseDmUploader {
     }
 
     public void uploadForDate(LocalDate forDate) {
+        if(DateUtils.notTradingDay(forDate)) return;
+
         if(dao.dataCount(forDate) > 0) {
             LOGGER.info("dm | already uploaded - for date:[{}]", forDate);
             return;

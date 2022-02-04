@@ -180,6 +180,7 @@ public class NseFileUtils {
         LocalDate todayDate = LocalDate.now();
         //LocalDate todayDate = LocalDate.of(2018, 12, 31);
         int weekends = 0;
+        String constructedFileName;
         while (rollingDate.compareTo(todayDate) < 1) {
             //LOGGER.info(localDate);
             //LOGGER.info(localDate.getDayOfWeek());
@@ -247,6 +248,7 @@ public class NseFileUtils {
         //filesUrl.forEach(url -> LOGGER.info(url));
         return filesUrl;
     }
+
 
     private File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
         File destFile = new File(destinationDir, zipEntry.getName().replace("bhav",""));

@@ -91,6 +91,8 @@ public class NseOmUploader {
     }
 
     public void uploadForDate(LocalDate forDate) {
+        if(DateUtils.notTradingDay(forDate)) return;
+
         if(dao.dataCount(forDate) > 0) {
             LOGGER.info("om | already uploaded - for date:[{}]", forDate);
             return;
@@ -127,7 +129,7 @@ public class NseOmUploader {
                     NseOptionMarketTab target = new NseOptionMarketTab();
                     target.setInstrument(source.getInstrument());
                     target.setSymbol(source.getSymbol());
-                    target.setExpiryDate(DateUtils.toLocalDate(source.getExpiry_Dt()));
+                    target.setExpiryDate(source.getExpiry_Dt());
                     target.setStrikePrice(source.getStrike_Pr());
                     target.setOptionType(source.getOption_Typ());
                     target.setOpen(source.getOpen());
@@ -144,7 +146,7 @@ public class NseOmUploader {
                     target.setTds(forDate.toString());
                     target.setTdn(Integer.valueOf(forDate.toString().replace("-", "")));
 
-                    LocalDate edt = DateUtils.toLocalDate(source.getExpiry_Dt());
+                    LocalDate edt = source.getExpiry_Dt();
                     target.setEds(edt.toString());
                     target.setEdn(Integer.valueOf(edt.toString().replace("-", "")));
 
@@ -156,7 +158,7 @@ public class NseOmUploader {
                         Integer foLotSize = symbol_ed_ls_map.get(source.getSymbol()).get(edt);
                         target.setLotSize(foLotSize);
                     } else {
-                        LOGGER.warn("fo lotSize not found, symbol: {}, td: {}, ed: {}", source.getSymbol(), forDate, edt);
+                        //LOGGER.warn("fo lotSize not found, symbol: {}, td: {}, ed: {}", source.getSymbol(), forDate, edt);
                     }
 
                     list.add(target);
